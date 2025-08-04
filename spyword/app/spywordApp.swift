@@ -11,7 +11,8 @@ import SwiftUI
 struct spywordApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashScreen()
+                .withRouter()
         }
     }
 }
