@@ -14,12 +14,12 @@ struct Player: Identifiable, Equatable {
 // MARK: - RoomView
 struct RoomView: View {
     let roomCode: String
-    
+
     @StateObject private var vm: RoomViewModel
     @EnvironmentObject var router: Router
-    
-    // for alert when removed
+
     @State private var showRemovedAlert = false
+    @State private var navigatedToGame = false   // <— yeni: tekrar push olmasın
 
     // current device
     private let deviceId = UserDefaults.standard.string(forKey: "deviceId")
@@ -52,9 +52,9 @@ struct RoomView: View {
             .padding()
             .background(Color.backgroundLight)
             .shadow(radius: 2)
-            
+
             Divider()
-            
+
             // Players list
             if vm.isLoading {
                 ProgressView().padding()
@@ -62,7 +62,6 @@ struct RoomView: View {
             } else {
                 ScrollView {
                     LazyVStack(spacing: 12) {
-                        // RoomView.swift (excerpt showing current-user indicator)
                         ForEach(vm.players) { p in
                             HStack {
                                 Text(p.name)
@@ -71,45 +70,38 @@ struct RoomView: View {
 
                                 Spacer()
 
-                                // Indicator for yourself
                                 if p.id == deviceId {
                                     Image(systemName: "checkmark.seal.fill")
                                         .foregroundColor(.successGreen)
                                         .help("Sen buradasın")
                                 }
 
-                                // Remove button for host
                                 if isHost && p.id != deviceId {
-                                    Button("Kaldır") {
-                                        vm.remove(player: p)
-                                    }
-                                    .font(.caption)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(Color.errorRed)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(8)
+                                    Button("Kaldır") { vm.remove(player: p) }
+                                        .font(.caption)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .background(Color.errorRed)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(8)
                                 }
                             }
                             .padding(.horizontal)
                         }
-
                     }
                     .padding(.top)
                 }
             }
-            
+
             Spacer()
-            
-            // Start button
+
+            // Start button (sadece host görür)
             if isHost {
                 ButtonText(
                     title: "Oyunu Başlat",
                     action: {
-                        router.navigate(
-                            to: GameDetailView(roomCode: roomCode),
-                            type: .push
-                        )
+                        vm.beginArranging()
+                        router.navigate(to: SelectPlayersView(roomCode: roomCode, vm: vm).withRouter(), type: .push)
                     },
                     backgroundColor: vm.players.count >= 2 ? .primaryBlue : .gray,
                     textColor: .white,
@@ -119,7 +111,7 @@ struct RoomView: View {
                 .disabled(vm.players.count < 2)
                 .padding()
             }
-            
+
             if let err = vm.errorMessage {
                 Text(err)
                     .font(.caption)
@@ -129,9 +121,20 @@ struct RoomView: View {
         }
         .ignoresSafeArea(edges: .bottom)
         .onChange(of: vm.players) { _, players in
+            // Odadan atılma
             if !players.contains(where: { $0.id == deviceId }) {
                 showRemovedAlert = true
             }
+            // Seçililer güncellenince oyun ekranına geçmesi gerekiyorsa geç
+            checkAndNavigateToGame()
+        }
+        .onChange(of: vm.status) { _, _ in
+            // Durum değişince kontrol et
+            checkAndNavigateToGame()
+        }
+        .onAppear {
+            // Ekrana döndüğünde de kontrol et (uygulama geri açıldı vs.)
+            checkAndNavigateToGame()
         }
         .alert("Odadan Kaldırıldınız", isPresented: $showRemovedAlert) {
             Button("Ana Menü") {
@@ -141,8 +144,29 @@ struct RoomView: View {
             Text("Host tarafından odadan çıkarıldınız.")
         }
     }
-    
+
+    // MARK: - Helpers
+
     private var isHost: Bool {
         vm.hostId == deviceId
+    }
+
+    private var amSelected: Bool {
+        vm.players.first(where: { $0.id == deviceId })?.isSelected == true
+    }
+
+    private func isGameStatus(_ s: String) -> Bool {
+        let l = s.lowercased()
+        return l == "the game" || l == "started" || l == "in game"
+    }
+
+    /// Yalnızca seçilmiş oyuncu isen ve status "game" ise GameDetailView'a yönlendirir.
+    private func checkAndNavigateToGame() {
+        guard !navigatedToGame else { return }
+        guard isGameStatus(vm.status) else { return }
+        guard amSelected else { return } // <-- kritik kural
+
+        navigatedToGame = true
+        router.navigate(to: GameDetailView(roomCode: roomCode), type: .push)
     }
 }
