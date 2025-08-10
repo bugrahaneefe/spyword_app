@@ -261,7 +261,7 @@ struct JoinGameView: View {
                     let vm = RoomViewModel(roomCode: code)
                     if !locked.isEmpty {
                         self.router.navigate(
-                            to: GameSettingsView(vm: vm, selectedIds: locked).withRouter(),
+                            to: GameSettingsView(vm: vm, roomCode: roomCode, selectedIds: locked).withRouter(),
                             type: .push
                         )
                     } else {

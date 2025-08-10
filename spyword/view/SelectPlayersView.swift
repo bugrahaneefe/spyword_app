@@ -50,7 +50,11 @@ struct SelectPlayersView: View {
             HStack(spacing: 12) {
                 Button {
                     vm.setStatus("waiting")
-                    router.pop()
+                    // Host, RoomView'a geri dönsün
+                    router.navigate(
+                        to: RoomView(roomCode: roomCode).withRouter(),
+                        type: .modal // veya .push ile de çalışır ama popTo köke döndürür
+                    )
                 } label: {
                     Text("İptal")
                         .frame(maxWidth: .infinity).padding()
@@ -62,11 +66,10 @@ struct SelectPlayersView: View {
                     // Seçimi kaydet, arranging devam → host ayar ekranına
                     vm.saveSelection(Array(chosen)) { err in
                         if let err = err {
-                            // basit bir hata gösterimi
                             print("Save selection error: \(err.localizedDescription)")
                         } else {
                             router.navigate(
-                                to: GameSettingsView(vm: vm, selectedIds: Array(chosen)).withRouter(),
+                                to: GameSettingsView(vm: vm, roomCode: roomCode, selectedIds: Array(chosen)).withRouter(),
                                 type: .push
                             )
                         }
@@ -82,8 +85,9 @@ struct SelectPlayersView: View {
             }
             .padding()
         }
+        .navigationBarBackButtonHidden(true) // <— geri butonunu kaldır
         .onAppear {
-            vm.beginArranging() // güvence: bu ekrana gelince arranging olsun
+            vm.beginArranging()
             chosen = Set(vm.players.filter { $0.isSelected == true }.map { $0.id })
         }
         .onChange(of: vm.players) { _, players in
@@ -91,7 +95,7 @@ struct SelectPlayersView: View {
             chosen = chosen.intersection(currentIds)
         }
         .onChange(of: vm.hostId) { _, host in
-            if host != deviceId { router.pop() } // sadece host görebilir
+            if host != deviceId { router.pop() }
         }
     }
 

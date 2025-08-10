@@ -3,7 +3,7 @@ import SwiftUI
 struct GameSettingsView: View {
     @ObservedObject var vm: RoomViewModel
     @EnvironmentObject var router: Router
-
+    let roomCode: String
     let selectedIds: [String]        // SelectPlayersView'den gelir
 
     @State private var mode: GameSettings.WordMode = .random
@@ -19,9 +19,28 @@ struct GameSettingsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            // Custom top bar (geri = waiting + RoomView)
             HStack {
-                Text("Oyun Ayarları").font(.title3).bold()
+                Button {
+                    vm.setStatus("waiting")
+                    router.navigate(
+                        to: RoomView(roomCode: roomCode).withRouter(),
+                        type: .push
+                    )
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "chevron.left")
+                        Text("Odaya Dön")
+                    }
+                    .font(.body)
+                }
+
                 Spacer()
+
+                Text("Oyun Ayarları").font(.title3).bold()
+
+                Spacer()
+
                 StatusBadge(status: "arranging")
             }
             .padding()
@@ -75,7 +94,7 @@ struct GameSettingsView: View {
                             totalRounds: totalRounds
                         )
                         vm.startGame(selectedIds: selectedIds, settings: settings)
-                        router.pop()
+                        router.pop() // oyun başlayınca RoomView zaten GameDetail'e yönlendiriyor
                     } label: {
                         Text("Başlat")
                             .frame(maxWidth: .infinity, alignment: .center)
@@ -84,12 +103,13 @@ struct GameSettingsView: View {
                 }
             }
         }
+        .navigationBarBackButtonHidden(true) // sistem geri butonu kapalı
         .onAppear {
             // güvenlik: sadece host
             if vm.hostId != deviceId {
                 router.pop()
             }
-            // varsayılan spy sayısı (seçilene göre)
+            // varsayılan spy sayısı
             spyCount = min(1, maxSpyCount)
         }
     }
