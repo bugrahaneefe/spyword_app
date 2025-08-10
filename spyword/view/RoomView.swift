@@ -33,11 +33,15 @@ struct RoomView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Top bar
-            HStack {
+            HStack(spacing: 12) {
                 Text("Oda Kodu: \(roomCode)")
                     .font(.body)
                     .foregroundColor(.black)
+
+                StatusBadge(status: vm.status)
+
                 Spacer()
+
                 Button {
                     UIPasteboard.general.string = roomCode
                 } label: {

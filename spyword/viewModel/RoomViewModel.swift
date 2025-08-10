@@ -6,6 +6,7 @@ final class RoomViewModel: ObservableObject {
     @Published var hostId: String?
     @Published var isLoading = true
     @Published var errorMessage: String?
+    @Published var status: String = "waiting"
 
     private let roomCode: String
     private var roomListener: ListenerRegistration?
@@ -23,13 +24,17 @@ final class RoomViewModel: ObservableObject {
 
     private func startListeners() {
         let roomRef = Firestore.firestore().collection("rooms").document(roomCode)
-
+        
         roomListener = roomRef.addSnapshotListener { snap, error in
             if let data = snap?.data(),
-               let info = data["info"] as? [String:Any],
-               let h = info["hostId"] as? String {
+               let info = data["info"] as? [String:Any] {
+                
+                let h = info["hostId"] as? String
+                let s = (info["status"] as? String) ?? "waiting"
+                
                 DispatchQueue.main.async {
                     self.hostId = h
+                    self.status = s                  // <— NEW
                     self.isLoading = false
                 }
             } else if let err = error {
