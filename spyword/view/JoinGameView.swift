@@ -26,27 +26,31 @@ struct JoinGameView: View {
                     Text("Son Odalar")
                         .font(.h2)
                         .foregroundColor(.black)
-                    ForEach(recent.codes, id: \.self) { code in
-                        HStack {
-                            Text(code)
-                                .font(.body)
+                    ScrollView {
+                        ForEach(recent.codes, id: \.self) { code in
+                            HStack {
+                                Text(code)
+                                    .font(.body)
+                                    .padding(.vertical, 6)
+                                    .padding(.horizontal, 12)
+                                    .background(Color.backgroundLight)
+                                    .cornerRadius(8)
+                                Spacer()
+                                Button("Katıl") {
+                                    rejoin(code)
+                                }
+                                .font(.button)
                                 .padding(.vertical, 6)
-                                .padding(.horizontal, 12)
-                                .background(Color.backgroundLight)
-                                .cornerRadius(8)
-                            Spacer()
-                            Button("Katıl") {
-                                rejoin(code)
+                                .padding(.horizontal, 16)
+                                .background(Color.primaryBlue)
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
                             }
-                            .font(.button)
-                            .padding(.vertical, 6)
-                            .padding(.horizontal, 16)
-                            .background(Color.primaryBlue)
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
+                            .padding(.horizontal)
                         }
                     }
                 }
+                .frame(height: 200)
                 .padding(.bottom, 16)
             }
 
