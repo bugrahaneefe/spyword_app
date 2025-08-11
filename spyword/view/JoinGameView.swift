@@ -15,85 +15,107 @@ struct JoinGameView: View {
         .string(forKey: "deviceId") ?? UUID().uuidString
 
     var body: some View {
-        VStack(spacing: 24) {
-            Text("Odaya Katıl")
-                .font(.h2)
-                .foregroundColor(.primaryBlue)
+        VStack(spacing: 0) {
+            // Top bar with back button
+            HStack(spacing: 12) {
+                Button {
+                    router.replace(with: MainView())
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "chevron.left")
+                        Text("Ana Menü")
+                    }
+                    .font(.body)
+                }
+                Spacer()
+            }
+            .padding()
+            .background(Color.backgroundLight)
+            .shadow(radius: 2)
 
-            // A) Son Odalar
-            if !recent.codes.isEmpty {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Son Odalar")
-                        .font(.h2)
-                        .foregroundColor(.black)
-                    ScrollView {
-                        ForEach(recent.codes, id: \.self) { code in
-                            HStack {
-                                Text(code)
-                                    .font(.body)
+            Divider()
+
+            // Main content
+            VStack(spacing: 24) {
+                Text("Odaya Katıl")
+                    .font(.h2)
+                    .foregroundColor(.primaryBlue)
+
+                // A) Son Odalar
+                if !recent.codes.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Son Odalar")
+                            .font(.h2)
+                            .foregroundColor(.black)
+                        ScrollView {
+                            ForEach(recent.codes, id: \.self) { code in
+                                HStack {
+                                    Text(code)
+                                        .font(.body)
+                                        .padding(.vertical, 6)
+                                        .padding(.horizontal, 12)
+                                        .background(Color.backgroundLight)
+                                        .cornerRadius(8)
+                                    Spacer()
+                                    Button("Katıl") {
+                                        rejoin(code)
+                                    }
+                                    .font(.button)
                                     .padding(.vertical, 6)
-                                    .padding(.horizontal, 12)
-                                    .background(Color.backgroundLight)
-                                    .cornerRadius(8)
-                                Spacer()
-                                Button("Katıl") {
-                                    rejoin(code)
+                                    .padding(.horizontal, 16)
+                                    .background(Color.primaryBlue)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(12)
                                 }
-                                .font(.button)
-                                .padding(.vertical, 6)
-                                .padding(.horizontal, 16)
-                                .background(Color.primaryBlue)
-                                .foregroundColor(.white)
-                                .cornerRadius(12)
+                                .padding(.horizontal)
                             }
-                            .padding(.horizontal)
                         }
                     }
-                }
-                .frame(height: 200)
-                .padding(.bottom, 16)
-            }
-
-            // B) Yeni Odaya Giriş
-            VStack(spacing: 16) {
-                TextField("Oda Kodu (6 haneli)", text: $roomCode)
-                    .autocapitalization(.allCharacters)
-                    .disableAutocorrection(true)
-                    .font(.body)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(8)
-                    .shadow(color: .black.opacity(0.05), radius: 4)
-
-                TextField("Nickname", text: $nickname)
-                    .autocapitalization(.words)
-                    .disableAutocorrection(true)
-                    .font(.body)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(8)
-                    .shadow(color: .black.opacity(0.05), radius: 4)
-
-                if let err = errorMessage {
-                    Text(err)
-                        .font(.caption)
-                        .foregroundColor(.errorRed)
+                    .frame(height: 200)
+                    .padding(.bottom, 16)
                 }
 
-                ButtonText(
-                    title: isLoading ? "Bekleniyor..." : "Katıl",
-                    action: joinNew,
-                    backgroundColor: .primaryBlue,
-                    textColor: .white,
-                    cornerRadius: 12,
-                    size: .big
-                )
-                .disabled(isLoading || roomCode.count != 6 || nickname.trimmingCharacters(in: .whitespaces).isEmpty)
-            }
+                // B) Yeni Odaya Giriş
+                VStack(spacing: 16) {
+                    TextField("Oda Kodu (6 haneli)", text: $roomCode)
+                        .autocapitalization(.allCharacters)
+                        .disableAutocorrection(true)
+                        .font(.body)
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(8)
+                        .shadow(color: .black.opacity(0.05), radius: 4)
 
-            Spacer()
+                    TextField("Nickname", text: $nickname)
+                        .autocapitalization(.words)
+                        .disableAutocorrection(true)
+                        .font(.body)
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(8)
+                        .shadow(color: .black.opacity(0.05), radius: 4)
+
+                    if let err = errorMessage {
+                        Text(err)
+                            .font(.caption)
+                            .foregroundColor(.errorRed)
+                    }
+
+                    ButtonText(
+                        title: isLoading ? "Bekleniyor..." : "Katıl",
+                        action: joinNew,
+                        backgroundColor: .primaryBlue,
+                        textColor: .white,
+                        cornerRadius: 12,
+                        size: .big
+                    )
+                    .disabled(isLoading || roomCode.count != 6 || nickname.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+
+                Spacer()
+            }
+            .padding()
         }
-        .padding()
     }
 
     // MARK: - Join flows
@@ -244,15 +266,9 @@ struct JoinGameView: View {
             switch status {
             case "the game", "started":
                 if amSelected {
-                    self.router.navigate(
-                        to: GameDetailView(roomCode: code),
-                        type: .push
-                    )
+                    self.router.replace(with: GameDetailView(roomCode: code))
                 } else {
-                    self.router.navigate(
-                        to: RoomView(roomCode: code).withRouter(),
-                        type: .push
-                    )
+                    self.router.replace(with: RoomView(roomCode: code))
                 }
 
             case "arranging":
@@ -260,28 +276,16 @@ struct JoinGameView: View {
                     // host geri döndü: seçim varsa ayar ekranına, yoksa seçim ekranına
                     let vm = RoomViewModel(roomCode: code)
                     if !locked.isEmpty {
-                        self.router.navigate(
-                            to: GameSettingsView(vm: vm, roomCode: roomCode, selectedIds: locked).withRouter(),
-                            type: .push
-                        )
+                        self.router.replace(with: GameSettingsView(vm: vm, roomCode: roomCode, selectedIds: locked))
                     } else {
-                        self.router.navigate(
-                            to: SelectPlayersView(roomCode: code, vm: vm).withRouter(),
-                            type: .push
-                        )
+                        self.router.replace(with: SelectPlayersView(roomCode: code, vm: vm))
                     }
                 } else {
-                    self.router.navigate(
-                        to: RoomView(roomCode: code).withRouter(),
-                        type: .push
-                    )
+                    self.router.replace(with: RoomView(roomCode: code))
                 }
 
             default: // waiting
-                self.router.navigate(
-                    to: RoomView(roomCode: code).withRouter(),
-                    type: .push
-                )
+                self.router.replace(with: RoomView(roomCode: code))
             }
         }
     }

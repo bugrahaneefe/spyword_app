@@ -31,13 +31,11 @@ struct RoomView: View {
         VStack(spacing: 0) {
             // Top bar
             HStack(spacing: 12) {
-                // CUSTOM BACK
                 Button {
-                    router.navigate(to: MainView().withRouter(), type: .modal)
+                    router.replace(with: MainView())
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "chevron.left")
-                        Text("Ana Menü")
                     }
                     .font(.body)
                 }
@@ -107,10 +105,7 @@ struct RoomView: View {
                     title: "Oyunu Başlat",
                     action: {
                         vm.beginArranging()
-                        router.navigate(
-                            to: SelectPlayersView(roomCode: roomCode, vm: vm).withRouter(),
-                            type: .push
-                        )
+                        router.replace(with: SelectPlayersView(roomCode: roomCode, vm: vm))
                     },
                     backgroundColor: vm.players.count >= 2 ? .primaryBlue : .gray,
                     textColor: .white,
@@ -128,7 +123,6 @@ struct RoomView: View {
                     .padding(.bottom)
             }
         }
-        .navigationBarBackButtonHidden(true)   // <— sistem geri butonunu gizle
         .ignoresSafeArea(edges: .bottom)
         .onChange(of: vm.players) { _, players in
             if !players.contains(where: { $0.id == deviceId }) {
@@ -142,7 +136,7 @@ struct RoomView: View {
         .onAppear { checkAndNavigateToGame() }
         .alert("Odadan Kaldırıldınız", isPresented: $showRemovedAlert) {
             Button("Ana Menü") {
-                router.navigate(to: MainView().withRouter(), type: .modal)
+                router.replace(with: MainView())
             }
         } message: {
             Text("Host tarafından odadan çıkarıldınız.")
@@ -163,6 +157,6 @@ struct RoomView: View {
         guard isGameStatus(vm.status) else { return }
         guard amSelected else { return }
         navigatedToGame = true
-        router.navigate(to: GameDetailView(roomCode: roomCode), type: .push)
+        router.replace(with: GameDetailView(roomCode: roomCode))
     }
 }

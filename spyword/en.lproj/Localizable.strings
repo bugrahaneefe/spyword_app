@@ -1,0 +1,21 @@
+/* Main actions */
+"create_game" = "Create Game";
+"join_game" = "Join Game";
+"start" = "Start";
+
+/* Language UI */
+"language_title" = "Language";
+"language_turkish" = "Turkish";
+"language_english" = "English";
+"close" = "Close";
+"change_language" = "Change language";
+
+/* Common / other screens */
+"main_menu" = "Main Menu";
+"preparing_room" = "Preparing Room";
+"your_name" = "Your name";
+"copy" = "Copy";
+"next" = "Next";
+"room_creation_failed" = "Room couldn't be created: %@";
+"name_add_failed" = "Name couldn't be added: %@";
+

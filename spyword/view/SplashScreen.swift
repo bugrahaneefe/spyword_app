@@ -2,7 +2,6 @@ import SwiftUI
 
 private enum Constant {
     static let splashImage = Image("splashScreen")
-    static let startString = "Start"
 }
 
 struct SplashScreen: View {
@@ -18,8 +17,8 @@ struct SplashScreen: View {
             if showButton {
                 VStack {
                     Spacer()
-                    ButtonText(title: Constant.startString) {
-                        router.navigate(to: MainView().withRouter(), type: .modal)
+                    ButtonText(title: "start") {   // <- localized key
+                        router.replace(with: MainView())
                     }
                     .transition(.opacity)
                 }
@@ -28,9 +27,7 @@ struct SplashScreen: View {
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                withAnimation(.easeOut(duration: 0.5)) {
-                    showButton = true
-                }
+                withAnimation(.easeOut(duration: 0.5)) { showButton = true }
             }
         }
     }

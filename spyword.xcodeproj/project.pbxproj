@@ -92,11 +92,12 @@
 				};
 			};
 			buildConfigurationList = C16F1FFA2E41442A007648BC /* Build configuration list for PBXProject "spyword" */;
-			developmentRegion = en;
+			developmentRegion = tr;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				tr,
 			);
 			mainGroup = C16F1FF62E41442A007648BC;
 			minimizedProjectReferenceProxies = 1;

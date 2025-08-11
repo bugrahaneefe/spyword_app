@@ -51,10 +51,7 @@ struct SelectPlayersView: View {
                 Button {
                     vm.setStatus("waiting")
                     // Host, RoomView'a geri dönsün
-                    router.navigate(
-                        to: RoomView(roomCode: roomCode).withRouter(),
-                        type: .modal // veya .push ile de çalışır ama popTo köke döndürür
-                    )
+                    router.replace(with: RoomView(roomCode: roomCode))
                 } label: {
                     Text("İptal")
                         .frame(maxWidth: .infinity).padding()
@@ -68,10 +65,7 @@ struct SelectPlayersView: View {
                         if let err = err {
                             print("Save selection error: \(err.localizedDescription)")
                         } else {
-                            router.navigate(
-                                to: GameSettingsView(vm: vm, roomCode: roomCode, selectedIds: Array(chosen)).withRouter(),
-                                type: .push
-                            )
+                            router.replace(with: GameSettingsView(vm: vm, roomCode: roomCode, selectedIds: Array(chosen)))
                         }
                     }
                 } label: {

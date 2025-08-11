@@ -6,62 +6,70 @@ enum NavigationType {
     case sheet
 }
 
-class Router: ObservableObject {
-    @Published var pushView: AnyView? = nil
-    @Published var sheetView: AnyView? = nil
-    @Published var modalView: AnyView? = nil
+final class Router: ObservableObject {
+    @Published var pushView: AnyView?
+    @Published var sheetView: AnyView?
+    @Published var modalView: AnyView?
+    @Published var rootView: AnyView?
 
     func navigate<Destination: View>(to view: Destination, type: NavigationType) {
+        let wrapped = AnyView(view.environmentObject(self))
         switch type {
         case .push:
-            pushView = AnyView(view)
+            pushView = wrapped
         case .sheet:
-            sheetView = AnyView(view)
+            sheetView = wrapped
         case .modal:
-            modalView = AnyView(view)
+            modalView = wrapped
         }
     }
 
-    func dismissSheet() {
-        sheetView = nil
-    }
+    func dismissSheet() { sheetView = nil }
+    func dismissModal() { modalView = nil }
+    func pop() { pushView = nil }
 
-    func dismissModal() {
-        modalView = nil
-    }
-
-    func pop() {
+    func replace<Destination: View>(with view: Destination) {
         pushView = nil
+        sheetView = nil
+        modalView = nil
+        rootView = AnyView(view.environmentObject(self))
     }
 }
 
-struct WithRouter: ViewModifier {
+struct RootContainer: View {
     @StateObject private var router = Router()
+    @StateObject private var lang = LanguageManager()
 
-    func body(content: Content) -> some View {
+    var body: some View {
         NavigationStack {
             ZStack {
-                content
-                    .environmentObject(router)
-                    .navigationDestination(isPresented: Binding(
-                        get: { router.pushView != nil },
-                        set: { if !$0 { router.pop() } })
-                    ) {
-                        router.pushView
+                Group {
+                    if let root = router.rootView {
+                        root
+                    } else {
+                        SplashScreen()
                     }
-                    .sheet(isPresented: Binding(
-                        get: { router.sheetView != nil },
-                        set: { if !$0 { router.dismissSheet() } })
-                    ) {
-                        router.sheetView
-                    }
-                    .fullScreenCover(isPresented: Binding(
-                        get: { router.modalView != nil },
-                        set: { if !$0 { router.dismissModal() } })
-                    ) {
-                        router.modalView
-                    }
+                }
+                .environmentObject(router)
+                .environmentObject(lang)
+                .environment(\.locale, lang.locale) // 💡 kritik: runtime dil değişimi
+
+                .navigationDestination(isPresented: Binding(
+                    get: { router.pushView != nil },
+                    set: { if !$0 { router.pop() } })
+                ) { router.pushView }
+
+                .sheet(isPresented: Binding(
+                    get: { router.sheetView != nil },
+                    set: { if !$0 { router.dismissSheet() } })
+                ) { router.sheetView }
+
+                .fullScreenCover(isPresented: Binding(
+                    get: { router.modalView != nil },
+                    set: { if !$0 { router.dismissModal() } })
+                ) { router.modalView }
             }
         }
     }
 }
+

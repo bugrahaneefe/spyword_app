@@ -8,75 +8,98 @@ struct CreateRoomView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @StateObject private var recent = RecentRoomsManager.shared
-    
+
     @EnvironmentObject var router: Router
+    @EnvironmentObject var lang: LanguageManager
 
     private let deviceId = UserDefaults.standard
         .string(forKey: "deviceId") ?? UUID().uuidString
 
     var body: some View {
-        VStack(spacing: 32) {
-            Text("Oda Hazırlanıyor")
-                .font(.h2)
-                .foregroundColor(.primaryBlue)
-
-            if isLoading {
-                ProgressView()
-            } else if roomCode.isEmpty {
-                Spacer()
-            } else {
-                Text(roomCode)
-                    .font(.h1)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.backgroundLight)
-                    .cornerRadius(12)
-                    .shadow(radius: 4)
-
-                TextField("Kendi isminiz", text: $hostName)
+        VStack(spacing: 0) {
+            // Top bar
+            HStack(spacing: 12) {
+                Button {
+                    router.replace(with: MainView())
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "chevron.left")
+                        Text("main_menu") // LocalizedStringKey
+                    }
                     .font(.body)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(8)
-                    .shadow(color: .black.opacity(0.05), radius: 4)
-                    .autocapitalization(.words)
-                    .disableAutocorrection(true)
-
-                HStack(spacing: 16) {
-                    Button(action: copyCode) {
-                        Text("Kopyala")
-                            .font(.button)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.secondaryBlue)
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                    }
-
-                    Button(action: finalizeRoom) {
-                        Text("İleri")
-                            .font(.button)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(hostName.trimmingCharacters(in: .whitespaces).isEmpty
-                                        ? Color.gray
-                                        : Color.successGreen)
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                    }
-                    .disabled(hostName.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
+                Spacer()
             }
+            .padding()
+            .background(Color.backgroundLight)
+            .shadow(radius: 2)
 
-            if let error = errorMessage {
-                Text(error)
-                    .font(.caption)
-                    .foregroundColor(.errorRed)
+            Divider()
+
+            // Content
+            VStack(spacing: 32) {
+                Text("preparing_room")
+                    .font(.h2)
+                    .foregroundColor(.primaryBlue)
+
+                if isLoading {
+                    ProgressView()
+                } else if roomCode.isEmpty {
+                    Spacer()
+                } else {
+                    Text(roomCode)
+                        .font(.h1)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.backgroundLight)
+                        .cornerRadius(12)
+                        .shadow(radius: 4)
+
+                    TextField(String(localized: "your_name"), text: $hostName)
+                        .font(.body)
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(8)
+                        .shadow(color: .black.opacity(0.05), radius: 4)
+                        .autocapitalization(.words)
+                        .disableAutocorrection(true)
+
+                    HStack(spacing: 16) {
+                        Button(action: copyCode) {
+                            Text("copy")
+                                .font(.button)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.secondaryBlue)
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                        }
+
+                        Button(action: finalizeRoom) {
+                            Text("next")
+                                .font(.button)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(hostName.trimmingCharacters(in: .whitespaces).isEmpty
+                                            ? Color.gray
+                                            : Color.successGreen)
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                        }
+                        .disabled(hostName.trimmingCharacters(in: .whitespaces).isEmpty)
+                    }
+                }
+
+                if let error = errorMessage {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundColor(.errorRed)
+                }
+
+                Spacer()
             }
-            
-            Spacer()
+            .padding()
         }
-        .padding()
         .onAppear(perform: createRoom)
     }
 
@@ -96,7 +119,9 @@ struct CreateRoomView: View {
         roomDoc.setData(["info": infoData], merge: true) { error in
             isLoading = false
             if let err = error {
-                errorMessage = "Oda oluşturulamadı: \(err.localizedDescription)"
+                // localized format + current locale
+                let fmt = String(localized: "room_creation_failed", bundle: .main, locale: lang.locale)
+                errorMessage = String(format: fmt, locale: lang.locale, err.localizedDescription)
             } else {
                 roomCode = code
             }
@@ -119,23 +144,19 @@ struct CreateRoomView: View {
         ]
 
         db.collection("rooms")
-          .document(roomCode)
-          .collection("players")
-          .document(deviceId)
-          .setData(playerData) { error in
-              isLoading = false
-              if let err = error {
-                  errorMessage = "İsim eklenemedi: \(err.localizedDescription)"
-              } else {
-                  // Add newly created room to recent list
-                  recent.add(roomCode)
-                  // Navigate into live RoomView
-                  router.navigate(
-                      to: RoomView(roomCode: roomCode).withRouter(),
-                      type: .push
-                  )
-              }
-          }
+            .document(roomCode)
+            .collection("players")
+            .document(deviceId)
+            .setData(playerData) { error in
+                isLoading = false
+                if let err = error {
+                    let fmt = String(localized: "name_add_failed", bundle: .main, locale: lang.locale)
+                    errorMessage = String(format: fmt, locale: lang.locale, err.localizedDescription)
+                } else {
+                    recent.add(roomCode)
+                    router.replace(with: RoomView(roomCode: roomCode))
+                }
+            }
     }
 
     private func copyCode() {

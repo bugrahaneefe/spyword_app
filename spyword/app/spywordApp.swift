@@ -6,8 +6,7 @@ struct spywordApp: App {
     
     var body: some Scene {
         WindowGroup {
-            SplashScreen()
-                .withRouter()
+            RootContainer()
         }
     }
 }

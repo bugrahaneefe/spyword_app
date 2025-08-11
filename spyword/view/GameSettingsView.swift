@@ -23,10 +23,7 @@ struct GameSettingsView: View {
             HStack {
                 Button {
                     vm.setStatus("waiting")
-                    router.navigate(
-                        to: RoomView(roomCode: roomCode).withRouter(),
-                        type: .push
-                    )
+                    router.replace(with: RoomView(roomCode: roomCode))
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "chevron.left")
@@ -94,7 +91,7 @@ struct GameSettingsView: View {
                             totalRounds: totalRounds
                         )
                         vm.startGame(selectedIds: selectedIds, settings: settings)
-                        router.pop() // oyun başlayınca RoomView zaten GameDetail'e yönlendiriyor
+                        router.replace(with: GameDetailView(roomCode: roomCode))
                     } label: {
                         Text("Başlat")
                             .frame(maxWidth: .infinity, alignment: .center)
@@ -103,7 +100,7 @@ struct GameSettingsView: View {
                 }
             }
         }
-        .navigationBarBackButtonHidden(true) // sistem geri butonu kapalı
+        .navigationBarBackButtonHidden(true)
         .onAppear {
             // güvenlik: sadece host
             if vm.hostId != deviceId {

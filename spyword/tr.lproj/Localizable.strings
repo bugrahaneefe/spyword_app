@@ -1,0 +1,20 @@
+/* Main actions */
+"create_game" = "Oyun Yarat";
+"join_game" = "Oyuna Katıl";
+"start" = "Başla";
+
+/* Language UI */
+"language_title" = "Dil";
+"language_turkish" = "Türkçe";
+"language_english" = "English";
+"close" = "Kapat";
+"change_language" = "Dili değiştir";
+
+/* Common / other screens */
+"main_menu" = "Ana Menü";
+"preparing_room" = "Oda Hazırlanıyor";
+"your_name" = "Kendi isminiz";
+"copy" = "Kopyala";
+"next" = "İleri";
+"room_creation_failed" = "Oda oluşturulamadı: %@";
+"name_add_failed" = "İsim eklenemedi: %@";
