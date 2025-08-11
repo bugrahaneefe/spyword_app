@@ -15,7 +15,11 @@ final class RoomViewModel: ObservableObject {
     @Published var status: String = "waiting"
     @Published var isLoading = true
     @Published var errorMessage: String?
-
+    @Published var chosen: Set<String> = []
+    @Published var mode: GameSettings.WordMode = .random
+    @Published var customWord: String = ""
+    @Published var spyCount: Int = 1
+    @Published var totalRounds: Int = 3
     private let roomCode: String
     private var roomListener: ListenerRegistration?
     private var playersListener: ListenerRegistration?

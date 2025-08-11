@@ -4,12 +4,7 @@ struct GameSettingsView: View {
     @ObservedObject var vm: RoomViewModel
     @EnvironmentObject var router: Router
     let roomCode: String
-    let selectedIds: [String]        // SelectPlayersView'den gelir
-
-    @State private var mode: GameSettings.WordMode = .random
-    @State private var customWord: String = ""
-    @State private var spyCount: Int = 1
-    @State private var totalRounds: Int = 3
+    let selectedIds: [String]
 
     private let deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? UUID().uuidString
 
@@ -19,7 +14,6 @@ struct GameSettingsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Custom top bar (geri = waiting + RoomView)
             HStack {
                 Button {
                     vm.setStatus("waiting")
@@ -45,18 +39,18 @@ struct GameSettingsView: View {
 
             Form {
                 Section(header: Text("Kelime")) {
-                    Picker("Başlangıç", selection: $mode) {
+                    Picker("Başlangıç", selection: $vm.mode) {
                         Text("Rastgele kelimeyle başla").tag(GameSettings.WordMode.random)
                         Text("Kendin gir").tag(GameSettings.WordMode.custom)
                     }
                     .pickerStyle(.inline)
 
-                    if mode == .custom {
-                        TextField("Kelimeyi yaz", text: $customWord)
+                    if vm.mode == .custom {
+                        TextField("Kelimeyi yaz", text: $vm.customWord)
                             .textInputAutocapitalization(.never)
                             .disableAutocorrection(true)
-                            .onChange(of: customWord) { _, new in
-                                if new.count > 40 { customWord = String(new.prefix(40)) }
+                            .onChange(of: vm.customWord) { _, new in
+                                if new.count > 40 { vm.customWord = String(new.prefix(40)) }
                             }
                         Text("Not: Kelimeyi host girerse, host otomatik bilen olur.")
                             .font(.caption)
@@ -65,19 +59,19 @@ struct GameSettingsView: View {
                 }
 
                 Section(header: Text("Sayısal Ayarlar")) {
-                    Stepper(value: $spyCount, in: 0...maxSpyCount) {
+                    Stepper(value: $vm.spyCount, in: 0...maxSpyCount) {
                         HStack {
                             Text("Spy sayısı")
                             Spacer()
-                            Text("\(spyCount)")
+                            Text("\(vm.spyCount)")
                         }
                     }
 
-                    Stepper(value: $totalRounds, in: 1...10) {
+                    Stepper(value: $vm.totalRounds, in: 1...10) {
                         HStack {
                             Text("Tur sayısı")
                             Spacer()
-                            Text("\(totalRounds)")
+                            Text("\(vm.totalRounds)")
                         }
                     }
                 }
@@ -85,10 +79,10 @@ struct GameSettingsView: View {
                 Section {
                     Button {
                         let settings = GameSettings(
-                            mode: mode,
-                            customWord: mode == .custom ? customWord : nil,
-                            spyCount: spyCount,
-                            totalRounds: totalRounds
+                            mode: vm.mode,
+                            customWord: vm.mode == .custom ? vm.customWord : nil,
+                            spyCount: vm.spyCount,
+                            totalRounds: vm.totalRounds
                         )
                         vm.startGame(selectedIds: selectedIds, settings: settings)
                         router.replace(with: GameDetailView(roomCode: roomCode))
@@ -107,14 +101,14 @@ struct GameSettingsView: View {
                 router.pop()
             }
             // varsayılan spy sayısı
-            spyCount = min(1, maxSpyCount)
+            vm.spyCount = min(1, maxSpyCount)
         }
     }
 
     private var canStart: Bool {
         if selectedIds.count < 2 { return false }
-        if mode == .custom {
-            return !customWord.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        if vm.mode == .custom {
+            return !vm.customWord.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         }
         return true
     }
