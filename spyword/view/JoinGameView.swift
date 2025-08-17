@@ -47,7 +47,8 @@ struct JoinGameView: View {
                         Text("recent_rooms")
                             .font(.h2)
                             .foregroundColor(.black)
-                        ScrollView {
+
+                        List {
                             ForEach(recent.codes, id: \.self) { code in
                                 HStack {
                                     Text(code)
@@ -67,9 +68,16 @@ struct JoinGameView: View {
                                     .foregroundColor(.white)
                                     .cornerRadius(12)
                                 }
-                                .padding(.horizontal)
+                            }
+                            .onDelete { indexSet in
+                                for index in indexSet {
+                                    let code = recent.codes[index]
+                                    leaveRoom(code: code)
+                                }
+                                recent.remove(at: indexSet)
                             }
                         }
+                        .listStyle(.plain) // düz görünüm
                     }
                     .frame(height: 200)
                     .padding(.bottom, 16)
@@ -199,6 +207,39 @@ struct JoinGameView: View {
             }
         }
     }
+    
+    private func leaveRoom(code: String) {
+        let db = Firestore.firestore()
+        let roomRef = db.collection("rooms").document(code)
+
+        // Önce oda bilgilerini oku
+        roomRef.getDocument { snap, _ in
+            guard let data = snap?.data(),
+                  let info = data["info"] as? [String: Any],
+                  let hostId = info["hostId"] as? String else { return }
+
+            if hostId == deviceId {
+                // Ben host isem: Odayı tamamen sil
+                roomRef.delete { err in
+                    if let err = err {
+                        print("Oda silinemedi: \(err)")
+                    } else {
+                        print("Oda tamamen silindi.")
+                    }
+                }
+            } else {
+                // Host değilsem: sadece oyuncu kaydımı sil
+                roomRef.collection("players").document(deviceId).delete { err in
+                    if let err = err {
+                        print("Oyuncu kaydı silinemedi: \(err)")
+                    } else {
+                        print("Oyuncu odadan ayrıldı.")
+                    }
+                }
+            }
+        }
+    }
+
 
     /// info.hostId'yi okuyup players/{hostId} belgesi var mı ve name alanı dolu mu diye kontrol eder.
     private func checkHostReady(roomRef: DocumentReference, completion: @escaping (Bool) -> Void) {

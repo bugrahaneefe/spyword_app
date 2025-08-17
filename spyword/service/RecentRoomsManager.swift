@@ -21,4 +21,11 @@ final class RecentRoomsManager: ObservableObject {
         UserDefaults.standard.set(arr, forKey: userDefaultsKey)
         codes = arr
     }
+    
+    func remove(at offsets: IndexSet) {
+        var arr = UserDefaults.standard.stringArray(forKey: userDefaultsKey) ?? []
+        arr.remove(atOffsets: offsets)
+        UserDefaults.standard.set(arr, forKey: userDefaultsKey)
+        codes = arr
+    }
 }
