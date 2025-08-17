@@ -9,7 +9,7 @@ struct GameSettingsView: View {
     private let deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? UUID().uuidString
 
     private var maxSpyCount: Int {
-        max(0, selectedIds.count - 1)
+        max(1, selectedIds.count - 1)
     }
 
     var body: some View {
@@ -39,12 +39,12 @@ struct GameSettingsView: View {
 
             Form {
                 Section(header: Text("Kelime")) {
-                    Picker("Başlangıç", selection: $vm.mode) {
+                    Picker(selection: $vm.mode) {
                         Text("Rastgele kelimeyle başla").tag(GameSettings.WordMode.random)
                         Text("Kendin gir").tag(GameSettings.WordMode.custom)
-                    }
-                    .pickerStyle(.inline)
-
+                    } label: { }
+                        .pickerStyle(.inline)
+                    
                     if vm.mode == .custom {
                         TextField("Kelimeyi yaz", text: $vm.customWord)
                             .textInputAutocapitalization(.never)

@@ -15,9 +15,17 @@ struct GameDetailView: View {
     @State private var hostId: String = ""
     @State private var amSelected = false
     @State private var myRole: String? = nil
+    @State private var gameWord: String? = nil
 
-    @State private var showRoleSheet = false
+    // round info
+    @State private var currentRound: Int = 1
+    @State private var totalRounds: Int = 3
+
+    // role reveal states
     @State private var revealedOnce = false
+    @State private var showCountdown = false
+    @State private var countdown = 3
+    @State private var continuePressed = false
 
     private let deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? UUID().uuidString
     private var isHost: Bool { hostId == deviceId }
@@ -33,11 +41,11 @@ struct GameDetailView: View {
             // Top bar
             HStack(spacing: 12) {
                 Button {
-                    router.replace(with: RoomView(roomCode: roomCode))
+                    router.replace(with: MainView())
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "chevron.left")
-                        Text("Odaya Dön")
+                        Text("Ana Menü")
                     }
                     .font(.body)
                 }
@@ -71,13 +79,12 @@ struct GameDetailView: View {
                 Spacer()
             } else {
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
-                        Text("🎮 Oyun Ekranı")
+                    VStack(spacing: 20) {
+                        Text("Tur: \(currentRound)/\(totalRounds)")
                             .font(.h2)
                             .foregroundColor(.primaryBlue)
 
                         if !amSelected {
-                            // Not chosen → block with a friendly note
                             VStack(spacing: 8) {
                                 Text("Bu oyun için seçilmediniz.")
                                     .font(.body)
@@ -90,67 +97,102 @@ struct GameDetailView: View {
                             .background(Color.backgroundLight)
                             .cornerRadius(12)
                             .shadow(radius: 2)
+
                         } else {
-                            // Show / close "my role"
-                            VStack(spacing: 10) {
-                                Text(revealedOnce ? roleTitleText : "Rolünü görmek için bas:")
-                                ButtonText(title: revealedOnce ? "Rolümü Tekrar Gör" : "Rolümü Göster") {
-                                    revealedOnce = true
-                                    showRoleSheet = true
-                                }
-                            }
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.backgroundLight)
-                            .cornerRadius(12)
-                            .shadow(radius: 2)
-
-                            // Selected players list (names only for now)
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("Oyuncular")
-                                    .font(.h2)
-
-                                if selectedPlayers.isEmpty {
-                                    Text("Oyuncu yok").foregroundColor(.secondary)
-                                } else {
-                                    ForEach(selectedPlayers) { p in
-                                        HStack {
-                                            Text(p.name)
-                                            Spacer()
-                                            // ileride ipucu burada görünecek
-                                            Text("—").foregroundColor(.secondary)
+                            // STEP 1: Show role reveal box
+                            if !continuePressed {
+                                VStack(spacing: 12) {
+                                    if !revealedOnce {
+                                        if showCountdown {
+                                            Text("Rolün \(countdown) saniye içinde görünecek…")
+                                                .font(.body)
+                                                .foregroundColor(.secondary)
+                                        } else {
+                                            Text("Rolünü görmek için bas:")
+                                                .font(.body)
+                                            ButtonText(title: "Rolümü Göster") {
+                                                startCountdown()
+                                            }
+                                        }
+                                    } else {
+                                        Text(roleTitleText)
+                                            .font(.title3).bold()
+                                        if !iAmSpy {
+                                            if let word = gameWord {
+                                                Text("Kelime: \(word)")
+                                                    .font(.body)
+                                                    .foregroundColor(.primaryBlue)
+                                            }
+                                        }
+                                        ButtonText(title: "Devam Et") {
+                                            continuePressed = true
                                         }
                                     }
                                 }
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.backgroundLight)
+                                .cornerRadius(12)
+                                .shadow(radius: 2)
                             }
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.backgroundLight)
-                            .cornerRadius(12)
-                            .shadow(radius: 2)
 
-                            if let e = errorMessage {
-                                Text(e)
-                                    .font(.caption)
-                                    .foregroundColor(.errorRed)
+                            // STEP 2: After pressing continue → show player list
+                            if continuePressed {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Oyuncular")
+                                        .font(.h2)
+
+                                    if selectedPlayers.isEmpty {
+                                        Text("Oyuncu yok").foregroundColor(.secondary)
+                                    } else {
+                                        ForEach(selectedPlayers) { p in
+                                            HStack {
+                                                Text(p.name)
+                                                Spacer()
+                                                Text("—").foregroundColor(.secondary)
+                                            }
+                                        }
+                                    }
+                                }
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.backgroundLight)
+                                .cornerRadius(12)
+                                .shadow(radius: 2)
+
+                                if let e = errorMessage {
+                                    Text(e)
+                                        .font(.caption)
+                                        .foregroundColor(.errorRed)
+                                }
                             }
                         }
                     }
                     .padding()
                 }
             }
+
+            // 🆕 en alta spyword image
+            Image("spyword")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 80)
+                .cornerRadius(12)
+                .opacity(0.8)
+                .padding(.bottom, 8)
         }
-        .onAppear(perform: attachListeners)
-        .onChange(of: status) { _, new in
-            // If host ended (or status changed), return users to RoomView
-            if !isGameStatus(new) {
-                router.replace(with: RoomView(roomCode: roomCode))
+        .onAppear {
+            attachListeners()
+            if hasSeenRole() {
+                revealedOnce = true
+                continuePressed = true
             }
         }
-        .sheet(isPresented: $showRoleSheet) {
-            RoleSheet(isSpy: iAmSpy, roleText: roleTitleText)
-                .presentationDetents([.fraction(0.35), .medium])
-                .presentationDragIndicator(.visible)
+        .onChange(of: status) { _, new in
+            if !isGameStatus(new) {
+                markRoleAs(revealStatus: false)
+                router.replace(with: RoomView(roomCode: roomCode))
+            }
         }
         .navigationBarBackButtonHidden(true)
     }
@@ -160,6 +202,20 @@ struct GameDetailView: View {
         case "spy":     return "Rolün: SPY 🕵️‍♂️"
         case "knower":  return "Rolün: Bilen ✅"
         default:        return "Rolün belirleniyor…"
+        }
+    }
+
+    private func startCountdown() {
+        showCountdown = true
+        countdown = 3
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+            if countdown > 1 {
+                countdown -= 1
+            } else {
+                timer.invalidate()
+                showCountdown = false
+                markRoleAs(revealStatus: true)
+            }
         }
     }
 
@@ -183,6 +239,12 @@ struct GameDetailView: View {
             }
             self.status = (info["status"] as? String) ?? "started"
             self.hostId = (info["hostId"] as? String) ?? ""
+            self.gameWord = info["word"] as? String
+
+            // 🆕 round bilgisi Firestore'dan alınabilir (dummy varsayılanlar)
+            self.currentRound = (info["currentRound"] as? Int) ?? 1
+            self.totalRounds = (info["totalRounds"] as? Int) ?? 3
+
             self.isLoading = false
         }
 
@@ -221,34 +283,16 @@ struct GameDetailView: View {
             if let err = err {
                 self.errorMessage = err.localizedDescription
             }
-            // Everyone will observe status change and return to RoomView (onChange above)
         }
-        
         self.status = "waiting"
     }
-}
-
-// MARK: - Bottom sheet for role
-private struct RoleSheet: View {
-    let isSpy: Bool
-    let roleText: String
-
-    var body: some View {
-        VStack(spacing: 16) {
-            RoundedRectangle(cornerRadius: 3)
-                .frame(width: 40, height: 5)
-                .foregroundColor(.secondary.opacity(0.4))
-                .padding(.top, 8)
-
-            Text(roleText)
-                .font(.title2).bold()
-
-            Text(isSpy ? "Kelime gösterilmeyecek." : "Kelimeyi bilen taraftasın.")
-                .font(.caption)
-                .foregroundColor(.secondary)
-
-            Spacer()
-        }
-        .padding()
+    
+    private func markRoleAs(revealStatus: Bool) {
+        revealedOnce = revealStatus
+        UserDefaults.standard.set(revealStatus, forKey: "roleRevealed-\(roomCode)-\(deviceId)")
+    }
+        
+    private func hasSeenRole() -> Bool {
+        return UserDefaults.standard.bool(forKey: "roleRevealed-\(roomCode)-\(deviceId)")
     }
 }

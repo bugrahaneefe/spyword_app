@@ -37,6 +37,7 @@ struct SelectPlayersView: View {
                         Spacer()
                         Image(systemName: vm.chosen.contains(p.id) ? "checkmark.circle.fill" : "circle")
                             .imageScale(.large)
+                            .foregroundStyle( (p.id == vm.hostId) ? Color.successGreen : Color.primary)
                             .accessibilityHidden(true)
                     }
                     .contentShape(Rectangle())
@@ -82,10 +83,16 @@ struct SelectPlayersView: View {
         .onAppear {
             vm.beginArranging()
             vm.chosen = Set(vm.players.filter { $0.isSelected == true }.map { $0.id })
+            if let host = vm.hostId {
+                vm.chosen.insert(host)
+            }
         }
         .onChange(of: vm.players) { _, players in
             let currentIds = Set(players.map { $0.id })
             vm.chosen = vm.chosen.intersection(currentIds)
+            if let host = vm.hostId {
+                vm.chosen.insert(host)
+            }
         }
         .onChange(of: vm.hostId) { _, host in
             if host != deviceId { router.pop() }
@@ -94,8 +101,27 @@ struct SelectPlayersView: View {
 
     // MARK: - Helpers
     private func toggle(_ id: String) {
-        if vm.chosen.contains(id) { vm.chosen.remove(id) } else { vm.chosen.insert(id) }
+        if id == vm.hostId {
+            return
+        }
+        if vm.chosen.contains(id) {
+            vm.chosen.remove(id)
+        } else {
+            vm.chosen.insert(id)
+        }
     }
-    private func selectAll() { vm.chosen = Set(vm.players.map { $0.id }) }
-    private func clearAll() { vm.chosen.removeAll() }
+    
+    private func selectAll() {
+        vm.chosen = Set(vm.players.map { $0.id })
+        if let host = vm.hostId {
+            vm.chosen.insert(host)
+        }
+    }
+
+    private func clearAll() {
+        vm.chosen.removeAll()
+        if let host = vm.hostId {
+            vm.chosen.insert(host)
+        }
+    }
 }
