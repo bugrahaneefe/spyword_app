@@ -3,23 +3,23 @@ import SwiftUI
 struct StatusBadge: View {
     let status: String
 
-    private var label: String {
+    private var label: LocalizedStringKey {
         switch status.lowercased() {
-        case "waiting": return "Waiting"
-        case "arranging": return "Arranging"
-        case "started": return "Started"
-        case "the game": return "In Game"
-        default: return status.capitalized
+        case "waiting":   return "status_waiting"
+        case "arranging": return "status_arranging"
+        case "started":   return "status_started"
+        case "the game":  return "status_in_game"
+        default:          return LocalizedStringKey(status.capitalized)
         }
     }
 
     private var color: Color {
         switch status.lowercased() {
-        case "waiting": return .gray
+        case "waiting":   return .gray
         case "arranging": return .orange
-        case "started": return .blue
-        case "the game": return .green
-        default: return .secondary
+        case "started":   return .blue
+        case "the game":  return .green
+        default:          return .secondary
         }
     }
 
@@ -34,7 +34,6 @@ struct StatusBadge: View {
         .foregroundColor(.white)
         .background(color)
         .clipShape(Capsule())
-        .accessibilityLabel("Room status: \(label)")
+        .accessibilityLabel("room_status_accessibility \(label)")
     }
 }
-

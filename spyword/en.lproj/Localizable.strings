@@ -19,3 +19,79 @@
 "room_creation_failed" = "Room couldn't be created: %@";
 "name_add_failed" = "Name couldn't be added: %@";
 
+/* Status labels */
+"status_waiting" = "Waiting";
+"status_arranging" = "Arranging";
+"status_started" = "Started";
+"status_in_game" = "In Game";
+
+/* Accessibility */
+"room_status_accessibility" = "Room status:";
+
+"main_menu" = "Main Menu";
+"end_game" = "End Game";
+"round_progress" = "Round: %d/%d";
+"not_selected" = "You were not selected for this game.";
+"back_to_room" = "Back to Room";
+"role_reveal_countdown" = "Your role will appear in %d seconds…";
+"tap_to_reveal" = "Tap to reveal your role:";
+"show_role" = "Show My Role";
+"game_word" = "Word: %@";
+"continue" = "Continue";
+"players" = "Players";
+"no_players" = "No players";
+
+/* Roles */
+"role_spy" = "Your role: SPY 🕵️‍♂️";
+"role_knower" = "Your role: Knower ✅";
+"role_pending" = "Your role is being assigned…";
+
+/* Errors */
+"room_info_error" = "Room info could not be loaded.";
+
+"back_to_room" = "Back to Room";
+"game_settings_title" = "Game Settings";
+
+"word_section" = "Word";
+"word_mode_random" = "Start with a random word";
+"word_mode_custom" = "Enter your own";
+"enter_word" = "Enter word";
+"custom_word_note" = "Note: If the host enters the word, the host automatically becomes the knower.";
+
+"numeric_settings" = "Numeric Settings";
+"spy_count" = "Number of spies";
+"round_count" = "Number of rounds";
+
+"start_game" = "Start";
+
+"main_menu" = "Main Menu";
+"join_room_title" = "Join Room";
+"recent_rooms" = "Recent Rooms";
+
+"join_button" = "Join";
+"loading_text" = "Loading...";
+
+"room_code_placeholder" = "Room Code (6 digits)";
+"nickname_placeholder" = "Nickname";
+
+"invalid_room_code_error" = "Please enter a valid 6-digit room code.";
+"empty_nickname_error" = "Please enter a nickname.";
+"room_not_found_error" = "Room not found or invalid.";
+"host_not_ready_error" = "Please wait for the host to enter a name and press 'Next'.";
+"join_failed_error" = "Join failed: %@";
+
+"room_code" = "Room Code: %@";
+"you_are_here" = "You are here";
+"remove" = "Remove";
+"start_game" = "Start Game";
+"removed_from_room_title" = "You have been removed from the room";
+"removed_from_room_message" = "You were kicked out by the host.";
+"main_menu" = "Main Menu";
+
+"select_players" = "Select Players";
+"selected_count" = "%d selected";
+"select_all" = "Select All";
+"clear" = "Clear";
+"options" = "Options";
+"cancel" = "Cancel";
+"continue" = "Continue";

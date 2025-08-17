@@ -17,7 +17,7 @@ struct SplashScreen: View {
             if showButton {
                 VStack {
                     Spacer()
-                    ButtonText(title: "start") {   // <- localized key
+                    ButtonText(title: "start") {
                         router.replace(with: MainView())
                     }
                     .transition(.opacity)

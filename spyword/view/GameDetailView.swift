@@ -45,7 +45,7 @@ struct GameDetailView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "chevron.left")
-                        Text("Ana Menü")
+                        Text("main_menu")
                     }
                     .font(.body)
                 }
@@ -58,7 +58,7 @@ struct GameDetailView: View {
                     Button {
                         endGame()
                     } label: {
-                        Text("Bitir")
+                        Text("end_game")
                             .font(.caption)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
@@ -80,15 +80,15 @@ struct GameDetailView: View {
             } else {
                 ScrollView {
                     VStack(spacing: 20) {
-                        Text("Tur: \(currentRound)/\(totalRounds)")
+                        Text(String(format: NSLocalizedString("round_progress", comment: ""), currentRound, totalRounds))
                             .font(.h2)
                             .foregroundColor(.primaryBlue)
 
                         if !amSelected {
                             VStack(spacing: 8) {
-                                Text("Bu oyun için seçilmediniz.")
+                                Text("not_selected")
                                     .font(.body)
-                                ButtonText(title: "Odaya Dön") {
+                                ButtonText(title: "back_to_room") {
                                     router.replace(with: RoomView(roomCode: roomCode))
                                 }
                             }
@@ -104,13 +104,13 @@ struct GameDetailView: View {
                                 VStack(spacing: 12) {
                                     if !revealedOnce {
                                         if showCountdown {
-                                            Text("Rolün \(countdown) saniye içinde görünecek…")
+                                            Text(String(format: NSLocalizedString("role_reveal_countdown", comment: ""), countdown))
                                                 .font(.body)
                                                 .foregroundColor(.secondary)
                                         } else {
-                                            Text("Rolünü görmek için bas:")
+                                            Text("tap_to_reveal")
                                                 .font(.body)
-                                            ButtonText(title: "Rolümü Göster") {
+                                            ButtonText(title: "show_role") {
                                                 startCountdown()
                                             }
                                         }
@@ -119,12 +119,12 @@ struct GameDetailView: View {
                                             .font(.title3).bold()
                                         if !iAmSpy {
                                             if let word = gameWord {
-                                                Text("Kelime: \(word)")
+                                                Text(String(format: NSLocalizedString("game_word", comment: ""), word))
                                                     .font(.body)
                                                     .foregroundColor(.primaryBlue)
                                             }
                                         }
-                                        ButtonText(title: "Devam Et") {
+                                        ButtonText(title: "continue") {
                                             continuePressed = true
                                         }
                                     }
@@ -139,11 +139,11 @@ struct GameDetailView: View {
                             // STEP 2: After pressing continue → show player list
                             if continuePressed {
                                 VStack(alignment: .leading, spacing: 8) {
-                                    Text("Oyuncular")
+                                    Text("players")
                                         .font(.h2)
 
                                     if selectedPlayers.isEmpty {
-                                        Text("Oyuncu yok").foregroundColor(.secondary)
+                                        Text("no_players").foregroundColor(.secondary)
                                     } else {
                                         ForEach(selectedPlayers) { p in
                                             HStack {
@@ -172,7 +172,6 @@ struct GameDetailView: View {
                 }
             }
 
-            // 🆕 en alta spyword image
             Image("spyword")
                 .resizable()
                 .scaledToFit()
@@ -199,11 +198,14 @@ struct GameDetailView: View {
 
     private var roleTitleText: String {
         switch myRole {
-        case "spy":     return "Rolün: SPY 🕵️‍♂️"
-        case "knower":  return "Rolün: Bilen ✅"
-        default:        return "Rolün belirleniyor…"
+        case "spy":     return NSLocalizedString("role_spy", comment: "")
+        case "knower":  return NSLocalizedString("role_knower", comment: "")
+        default:        return NSLocalizedString("role_pending", comment: "")
         }
     }
+}
+
+extension GameDetailView {
 
     private func startCountdown() {
         showCountdown = true

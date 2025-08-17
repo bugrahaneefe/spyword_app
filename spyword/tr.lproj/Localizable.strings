@@ -18,3 +18,80 @@
 "next" = "İleri";
 "room_creation_failed" = "Oda oluşturulamadı: %@";
 "name_add_failed" = "İsim eklenemedi: %@";
+
+/* Status labels */
+"status_waiting" = "Bekleniyor";
+"status_arranging" = "Düzenleniyor";
+"status_started" = "Başladı";
+"status_in_game" = "Oyunda";
+
+/* Accessibility */
+"room_status_accessibility" = "Oda durumu:";
+
+"main_menu" = "Ana Menü";
+"end_game" = "Bitir";
+"round_progress" = "Tur: %d/%d";
+"not_selected" = "Bu oyun için seçilmediniz.";
+"back_to_room" = "Odaya Dön";
+"role_reveal_countdown" = "Rolün %d saniye içinde görünecek…";
+"tap_to_reveal" = "Rolünü görmek için bas:";
+"show_role" = "Rolümü Göster";
+"game_word" = "Kelime: %@";
+"continue" = "Devam Et";
+"players" = "Oyuncular";
+"no_players" = "Oyuncu yok";
+
+/* Roles */
+"role_spy" = "Rolün: SPY 🕵️‍♂️";
+"role_knower" = "Rolün: Bilen ✅";
+"role_pending" = "Rolün belirleniyor…";
+
+/* Errors */
+"room_info_error" = "Oda bilgisi okunamadı.";
+
+"back_to_room" = "Odaya Dön";
+"game_settings_title" = "Oyun Ayarları";
+
+"word_section" = "Kelime";
+"word_mode_random" = "Rastgele kelimeyle başla";
+"word_mode_custom" = "Kendin gir";
+"enter_word" = "Kelimeyi yaz";
+"custom_word_note" = "Not: Kelimeyi host girerse, host otomatik bilen olur.";
+
+"numeric_settings" = "Sayısal Ayarlar";
+"spy_count" = "Spy sayısı";
+"round_count" = "Tur sayısı";
+
+"start_game" = "Başlat";
+
+"main_menu" = "Ana Menü";
+"join_room_title" = "Odaya Katıl";
+"recent_rooms" = "Son Odalar";
+
+"join_button" = "Katıl";
+"loading_text" = "Bekleniyor...";
+
+"room_code_placeholder" = "Oda Kodu (6 haneli)";
+"nickname_placeholder" = "Nickname";
+
+"invalid_room_code_error" = "Geçerli 6 haneli oda kodu giriniz.";
+"empty_nickname_error" = "Lütfen bir nickname girin.";
+"room_not_found_error" = "Oda bulunamadı veya geçerli değil.";
+"host_not_ready_error" = "Ev sahibinin ismini girip 'İleri' basmasını bekleyin.";
+"join_failed_error" = "Katılım başarısız: %@";
+
+"room_code" = "Oda Kodu: %@";
+"you_are_here" = "Sen buradasın";
+"remove" = "Kaldır";
+"start_game" = "Oyunu Başlat";
+"removed_from_room_title" = "Odadan Kaldırıldınız";
+"removed_from_room_message" = "Host tarafından odadan çıkarıldınız.";
+"main_menu" = "Ana Menü";
+
+"select_players" = "Oyuncu Seç";
+"selected_count" = "%d seçili";
+"select_all" = "Hepsini Seç";
+"clear" = "Temizle";
+"options" = "Seçenekler";
+"cancel" = "İptal";
+"continue" = "Devam";

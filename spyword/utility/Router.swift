@@ -52,7 +52,7 @@ struct RootContainer: View {
                 }
                 .environmentObject(router)
                 .environmentObject(lang)
-                .environment(\.locale, lang.locale) // 💡 kritik: runtime dil değişimi
+                .environment(\.locale, lang.locale)
 
                 .navigationDestination(isPresented: Binding(
                     get: { router.pushView != nil },

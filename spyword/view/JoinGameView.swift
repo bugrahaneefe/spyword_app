@@ -23,7 +23,7 @@ struct JoinGameView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "chevron.left")
-                        Text("Ana Menü")
+                        Text("main_menu")
                     }
                     .font(.body)
                 }
@@ -37,14 +37,14 @@ struct JoinGameView: View {
 
             // Main content
             VStack(spacing: 24) {
-                Text("Odaya Katıl")
+                Text("join_room_title")
                     .font(.h2)
                     .foregroundColor(.primaryBlue)
 
                 // A) Son Odalar
                 if !recent.codes.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Son Odalar")
+                        Text("recent_rooms")
                             .font(.h2)
                             .foregroundColor(.black)
                         ScrollView {
@@ -57,7 +57,7 @@ struct JoinGameView: View {
                                         .background(Color.backgroundLight)
                                         .cornerRadius(8)
                                     Spacer()
-                                    Button("Katıl") {
+                                    Button("join_button") {
                                         rejoin(code)
                                     }
                                     .font(.button)
@@ -77,7 +77,7 @@ struct JoinGameView: View {
 
                 // B) Yeni Odaya Giriş
                 VStack(spacing: 16) {
-                    TextField("Oda Kodu (6 haneli)", text: $roomCode)
+                    TextField("room_code_placeholder", text: $roomCode)
                         .autocapitalization(.allCharacters)
                         .disableAutocorrection(true)
                         .font(.body)
@@ -86,7 +86,7 @@ struct JoinGameView: View {
                         .cornerRadius(8)
                         .shadow(color: .black.opacity(0.05), radius: 4)
 
-                    TextField("Nickname", text: $nickname)
+                    TextField("nickname_placeholder", text: $nickname)
                         .autocapitalization(.words)
                         .disableAutocorrection(true)
                         .font(.body)
@@ -102,7 +102,7 @@ struct JoinGameView: View {
                     }
 
                     ButtonText(
-                        title: isLoading ? "Bekleniyor..." : "Katıl",
+                        title: isLoading ? "loading_text" : "join_button",
                         action: joinNew,
                         backgroundColor: .primaryBlue,
                         textColor: .white,
@@ -124,12 +124,12 @@ struct JoinGameView: View {
         errorMessage = nil
         roomCode = roomCode.uppercased()
         guard roomCode.count == 6 else {
-            errorMessage = "Geçerli 6 haneli oda kodu giriniz."
+            errorMessage = NSLocalizedString("invalid_room_code_error", comment: "")
             return
         }
         let name = nickname.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else {
-            errorMessage = "Lütfen bir nickname girin."
+            errorMessage = NSLocalizedString("empty_nickname_error", comment: "")
             return
         }
 
@@ -140,18 +140,18 @@ struct JoinGameView: View {
         // 1) Oda var mı?
         roomRef.getDocument { snap, err in
             guard err == nil, let snap = snap, snap.exists else {
-                finish(error: "Oda bulunamadı veya geçerli değil.")
+                finish(error: NSLocalizedString("room_not_found_error", comment: ""))
                 return
             }
 
-            // 2) Host hazır mı? (info.hostId -> players/{hostId} var mı kontrolü)
+            // 2) Host hazır mı?
             checkHostReady(roomRef: roomRef) { ready in
                 guard ready else {
-                    finish(error: "Ev sahibinin ismini girip 'İleri' basmasını bekleyin.")
+                    finish(error: NSLocalizedString("host_not_ready_error", comment: ""))
                     return
                 }
 
-                // 3) Oyuncu kaydı (idempotent)
+                // 3) Oyuncu kaydı
                 let playerData: [String: Any] = [
                     "name": name,
                     "role": NSNull(),
@@ -163,11 +163,11 @@ struct JoinGameView: View {
                     .document(deviceId)
                     .setData(playerData, merge: true) { err in
                         if let err = err {
-                            finish(error: "Katılım başarısız: \(err.localizedDescription)")
+                            finish(error: String(format: NSLocalizedString("join_failed_error", comment: ""), err.localizedDescription))
                         } else {
                             isLoading = false
                             recent.add(roomCode)
-                            routeToCurrentState(code: roomCode) // mevcut duruma yönlendir
+                            routeToCurrentState(code: roomCode)
                         }
                     }
             }
@@ -181,17 +181,15 @@ struct JoinGameView: View {
         let db = Firestore.firestore()
         let roomRef = db.collection("rooms").document(code.uppercased())
 
-        // Oda var mı?
         roomRef.getDocument { snap, err in
             guard err == nil, let snap = snap, snap.exists else {
-                finish(error: "Oda bulunamadı veya geçerli değil.")
+                finish(error: NSLocalizedString("room_not_found_error", comment: ""))
                 return
             }
 
-            // Host hazır mı?
             checkHostReady(roomRef: roomRef) { ready in
                 guard ready else {
-                    finish(error: "Ev sahibinin ismini girip 'İleri' basmasını bekleyin.")
+                    finish(error: NSLocalizedString("host_not_ready_error", comment: ""))
                     return
                 }
 

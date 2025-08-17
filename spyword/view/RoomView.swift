@@ -42,7 +42,7 @@ struct RoomView: View {
 
                 Divider().frame(height: 20)
 
-                Text("Oda Kodu: \(roomCode)")
+                Text(String(format: NSLocalizedString("room_code", comment: ""), roomCode))
                     .font(.body)
                     .foregroundColor(.black)
 
@@ -79,10 +79,10 @@ struct RoomView: View {
                                 if p.id == deviceId {
                                     Image(systemName: "checkmark.seal.fill")
                                         .foregroundColor(.successGreen)
-                                        .help("Sen buradasın")
+                                        .help(NSLocalizedString("you_are_here", comment: ""))
                                 }
                                 if isHost && p.id != deviceId {
-                                    Button("Kaldır") { vm.remove(player: p) }
+                                    Button(NSLocalizedString("remove", comment: "")) { vm.remove(player: p) }
                                         .font(.caption)
                                         .padding(.horizontal, 12)
                                         .padding(.vertical, 6)
@@ -102,7 +102,7 @@ struct RoomView: View {
 
             if isHost {
                 ButtonText(
-                    title: "Oyunu Başlat",
+                    title: NSLocalizedString("start_game", comment: ""),
                     action: {
                         vm.beginArranging()
                         router.replace(with: SelectPlayersView(roomCode: roomCode, vm: vm))
@@ -134,12 +134,12 @@ struct RoomView: View {
             checkAndNavigateToGame()
         }
         .onAppear { checkAndNavigateToGame() }
-        .alert("Odadan Kaldırıldınız", isPresented: $showRemovedAlert) {
-            Button("Ana Menü") {
+        .alert(NSLocalizedString("removed_from_room_title", comment: ""), isPresented: $showRemovedAlert) {
+            Button(NSLocalizedString("main_menu", comment: "")) {
                 router.replace(with: MainView())
             }
         } message: {
-            Text("Host tarafından odadan çıkarıldınız.")
+            Text(NSLocalizedString("removed_from_room_message", comment: ""))
         }
     }
 

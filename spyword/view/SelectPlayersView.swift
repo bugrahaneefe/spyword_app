@@ -12,16 +12,18 @@ struct SelectPlayersView: View {
             // Top bar
             HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Oyuncu Seç").font(.title3).bold()
-                    Text("\(vm.chosen.count) seçili").font(.caption).foregroundColor(.secondary)
+                    Text(NSLocalizedString("select_players", comment: "")).font(.title3).bold()
+                    Text(String(format: NSLocalizedString("selected_count", comment: ""), vm.chosen.count))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
                 StatusBadge(status: "arranging")
                 Spacer()
                 Menu {
-                    Button("Hepsini Seç", action: selectAll)
-                    Button("Temizle", action: clearAll)
+                    Button(NSLocalizedString("select_all", comment: ""), action: selectAll)
+                    Button(NSLocalizedString("clear", comment: ""), action: clearAll)
                 } label: {
-                    Label("Seçenekler", systemImage: "ellipsis.circle")
+                    Label(NSLocalizedString("options", comment: ""), systemImage: "ellipsis.circle")
                         .labelStyle(.iconOnly)
                         .font(.title3)
                 }
@@ -37,7 +39,7 @@ struct SelectPlayersView: View {
                         Spacer()
                         Image(systemName: vm.chosen.contains(p.id) ? "checkmark.circle.fill" : "circle")
                             .imageScale(.large)
-                            .foregroundStyle( (p.id == vm.hostId) ? Color.successGreen : Color.primary)
+                            .foregroundStyle((p.id == vm.hostId) ? Color.successGreen : Color.primary)
                             .accessibilityHidden(true)
                     }
                     .contentShape(Rectangle())
@@ -50,26 +52,30 @@ struct SelectPlayersView: View {
             HStack(spacing: 12) {
                 Button {
                     vm.setStatus("waiting")
-                    // Host, RoomView'a geri dönsün
                     router.replace(with: RoomView(roomCode: roomCode))
                 } label: {
-                    Text("İptal")
+                    Text(NSLocalizedString("cancel", comment: ""))
                         .frame(maxWidth: .infinity).padding()
                         .background(Color.gray.opacity(0.15))
                         .cornerRadius(12)
                 }
 
                 Button {
-                    // Seçimi kaydet, arranging devam → host ayar ekranına
                     vm.saveSelection(Array(vm.chosen)) { err in
                         if let err = err {
                             print("Save selection error: \(err.localizedDescription)")
                         } else {
-                            router.replace(with: GameSettingsView(vm: vm, roomCode: roomCode, selectedIds: Array(vm.chosen)))
+                            router.replace(
+                                with: GameSettingsView(
+                                    vm: vm,
+                                    roomCode: roomCode,
+                                    selectedIds: Array(vm.chosen)
+                                )
+                            )
                         }
                     }
                 } label: {
-                    Text("Devam")
+                    Text(NSLocalizedString("continue", comment: ""))
                         .frame(maxWidth: .infinity).padding()
                         .background(vm.chosen.count >= 2 ? Color.primaryBlue : Color.gray)
                         .foregroundColor(.white)
@@ -79,7 +85,7 @@ struct SelectPlayersView: View {
             }
             .padding()
         }
-        .navigationBarBackButtonHidden(true) // <— geri butonunu kaldır
+        .navigationBarBackButtonHidden(true)
         .onAppear {
             vm.beginArranging()
             vm.chosen = Set(vm.players.filter { $0.isSelected == true }.map { $0.id })
@@ -101,16 +107,14 @@ struct SelectPlayersView: View {
 
     // MARK: - Helpers
     private func toggle(_ id: String) {
-        if id == vm.hostId {
-            return
-        }
+        if id == vm.hostId { return }
         if vm.chosen.contains(id) {
             vm.chosen.remove(id)
         } else {
             vm.chosen.insert(id)
         }
     }
-    
+
     private func selectAll() {
         vm.chosen = Set(vm.players.map { $0.id })
         if let host = vm.hostId {

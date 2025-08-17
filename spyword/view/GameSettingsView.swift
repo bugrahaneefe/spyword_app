@@ -21,14 +21,14 @@ struct GameSettingsView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "chevron.left")
-                        Text("Odaya Dön")
+                        Text("back_to_room")
                     }
                     .font(.body)
                 }
 
                 Spacer()
 
-                Text("Oyun Ayarları").font(.title3).bold()
+                Text("game_settings_title").font(.title3).bold()
 
                 Spacer()
 
@@ -38,30 +38,30 @@ struct GameSettingsView: View {
             Divider()
 
             Form {
-                Section(header: Text("Kelime")) {
+                Section(header: Text("word_section")) {
                     Picker(selection: $vm.mode) {
-                        Text("Rastgele kelimeyle başla").tag(GameSettings.WordMode.random)
-                        Text("Kendin gir").tag(GameSettings.WordMode.custom)
+                        Text("word_mode_random").tag(GameSettings.WordMode.random)
+                        Text("word_mode_custom").tag(GameSettings.WordMode.custom)
                     } label: { }
                         .pickerStyle(.inline)
                     
                     if vm.mode == .custom {
-                        TextField("Kelimeyi yaz", text: $vm.customWord)
+                        TextField("enter_word", text: $vm.customWord)
                             .textInputAutocapitalization(.never)
                             .disableAutocorrection(true)
                             .onChange(of: vm.customWord) { _, new in
                                 if new.count > 40 { vm.customWord = String(new.prefix(40)) }
                             }
-                        Text("Not: Kelimeyi host girerse, host otomatik bilen olur.")
+                        Text("custom_word_note")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
                 }
 
-                Section(header: Text("Sayısal Ayarlar")) {
+                Section(header: Text("numeric_settings")) {
                     Stepper(value: $vm.spyCount, in: 0...maxSpyCount) {
                         HStack {
-                            Text("Spy sayısı")
+                            Text("spy_count")
                             Spacer()
                             Text("\(vm.spyCount)")
                         }
@@ -69,7 +69,7 @@ struct GameSettingsView: View {
 
                     Stepper(value: $vm.totalRounds, in: 1...10) {
                         HStack {
-                            Text("Tur sayısı")
+                            Text("round_count")
                             Spacer()
                             Text("\(vm.totalRounds)")
                         }
@@ -87,7 +87,7 @@ struct GameSettingsView: View {
                         vm.startGame(selectedIds: selectedIds, settings: settings)
                         router.replace(with: GameDetailView(roomCode: roomCode))
                     } label: {
-                        Text("Başlat")
+                        Text("start_game")
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
                     .disabled(!canStart)
