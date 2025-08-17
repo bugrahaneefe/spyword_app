@@ -34,6 +34,7 @@ struct StatusBadge: View {
         .foregroundColor(.white)
         .background(color)
         .clipShape(Capsule())
+        .fixedSize(horizontal: true, vertical: false)
         .accessibilityLabel("room_status_accessibility \(label)")
     }
 }

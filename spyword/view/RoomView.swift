@@ -2,95 +2,104 @@ import SwiftUI
 import FirebaseCore
 import FirebaseFirestore
 
-struct Player: Identifiable, Equatable {
-    let id: String
-    let name: String
-    let role: String?
-    var isEliminated: Bool?
-    var isSelected: Bool?
-}
-
 struct RoomView: View {
+    @EnvironmentObject var router: Router
+    @Environment(\.colorScheme) var colorScheme
+
     let roomCode: String
 
     @StateObject private var vm: RoomViewModel
-    @EnvironmentObject var router: Router
 
     @State private var showRemovedAlert = false
     @State private var navigatedToGame = false
+    @State private var showCopiedToast = false
 
-    private let deviceId = UserDefaults.standard.string(forKey: "deviceId")
-        ?? UUID().uuidString
+    private let deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? UUID().uuidString
 
     init(roomCode: String) {
         self.roomCode = roomCode
         _vm = StateObject(wrappedValue: RoomViewModel(roomCode: roomCode))
     }
 
+    // MARK: - Body
     var body: some View {
-        VStack(spacing: 0) {
-            // Top bar
-            HStack(spacing: 12) {
-                Button {
-                    router.replace(with: MainView())
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "chevron.left")
+        ZStack(alignment: .top) {
+            (colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
+                .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                HStack(spacing: 12) {
+                    Button {
+                        router.replace(with: MainView())
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.left")
+                        }
+                        .font(.body)
+                        .foregroundColor(.primary)
                     }
-                    .font(.body)
+
+                    Divider().frame(height: 20)
+
+                    Text(String(format: NSLocalizedString("room_code", comment: ""), roomCode))
+                        .font(.body)
+                        .foregroundColor(.primary)
+
+                    Button {
+                        UIPasteboard.general.string = roomCode
+                        withAnimation(.spring) { showCopiedToast = true }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            withAnimation(.spring) { showCopiedToast = false }
+                        }
+                    } label: {
+                        Image(systemName: "doc.on.doc")
+                            .foregroundColor(.primary)
+                    }
+                    .accessibilityLabel(Text("copy"))
+                    
+                    Spacer()
+
+                    StatusBadge(status: vm.status)
                 }
-
-                Divider().frame(height: 20)
-
-                Text(String(format: NSLocalizedString("room_code", comment: ""), roomCode))
-                    .font(.body)
-                    .foregroundColor(.black)
-
-                StatusBadge(status: vm.status)
-
-                Spacer()
-
-                Button {
-                    UIPasteboard.general.string = roomCode
-                } label: {
-                    Image(systemName: "doc.on.doc")
-                        .foregroundColor(.secondaryBlue)
-                }
-            }
-            .padding()
-            .background(Color.backgroundLight)
-            .shadow(radius: 2)
-
-            Divider()
-
-            playersList()
-
-            Spacer()
-
-            if isHost {
-                ButtonText(
-                    title: LocalizedStringKey("start_game"),
-                    action: {
-                        vm.beginArranging()
-                        router.replace(with: SelectPlayersView(roomCode: roomCode, vm: vm))
-                    },
-                    backgroundColor: vm.players.count >= 2 ? .primaryBlue : .gray,
-                    textColor: .white,
-                    cornerRadius: 12,
-                    size: .big
-                )
-                .disabled(vm.players.count < 2)
                 .padding()
-            }
+                .background(colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
+                .shadow(radius: 2)
 
-            if let err = vm.errorMessage {
-                Text(err)
-                    .font(.caption)
-                    .foregroundColor(.errorRed)
-                    .padding(.bottom)
+                Divider()
+
+                playersList()
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+
+                Spacer(minLength: 0)
+
+                if isHost {
+                    let canStart = vm.players.count >= 2
+                    ButtonText(
+                        title: LocalizedStringKey("start_game"),
+                        action: {
+                            vm.beginArranging()
+                            router.replace(with: SelectPlayersView(roomCode: roomCode, vm: vm))
+                        },
+                        backgroundColor: canStart ? .successGreen : .gray,
+                        textColor: .white,
+                        cornerRadius: 12,
+                        size: .big
+                    )
+                    .disabled(!canStart)
+                    .padding()
+                }
+
+                if let err = vm.errorMessage {
+                    Text(err)
+                        .font(.caption)
+                        .foregroundColor(.errorRed)
+                        .padding(.bottom)
+                }
             }
+            .safeAreaPadding(.bottom)
         }
-        .ignoresSafeArea(edges: .bottom)
+        .keyboardAdaptive()
         .onChange(of: vm.players) { _, players in
             if !players.contains(where: { $0.id == deviceId }) {
                 showRemovedAlert = true
@@ -108,53 +117,84 @@ struct RoomView: View {
         } message: {
             Text(NSLocalizedString("removed_from_room_message", comment: ""))
         }
+        .overlay(alignment: .top) {
+            if showCopiedToast {
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark.circle.fill")
+                    Text("copied")
+                        .font(.caption)
+                        .bold()
+                }
+                .padding(.vertical, 6)
+                .padding(.horizontal, 12)
+                .background((colorScheme == .dark ? Color.black : Color.white).opacity(0.95))
+                .foregroundColor(.primary)
+                .cornerRadius(20)
+                .shadow(radius: 6)
+                .padding(.top, 12)
+            }
+        }
     }
-    
+
+    // MARK: - Subviews
     @ViewBuilder
     private func playersList() -> some View {
-        // Players list
         if vm.isLoading {
-            ProgressView().padding()
-            Spacer()
+            ProgressView()
+                .padding()
         } else {
             ScrollView {
                 LazyVStack(spacing: 12) {
                     ForEach(vm.players) { p in
-                        HStack {
+                        HStack(spacing: 12) {
                             Text(p.name)
                                 .font(.body)
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
+
                             Spacer()
+
                             if p.id == deviceId {
                                 Image(systemName: "checkmark.seal.fill")
                                     .foregroundColor(.successGreen)
                                     .help(NSLocalizedString("you_are_here", comment: ""))
                             }
+
                             if isHost && p.id != deviceId {
-                                Button(NSLocalizedString("remove", comment: "")) { vm.remove(player: p) }
-                                    .font(.caption)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(Color.errorRed)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(8)
+                                Button(NSLocalizedString("remove", comment: "")) {
+                                    vm.remove(player: p)
+                                }
+                                .font(.caption)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(Color.errorRed)
+                                .foregroundColor(.white)
+                                .cornerRadius(8)
                             }
                         }
-                        .padding(.horizontal)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 12)
+                        .background(colorScheme == .dark ? Color.black : Color.white)
+                        .cornerRadius(12)
+                        .shadow(color: .black.opacity(0.06), radius: 6, x: 0, y: 2)
                     }
                 }
-                .padding(.top)
+                .padding(.vertical, 8)
             }
+            .scrollDismissesKeyboard(.interactively)
         }
     }
+}
 
-    // MARK: - Helpers
+// MARK: - Helpers (Extension)
+extension RoomView {
     private var isHost: Bool { vm.hostId == deviceId }
     private var amSelected: Bool { vm.players.first(where: { $0.id == deviceId })?.isSelected == true }
 
     private func isGameStatus(_ s: String) -> Bool {
-        let l = s.lowercased()
-        return l == "the game" || l == "started" || l == "in game"
+        switch s.lowercased() {
+        case "the game", "started", "in game": return true
+        default: return false
+        }
     }
 
     private func checkAndNavigateToGame() {

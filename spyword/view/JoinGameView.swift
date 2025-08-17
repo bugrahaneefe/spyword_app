@@ -55,9 +55,21 @@ struct JoinGameView: View {
                                 .font(.button)
                                 .foregroundColor(.primary)
 
-                            List {
+                            ScrollView {
                                 ForEach(recent.codes, id: \.self) { code in
                                     HStack(spacing: 12) {
+                                        Button {
+                                            leaveRoom(code: code)
+                                            if let idx = recent.codes.firstIndex(of: code) {
+                                                recent.remove(at: IndexSet(integer: idx))
+                                            }
+                                        } label: {
+                                            Image(systemName: "xmark.circle.fill")
+                                                .foregroundColor(.errorRed)
+                                                .font(.caption)
+                                        }
+                                        .buttonStyle(.plain)
+                                        
                                         Text(code)
                                             .font(.body)
                                             .padding(.vertical, 6)
@@ -79,14 +91,10 @@ struct JoinGameView: View {
                                         .foregroundColor(.white)
                                         .cornerRadius(12)
                                     }
-                                    .listRowBackground((colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight).opacity(0.001))
-                                }
-                                .onDelete { indexSet in
-                                    for index in indexSet {
-                                        let code = recent.codes[index]
-                                        leaveRoom(code: code)
+                                    .onTapGesture {
+                                        rejoin(code)
                                     }
-                                    recent.remove(at: indexSet)
+                                    .listRowBackground((colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight).opacity(0.001))
                                 }
                             }
                             .listStyle(.plain)
