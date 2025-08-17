@@ -4,8 +4,11 @@ import FirebaseFirestore
 
 struct JoinGameView: View {
     @EnvironmentObject var router: Router
-    @StateObject private var recent = RecentRoomsManager.shared
+    @EnvironmentObject var lang: LanguageManager
+    @Environment(\.colorScheme) var colorScheme
 
+    @StateObject private var recent = RecentRoomsManager.shared
+    
     @State private var roomCode: String = ""
     @State private var nickname: String = ""
     @State private var isLoading = false
@@ -14,130 +17,158 @@ struct JoinGameView: View {
     private let deviceId = UserDefaults.standard
         .string(forKey: "deviceId") ?? UUID().uuidString
 
+    // MARK: - Body
     var body: some View {
-        VStack(spacing: 0) {
-            // Top bar with back button
-            HStack(spacing: 12) {
-                Button {
-                    router.replace(with: MainView())
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "chevron.left")
-                        Text("main_menu")
+        ZStack {
+            (colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
+                .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                HStack(spacing: 12) {
+                    Button {
+                        router.replace(with: MainView())
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.left")
+                            Text("main_menu")
+                        }
+                        .font(.body)
+                        .foregroundColor(.primary)
                     }
-                    .font(.body)
+                    Spacer()
                 }
-                Spacer()
-            }
-            .padding()
-            .background(Color.backgroundLight)
-            .shadow(radius: 2)
+                .padding()
+                .background(colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
+                .shadow(radius: 2)
 
-            Divider()
+                Divider()
 
-            // Main content
-            VStack(spacing: 24) {
-                Text("join_room_title")
-                    .font(.h2)
-                    .foregroundColor(.primaryBlue)
+                VStack(spacing: 24) {
+                    Text("join_room_title")
+                        .font(.h2)
+                        .foregroundColor(.primary)
+                        .padding(.top, 8)
 
-                // A) Son Odalar
-                if !recent.codes.isEmpty {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("recent_rooms")
-                            .font(.h2)
-                            .foregroundColor(.black)
+                    if !recent.codes.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("recent_rooms")
+                                .font(.button)
+                                .foregroundColor(.primary)
 
-                        List {
-                            ForEach(recent.codes, id: \.self) { code in
-                                HStack {
-                                    Text(code)
+                            List {
+                                ForEach(recent.codes, id: \.self) { code in
+                                    HStack(spacing: 12) {
+                                        Text(code)
+                                            .font(.body)
+                                            .padding(.vertical, 6)
+                                            .padding(.horizontal, 12)
+                                            .background(colorScheme == .dark ? Color.black : Color.white)
+                                            .cornerRadius(8)
+                                            .foregroundColor(.primary)
+                                            .shadow(color: .black.opacity(0.05), radius: 4)
+
+                                        Spacer()
+
+                                        Button("join_button") {
+                                            rejoin(code)
+                                        }
                                         .font(.body)
                                         .padding(.vertical, 6)
-                                        .padding(.horizontal, 12)
-                                        .background(Color.backgroundLight)
-                                        .cornerRadius(8)
-                                    Spacer()
-                                    Button("join_button") {
-                                        rejoin(code)
+                                        .padding(.horizontal, 16)
+                                        .background(Color.primaryBlue)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(12)
                                     }
-                                    .font(.button)
-                                    .padding(.vertical, 6)
-                                    .padding(.horizontal, 16)
-                                    .background(Color.primaryBlue)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(12)
+                                    .listRowBackground((colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight).opacity(0.001))
+                                }
+                                .onDelete { indexSet in
+                                    for index in indexSet {
+                                        let code = recent.codes[index]
+                                        leaveRoom(code: code)
+                                    }
+                                    recent.remove(at: indexSet)
                                 }
                             }
-                            .onDelete { indexSet in
-                                for index in indexSet {
-                                    let code = recent.codes[index]
-                                    leaveRoom(code: code)
-                                }
-                                recent.remove(at: indexSet)
-                            }
+                            .listStyle(.plain)
+                            .scrollContentBackground(.hidden)
+                            .frame(height: 200)
                         }
-                        .listStyle(.plain) // düz görünüm
-                    }
-                    .frame(height: 200)
-                    .padding(.bottom, 16)
-                }
-
-                // B) Yeni Odaya Giriş
-                VStack(spacing: 16) {
-                    TextField("room_code_placeholder", text: $roomCode)
-                        .autocapitalization(.allCharacters)
-                        .disableAutocorrection(true)
-                        .font(.body)
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(8)
-                        .shadow(color: .black.opacity(0.05), radius: 4)
-
-                    TextField("nickname_placeholder", text: $nickname)
-                        .autocapitalization(.words)
-                        .disableAutocorrection(true)
-                        .font(.body)
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(8)
-                        .shadow(color: .black.opacity(0.05), radius: 4)
-
-                    if let err = errorMessage {
-                        Text(err)
-                            .font(.caption)
-                            .foregroundColor(.errorRed)
                     }
 
-                    ButtonText(
-                        title: isLoading ? "loading_text" : "join_button",
-                        action: joinNew,
-                        backgroundColor: .primaryBlue,
-                        textColor: .white,
-                        cornerRadius: 12,
-                        size: .big
-                    )
-                    .disabled(isLoading || roomCode.count != 6 || nickname.trimmingCharacters(in: .whitespaces).isEmpty)
-                }
+                    Spacer()
+                    
+                    VStack(spacing: 16) {
+                        TextField("room_code_placeholder", text: $roomCode)
+                            .textInputAutocapitalization(.characters)
+                            .disableAutocorrection(true)
+                            .font(.body)
+                            .padding()
+                            .background(colorScheme == .dark ? Color.black : Color.white)
+                            .cornerRadius(8)
+                            .foregroundColor(.primary)
+                            .shadow(color: .black.opacity(0.05), radius: 4)
+                            .clearButton($roomCode)
+                        
+                        TextField("nickname_placeholder", text: $nickname)
+                            .textInputAutocapitalization(.words)
+                            .disableAutocorrection(true)
+                            .font(.body)
+                            .padding()
+                            .background(colorScheme == .dark ? Color.black : Color.white)
+                            .cornerRadius(8)
+                            .foregroundColor(.primary)
+                            .shadow(color: .black.opacity(0.05), radius: 4)
+                            .clearButton($nickname)
+                        
+                        if let err = errorMessage {
+                            Text(err)
+                                .font(.caption)
+                                .foregroundColor(.errorRed)
+                                .multilineTextAlignment(.center)
+                        }
+                        
+                        let isJoinDisabled = isLoading
+                            || roomCode.count != 6
+                            || nickname.trimmingCharacters(in: .whitespaces).isEmpty
 
-                Spacer()
+                        ButtonText(
+                            title: isLoading ? "loading_text" : "join_button",
+                            action: joinNew,
+                            backgroundColor: isJoinDisabled ? .gray : .successGreen,
+                            textColor: .white,
+                            cornerRadius: 12,
+                            size: .big
+                        )
+                        .disabled(isJoinDisabled)
+                    }
+
+                    Spacer(minLength: 0)
+                }
+                .padding()
+                .safeAreaPadding(.bottom)
             }
-            .padding()
         }
+        .keyboardAdaptive()
     }
+}
+
+// MARK: - Helpers & Firestore (Extension)
+extension JoinGameView {
 
     // MARK: - Join flows
 
     private func joinNew() {
         errorMessage = nil
         roomCode = roomCode.uppercased()
+
         guard roomCode.count == 6 else {
-            errorMessage = NSLocalizedString("invalid_room_code_error", comment: "")
+            errorMessage = String(localized: "invalid_room_code_error", bundle: .main, locale: lang.locale)
             return
         }
+
         let name = nickname.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else {
-            errorMessage = NSLocalizedString("empty_nickname_error", comment: "")
+            errorMessage = String(localized: "empty_nickname_error", bundle: .main, locale: lang.locale)
             return
         }
 
@@ -148,14 +179,14 @@ struct JoinGameView: View {
         // 1) Oda var mı?
         roomRef.getDocument { snap, err in
             guard err == nil, let snap = snap, snap.exists else {
-                finish(error: NSLocalizedString("room_not_found_error", comment: ""))
+                finish(error: String(localized: "room_not_found_error", bundle: .main, locale: lang.locale))
                 return
             }
 
             // 2) Host hazır mı?
             checkHostReady(roomRef: roomRef) { ready in
                 guard ready else {
-                    finish(error: NSLocalizedString("host_not_ready_error", comment: ""))
+                    finish(error: String(localized: "host_not_ready_error", bundle: .main, locale: lang.locale))
                     return
                 }
 
@@ -167,11 +198,13 @@ struct JoinGameView: View {
                     "isSelected": false,
                     "joinedAt": FieldValue.serverTimestamp()
                 ]
+
                 roomRef.collection("players")
                     .document(deviceId)
-                    .setData(playerData, merge: true) { err in
-                        if let err = err {
-                            finish(error: String(format: NSLocalizedString("join_failed_error", comment: ""), err.localizedDescription))
+                    .setData(playerData, merge: true) { setErr in
+                        if let setErr = setErr {
+                            let fmt = String(localized: "join_failed_error", bundle: .main, locale: lang.locale)
+                            finish(error: String(format: fmt, locale: lang.locale, setErr.localizedDescription))
                         } else {
                             isLoading = false
                             recent.add(roomCode)
@@ -187,39 +220,39 @@ struct JoinGameView: View {
         isLoading = true
 
         let db = Firestore.firestore()
-        let roomRef = db.collection("rooms").document(code.uppercased())
+        let upper = code.uppercased()
+        let roomRef = db.collection("rooms").document(upper)
 
         roomRef.getDocument { snap, err in
             guard err == nil, let snap = snap, snap.exists else {
-                finish(error: NSLocalizedString("room_not_found_error", comment: ""))
+                finish(error: String(localized: "room_not_found_error", bundle: .main, locale: lang.locale))
                 return
             }
 
             checkHostReady(roomRef: roomRef) { ready in
                 guard ready else {
-                    finish(error: NSLocalizedString("host_not_ready_error", comment: ""))
+                    finish(error: String(localized: "host_not_ready_error", bundle: .main, locale: lang.locale))
                     return
                 }
 
                 isLoading = false
-                recent.add(code.uppercased())
-                routeToCurrentState(code: code.uppercased())
+                recent.add(upper)
+                routeToCurrentState(code: upper)
             }
         }
     }
-    
+
     private func leaveRoom(code: String) {
         let db = Firestore.firestore()
         let roomRef = db.collection("rooms").document(code)
 
-        // Önce oda bilgilerini oku
         roomRef.getDocument { snap, _ in
             guard let data = snap?.data(),
                   let info = data["info"] as? [String: Any],
                   let hostId = info["hostId"] as? String else { return }
 
             if hostId == deviceId {
-                // Ben host isem: Odayı tamamen sil
+                // Host isem: Odayı tamamen sil
                 roomRef.delete { err in
                     if let err = err {
                         print("Oda silinemedi: \(err)")
@@ -240,7 +273,6 @@ struct JoinGameView: View {
         }
     }
 
-
     /// info.hostId'yi okuyup players/{hostId} belgesi var mı ve name alanı dolu mu diye kontrol eder.
     private func checkHostReady(roomRef: DocumentReference, completion: @escaping (Bool) -> Void) {
         roomRef.getDocument { snap, _ in
@@ -259,20 +291,18 @@ struct JoinGameView: View {
                 if let role = hd["role"] as? String, role == "host" {
                     completion(true)
                 } else {
-                    // rol alanı eksik olsa da isim girilmişse yine hazır sayabilirsiniz.
+                    // rol alanı eksik olsa da isim girilmişse yine hazır sayabiliriz
                     completion(true)
                 }
             }
         }
     }
 
-
     // MARK: - Smart routing (status + role + selection)
     private func routeToCurrentState(code: String) {
         let db = Firestore.firestore()
         let roomRef = db.collection("rooms").document(code)
 
-        // oda bilgisini ve kullanıcı dokümanını paralel okuyalım
         let group = DispatchGroup()
         var info: [String:Any]?
         var me: [String:Any]?
@@ -299,7 +329,6 @@ struct JoinGameView: View {
             let status = (info["status"] as? String)?.lowercased() ?? "waiting"
             let hostId = info["hostId"] as? String
             let locked = (info["lockedPlayers"] as? [String]) ?? []
-
             let amSelected = (me?["isSelected"] as? Bool) ?? false
 
             switch status {
@@ -312,10 +341,9 @@ struct JoinGameView: View {
 
             case "arranging":
                 if hostId == self.deviceId {
-                    // host geri döndü: seçim varsa ayar ekranına, yoksa seçim ekranına
                     let vm = RoomViewModel(roomCode: code)
                     if !locked.isEmpty {
-                        self.router.replace(with: GameSettingsView(vm: vm, roomCode: roomCode, selectedIds: locked))
+                        self.router.replace(with: GameSettingsView(vm: vm, roomCode: code, selectedIds: locked))
                     } else {
                         self.router.replace(with: SelectPlayersView(roomCode: code, vm: vm))
                     }
@@ -329,7 +357,7 @@ struct JoinGameView: View {
         }
     }
 
-    // MARK: - Helpers
+    // MARK: - Error helper
     private func finish(error: String) {
         DispatchQueue.main.async {
             self.errorMessage = error

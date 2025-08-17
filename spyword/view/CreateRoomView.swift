@@ -3,16 +3,17 @@ import FirebaseCore
 import FirebaseFirestore
 
 struct CreateRoomView: View {
+    @EnvironmentObject var router: Router
+    @EnvironmentObject var lang: LanguageManager
+    @Environment(\.colorScheme) var colorScheme
+    
+    @StateObject private var recent = RecentRoomsManager.shared
+
     @State private var roomCode: String = ""
     @State private var hostName: String = ""
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var showCopied = false
-    @StateObject private var recent = RecentRoomsManager.shared
-    
-    @EnvironmentObject var router: Router
-    @EnvironmentObject var lang: LanguageManager
-    @Environment(\.colorScheme) var colorScheme
     
     private let deviceId = UserDefaults.standard
         .string(forKey: "deviceId") ?? UUID().uuidString
@@ -86,21 +87,19 @@ struct CreateRoomView: View {
                             .shadow(color: .black.opacity(0.05), radius: 4)
                             .autocapitalization(.words)
                             .disableAutocorrection(true)
+                            .clearButton($hostName)
                         
-                        Button(action: finalizeRoom) {
-                            Text("next")
-                                .font(.button)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(
-                                    hostName.trimmingCharacters(in: .whitespaces).isEmpty
-                                    ? Color.gray
-                                    : Color.successGreen
-                                )
-                                .foregroundColor(.white)
-                                .cornerRadius(12)
-                        }
-                        .disabled(hostName.trimmingCharacters(in: .whitespaces).isEmpty)
+                        let isFinalizeDisabled = hostName.trimmingCharacters(in: .whitespaces).isEmpty
+
+                        ButtonText(
+                            title: "next",
+                            action: finalizeRoom,
+                            backgroundColor: isFinalizeDisabled ? .gray : .successGreen,
+                            textColor: .white,
+                            cornerRadius: 12,
+                            size: .big
+                        )
+                        .disabled(isFinalizeDisabled)
                     }
                     
                     if let error = errorMessage {
