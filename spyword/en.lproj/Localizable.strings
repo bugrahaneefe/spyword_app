@@ -4,7 +4,7 @@
 "start" = "Start";
 
 /* Language UI */
-"language_title" = "Language";
+"language_title" = "Language Selection";
 "language_turkish" = "Turkish";
 "language_english" = "English";
 "close" = "Close";

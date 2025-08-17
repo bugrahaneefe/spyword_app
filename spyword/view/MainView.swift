@@ -3,6 +3,7 @@ import SwiftUI
 private enum Constant {
     static let privacyPolicyUrl = URL(string: "https://infoappwide.github.io/spyWordPrivacyPolicy/")
     static let deviceIdKey = "deviceId"
+    static let appImage = Image("spyword")
 }
 
 struct MainView: View {
@@ -22,7 +23,7 @@ struct MainView: View {
                 
                 Spacer()
                 
-                Image("spyword")
+                Constant.appImage
                     .resizable()
                     .frame(width: 144, height: 144)
                     .cornerRadius(8)
@@ -49,16 +50,8 @@ struct MainView: View {
             VStack {
                 HStack {
                     Spacer()
-                    Button {
+                    ButtonIcon(iconName: "globe") {
                         showLanguageSheet = true
-                    } label: {
-                        Image(systemName: "globe")
-                            .font(.title3)
-                            .padding(10)
-                            .background(Color.backgroundLight)
-                            .clipShape(Circle())
-                            .shadow(radius: 1)
-                            .accessibilityLabel(Text("change_language")) // localized
                     }
                     .padding(.trailing, 16)
                 }
@@ -84,7 +77,7 @@ struct MainView: View {
     }
 }
 
-struct LanguagePickerSheet: View {
+private struct LanguagePickerSheet: View {
     let selected: String
     let onSelect: (String) -> Void
     @Environment(\.dismiss) private var dismiss
@@ -93,45 +86,20 @@ struct LanguagePickerSheet: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 8) {
-                    LanguageRow(
-                        code: "tr",
-                        title: String(localized: "language_turkish"),
-                        selected: selected == "tr"
-                    ) { onSelect("tr"); dismiss() }
-
-                    LanguageRow(
-                        code: "en",
-                        title: String(localized: "language_english"),
-                        selected: selected == "en"
-                    ) { onSelect("en"); dismiss() }
+                    ButtonText(title: "language_turkish") {
+                        onSelect("tr")
+                        dismiss()
+                    }
+                    
+                    ButtonText(title: "language_english") {
+                        onSelect("en")
+                        dismiss()
+                    }
                 }
-                .padding(.vertical, 8)
+                .padding(.vertical, 16)
             }
             .navigationTitle(Text("language_title"))
-        }
-    }
-}
-
-private struct LanguageRow: View {
-    let code: String
-    let title: String
-    let selected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack {
-                Text(title)
-                    .foregroundColor(.primaryBlue)
-                Spacer()
-                if selected {
-                    Image(systemName: "checkmark")
-                }
-            }
-            .padding()
-            .background(Color.backgroundLight)
-            .cornerRadius(12)
-            .padding(.horizontal)
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
