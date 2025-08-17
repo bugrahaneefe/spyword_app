@@ -23,7 +23,6 @@ struct CreateRoomView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Top bar
                 HStack(spacing: 12) {
                     Button {
                         router.replace(with: MainView())
@@ -43,7 +42,6 @@ struct CreateRoomView: View {
                 
                 Divider()
                 
-                // Content
                 VStack(spacing: 32) {
                     Text("preparing_room")
                         .font(.h2)
@@ -54,9 +52,7 @@ struct CreateRoomView: View {
                     
                     if isLoading {
                         ProgressView()
-                    } else if roomCode.isEmpty {
-                        Spacer()
-                    } else {
+                    } else if !roomCode.isEmpty {
                         ZStack(alignment: .topTrailing) {
                             Text(roomCode)
                                 .font(.h1)
@@ -116,6 +112,7 @@ struct CreateRoomView: View {
                     Spacer()
                 }
                 .padding()
+                .safeAreaPadding(.bottom)
             }
         }
         .onAppear{ createRoom() }
