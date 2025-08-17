@@ -30,7 +30,7 @@
 
 "main_menu" = "Ana Menü";
 "end_game" = "Bitir";
-"round_progress" = "Tur: %d/%d";
+"round_progress %d %d" = "Tur: %d / %d";
 "not_selected" = "Bu oyun için seçilmediniz.";
 "back_to_room" = "Odaya Dön";
 "role_reveal_countdown" = "Rolün %d saniye içinde görünecek…";

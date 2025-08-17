@@ -30,7 +30,7 @@
 
 "main_menu" = "Main Menu";
 "end_game" = "End Game";
-"round_progress" = "Round: %d/%d";
+"round_progress %d %d" = "Round: %d / %d";
 "not_selected" = "You were not selected for this game.";
 "back_to_room" = "Back to Room";
 "role_reveal_countdown" = "Your role will appear in %d seconds…";

@@ -63,46 +63,13 @@ struct RoomView: View {
 
             Divider()
 
-            // Players list
-            if vm.isLoading {
-                ProgressView().padding()
-                Spacer()
-            } else {
-                ScrollView {
-                    LazyVStack(spacing: 12) {
-                        ForEach(vm.players) { p in
-                            HStack {
-                                Text(p.name)
-                                    .font(.body)
-                                    .foregroundColor(.black)
-                                Spacer()
-                                if p.id == deviceId {
-                                    Image(systemName: "checkmark.seal.fill")
-                                        .foregroundColor(.successGreen)
-                                        .help(NSLocalizedString("you_are_here", comment: ""))
-                                }
-                                if isHost && p.id != deviceId {
-                                    Button(NSLocalizedString("remove", comment: "")) { vm.remove(player: p) }
-                                        .font(.caption)
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 6)
-                                        .background(Color.errorRed)
-                                        .foregroundColor(.white)
-                                        .cornerRadius(8)
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
-                    }
-                    .padding(.top)
-                }
-            }
+            playersList()
 
             Spacer()
 
             if isHost {
                 ButtonText(
-                    title: NSLocalizedString("start_game", comment: ""),
+                    title: LocalizedStringKey("start_game"),
                     action: {
                         vm.beginArranging()
                         router.replace(with: SelectPlayersView(roomCode: roomCode, vm: vm))
@@ -140,6 +107,44 @@ struct RoomView: View {
             }
         } message: {
             Text(NSLocalizedString("removed_from_room_message", comment: ""))
+        }
+    }
+    
+    @ViewBuilder
+    private func playersList() -> some View {
+        // Players list
+        if vm.isLoading {
+            ProgressView().padding()
+            Spacer()
+        } else {
+            ScrollView {
+                LazyVStack(spacing: 12) {
+                    ForEach(vm.players) { p in
+                        HStack {
+                            Text(p.name)
+                                .font(.body)
+                                .foregroundColor(.black)
+                            Spacer()
+                            if p.id == deviceId {
+                                Image(systemName: "checkmark.seal.fill")
+                                    .foregroundColor(.successGreen)
+                                    .help(NSLocalizedString("you_are_here", comment: ""))
+                            }
+                            if isHost && p.id != deviceId {
+                                Button(NSLocalizedString("remove", comment: "")) { vm.remove(player: p) }
+                                    .font(.caption)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(Color.errorRed)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(8)
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+                .padding(.top)
+            }
         }
     }
 

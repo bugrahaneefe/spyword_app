@@ -148,14 +148,21 @@ final class RoomViewModel: ObservableObject {
         }
 
         // Oda info
+        // random sıra oluştur
+        let turnOrder = selectedIds.shuffled()
+
+        // Oda info
         var info: [String:Any] = [
             "status": "the game",
             "word": word,
             "spyCount": spyCount,
             "totalRounds": settings.totalRounds,
-            "lockedPlayers": selectedIds
+            "lockedPlayers": selectedIds,
+            "turnOrder": turnOrder
         ]
+
         batch.setData(["info": info], forDocument: roomRef, merge: true)
+        
 
         batch.commit { [weak self] error in
             if let err = error {
