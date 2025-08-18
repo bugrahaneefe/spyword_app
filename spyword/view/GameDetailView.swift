@@ -83,6 +83,34 @@ struct GameDetailView: View {
                 router.replace(with: RoomView(roomCode: roomCode))
             }
         }
+        .onChange(of: status) { old, new in
+            if new == "started", old != "started" {
+                resetLocalForNewGame()
+
+                if isHost {
+                    let db = Firestore.firestore()
+                    let roomRef = db.collection("rooms").document(roomCode)
+
+                    roomRef.collection("rounds").getDocuments { qs, _ in
+                        qs?.documents.forEach { $0.reference.delete() }
+                    }
+                    roomRef.collection("guesses").getDocuments { qs, _ in
+                        qs?.documents.forEach { $0.reference.delete() }
+                    }
+
+                    roomRef.updateData([
+                        "info.currentRound": 1,
+                        "info.currentTurnIndex": 0,
+                        "info.resultText": FieldValue.delete()
+                    ])
+                }
+            }
+            else if !isGameStatus(new) && new != "guessing" && new != "guessReady" && new != "result" {
+                markRoleAs(revealStatus: false)
+                router.replace(with: RoomView(roomCode: roomCode))
+            }
+        }
+
         .navigationBarBackButtonHidden(true)
     }
 }
@@ -399,7 +427,8 @@ extension GameDetailView {
         roomRef.updateData([
             "info.status": "waiting",
             "info.currentRound": 1,
-            "info.currentTurnIndex": 0
+            "info.currentTurnIndex": 0,
+            "info.resultText": FieldValue.delete()
         ]) { err in
             if let err = err {
                 self.errorMessage = err.localizedDescription
@@ -456,6 +485,31 @@ extension GameDetailView {
 
         // hide my input after turn ends
         currentTurnIndex = -1
+    }
+    
+    private func resetLocalForNewGame() {
+        // local UI state
+        isLoading = false
+        errorMessage = nil
+
+        revealedOnce = false
+        showCountdown = false
+        countdown = 3
+        continuePressed = false
+        showGuessPopup = false
+
+        myWordInput = ""
+        playerInputs = [:]
+
+        // tur/sayaç
+        currentRound = 1
+        currentTurnIndex = 0
+
+        // içerik
+        gameWord = nil
+
+        // role reveal flag’i sıfırla (aynı odada yeni oyunda tekrar gösterilsin)
+        markRoleAs(revealStatus: false)
     }
 }
 

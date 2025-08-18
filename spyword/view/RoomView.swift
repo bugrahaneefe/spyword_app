@@ -13,6 +13,7 @@ struct RoomView: View {
     @State private var showRemovedAlert = false
     @State private var navigatedToGame = false
     @State private var showCopiedToast = false
+    @State private var showStartSplash = false
 
     private let deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? UUID().uuidString
 
@@ -100,6 +101,15 @@ struct RoomView: View {
             .safeAreaPadding(.bottom)
         }
         .keyboardAdaptive()
+        .slidingPage(
+            isPresented: $showStartSplash,
+            text: "Game Starts !"
+        )
+        .onChange(of: showStartSplash) { _, isShowing in
+            if !isShowing {
+                router.replace(with: GameDetailView(roomCode: roomCode))
+            }
+        }
         .onChange(of: vm.players) { _, players in
             if !players.contains(where: { $0.id == deviceId }) {
                 showRemovedAlert = true
@@ -202,6 +212,6 @@ extension RoomView {
         guard isGameStatus(vm.status) else { return }
         guard amSelected else { return }
         navigatedToGame = true
-        router.replace(with: GameDetailView(roomCode: roomCode))
+        showStartSplash = true
     }
 }
