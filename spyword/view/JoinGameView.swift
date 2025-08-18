@@ -103,6 +103,8 @@ struct JoinGameView: View {
                         }
                     }
 
+                    Divider()
+                    
                     Spacer()
                     
                     VStack(spacing: 16) {

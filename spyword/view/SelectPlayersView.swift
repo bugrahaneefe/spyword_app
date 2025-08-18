@@ -1,10 +1,15 @@
 import SwiftUI
 
 struct SelectPlayersView: View {
+    // MARK: - Inputs
     let roomCode: String
     @ObservedObject var vm: RoomViewModel
-    @EnvironmentObject var router: Router
 
+    // MARK: - Env
+    @EnvironmentObject var router: Router
+    @Environment(\.colorScheme) var colorScheme
+
+    // MARK: - Device
     private let deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? UUID().uuidString
 
     var body: some View {
@@ -17,8 +22,11 @@ struct SelectPlayersView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
+                
                 StatusBadge(status: "arranging")
+                
                 Spacer()
+                
                 Menu {
                     Button(NSLocalizedString("select_all", comment: ""), action: selectAll)
                     Button(NSLocalizedString("clear", comment: ""), action: clearAll)
@@ -29,9 +37,10 @@ struct SelectPlayersView: View {
                 }
             }
             .padding()
+            .background(colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
+            
             Divider()
 
-            // Players list (hücre tamamı tıklanır)
             List {
                 ForEach(vm.players) { p in
                     HStack {
@@ -54,9 +63,11 @@ struct SelectPlayersView: View {
                     vm.setStatus("waiting")
                     router.replace(with: RoomView(roomCode: roomCode))
                 } label: {
-                    Text(NSLocalizedString("cancel", comment: ""))
-                        .frame(maxWidth: .infinity).padding()
-                        .background(Color.gray.opacity(0.15))
+                    Text("cancel")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .foregroundColor(Color.white)
+                        .background(Color.primaryBlue)
                         .cornerRadius(12)
                 }
 
@@ -75,39 +86,35 @@ struct SelectPlayersView: View {
                         }
                     }
                 } label: {
-                    Text(NSLocalizedString("continue", comment: ""))
-                        .frame(maxWidth: .infinity).padding()
-                        .background(vm.chosen.count >= 2 ? Color.primaryBlue : Color.gray)
-                        .foregroundColor(.white)
+                    Text("continue")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(vm.chosen.count >= 2 ? Color.successGreen : Color.gray)
+                        .foregroundColor(Color.white)
                         .cornerRadius(12)
                 }
                 .disabled(vm.chosen.count < 2)
             }
             .padding()
         }
+        .background(colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            vm.beginArranging()
-            vm.chosen = Set(vm.players.filter { $0.isSelected == true }.map { $0.id })
-            if let host = vm.hostId {
-                vm.chosen.insert(host)
-            }
+            setupInitialSelection()
         }
         .onChange(of: vm.players) { _, players in
-            let currentIds = Set(players.map { $0.id })
-            vm.chosen = vm.chosen.intersection(currentIds)
-            if let host = vm.hostId {
-                vm.chosen.insert(host)
-            }
+            syncChosen(with: players)
         }
         .onChange(of: vm.hostId) { _, host in
             if host != deviceId { router.pop() }
         }
     }
+}
 
-    // MARK: - Helpers
+// MARK: - Helpers (Extension)
+extension SelectPlayersView {
     private func toggle(_ id: String) {
-        if id == vm.hostId { return }
+        guard id != vm.hostId else { return }
         if vm.chosen.contains(id) {
             vm.chosen.remove(id)
         } else {
@@ -124,6 +131,22 @@ struct SelectPlayersView: View {
 
     private func clearAll() {
         vm.chosen.removeAll()
+        if let host = vm.hostId {
+            vm.chosen.insert(host)
+        }
+    }
+
+    private func setupInitialSelection() {
+        vm.beginArranging()
+        vm.chosen = Set(vm.players.filter { $0.isSelected == true }.map { $0.id })
+        if let host = vm.hostId {
+            vm.chosen.insert(host)
+        }
+    }
+
+    private func syncChosen(with players: [Player]) {
+        let currentIds = Set(players.map { $0.id })
+        vm.chosen = vm.chosen.intersection(currentIds)
         if let host = vm.hostId {
             vm.chosen.insert(host)
         }
