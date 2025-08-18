@@ -9,6 +9,8 @@ struct GameSettingsView: View {
     let roomCode: String
     let selectedIds: [String]
 
+    @State private var showStartSplash = false
+    
     // MARK: - Device
     private let deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? UUID().uuidString
 
@@ -110,6 +112,12 @@ struct GameSettingsView: View {
             enforceHostOnly()
             setDefaultSpyCount()
         }
+        .slidingPage(isPresented: $showStartSplash, text: "Game Starts !")
+        .onChange(of: showStartSplash) { _, isShowing in
+            if !isShowing {
+                router.replace(with: GameDetailView(roomCode: roomCode))
+            }
+        }
     }
 }
 
@@ -123,7 +131,7 @@ extension GameSettingsView {
             totalRounds: vm.totalRounds
         )
         vm.startGame(selectedIds: selectedIds, settings: settings)
-        router.replace(with: GameDetailView(roomCode: roomCode))
+        showStartSplash = true
     }
 
     private func enforceHostOnly() {

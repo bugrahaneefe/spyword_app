@@ -18,3 +18,29 @@ extension View {
         }
     }
 }
+
+extension View {
+    func slidingPage(
+        isPresented: Binding<Bool>,
+        text: String,
+        image: Image = Image("slideSplash"),
+        slideDuration: Double = 0.35,
+        holdDuration: Double = 1.0,
+        verticalAnchor: CGFloat = 0.68,
+        verticalOffset: CGFloat = 0
+    ) -> some View {
+        overlay {
+            if isPresented.wrappedValue {
+                SlidingSplashPage(
+                    isPresented: isPresented,
+                    text: text,
+                    image: image,
+                    slideDuration: slideDuration,
+                    holdDuration: holdDuration,
+                    verticalAnchor: verticalAnchor,
+                    verticalOffset: verticalOffset
+                )
+            }
+        }
+    }
+}
