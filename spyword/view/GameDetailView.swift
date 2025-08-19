@@ -163,30 +163,28 @@ extension GameDetailView {
             ProgressView().padding()
             Spacer()
         } else {
-            ScrollView {
-                VStack(spacing: 20) {
-                    headerRound()
-                    if !amSelected {
-                        notSelectedCard()
-                    } else {
-                        if !continuePressed {
-                            roleRevealCard()
-                        }
-                        if continuePressed {
-                            playersInputsCard()
-                            myTurnInputCard()
-                            guessCTA()
-                            if let e = errorMessage {
-                                Text(e)
-                                    .font(.caption)
-                                    .foregroundColor(.errorRed)
-                                    .padding(.horizontal)
-                            }
+            VStack(spacing: 20) {
+                headerRound()
+                if !amSelected {
+                    notSelectedCard()
+                } else {
+                    if !continuePressed {
+                        roleRevealCard()
+                    }
+                    if continuePressed {
+                        playersInputsCard()
+                        myTurnInputCard()
+                        guessCTA()
+                        if let e = errorMessage {
+                            Text(e)
+                                .font(.caption)
+                                .foregroundColor(.errorRed)
+                                .padding(.horizontal)
                         }
                     }
                 }
-                .padding()
             }
+            .padding()
             .scrollDismissesKeyboard(.interactively)
             .keyboardAdaptive()
         }
@@ -266,23 +264,26 @@ extension GameDetailView {
                 Text("No players yet.")
                     .foregroundColor(.secondary)
             } else {
-                ForEach(selectedPlayers) { p in
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(p.name).bold().foregroundColor(.primary)
-                        ForEach(playerInputs.keys.sorted(), id: \.self) { roundNum in
-                            if let word = playerInputs[roundNum]?[p.id] {
-                                Text("Round \(roundNum): \(word)")
-                                    .font(.caption)
-                                    .foregroundColor(.primaryBlue)
+                ScrollView {
+                    ForEach(selectedPlayers) { p in
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(p.name).bold().foregroundColor(.primary)
+                            ForEach(playerInputs.keys.sorted(), id: \.self) { roundNum in
+                                if let word = playerInputs[roundNum]?[p.id] {
+                                    Text("Round \(roundNum): \(word)")
+                                        .font(.caption)
+                                        .foregroundColor(.primaryBlue)
+                                }
                             }
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
         }
         .padding()
         .frame(maxWidth: .infinity)
+        .frame(height: 320)
         .background(cardBG)
         .cornerRadius(12)
         .shadow(radius: 2)
@@ -294,6 +295,8 @@ extension GameDetailView {
            turnOrder[currentTurnIndex] == deviceId,
            status != "guessReady" {
             VStack(spacing: 12) {
+                Spacer(minLength: 16)
+
                 TextField("Enter a word…", text: $myWordInput)
                     .font(.body)
                     .padding()
@@ -308,13 +311,15 @@ extension GameDetailView {
                 }
             }
             .padding()
-            .background(cardBG.opacity(0)) // spacing only
+            .background(cardBG.opacity(0))
         }
     }
 
     @ViewBuilder
     private func guessCTA() -> some View {
         if status == "guessReady" {
+            Spacer(minLength: 16)
+            
             ButtonText(
                 title: "Guess the Spy",
                 action: { showGuessPopup = true },
@@ -522,6 +527,7 @@ struct SpyGuessView: View {
     @Binding var isPresented: Bool
     var router: Router
 
+    @State private var roomStatus: String = ""
     @State private var selectedId: String? = nil
     @State private var votes: [String: String] = [:]
     @State private var resultText: String? = nil
@@ -541,18 +547,8 @@ struct SpyGuessView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-                .onChange(of: votes) { _, _ in
-                    let db = Firestore.firestore()
-                    db.collection("rooms").document(roomCode).addSnapshotListener { snap, _ in
-                        if let data = snap?.data(),
-                           let info = data["info"] as? [String: Any],
-                           let result = info["resultText"] as? String {
-                            self.resultText = result
-                        }
-                    }
-                }
 
-                if let result = resultText {
+                if roomStatus == "result", let result = resultText {
                     // RESULT
                     Text(result)
                         .font(.title2).bold()
@@ -560,6 +556,7 @@ struct SpyGuessView: View {
                         .padding()
                         .background(Color.primaryBlue)
                         .cornerRadius(12)
+                        .multilineTextAlignment(.center)
 
                     VStack(alignment: .leading, spacing: 4) {
                         ForEach(players) { p in
@@ -618,7 +615,7 @@ struct SpyGuessView: View {
                                 }
                             }
                             .padding()
-                            .background(selectedId == p.id ? Color.secondaryBlue.opacity(0.3) : cardBG)
+                            .background(selectedId == p.id ? Color.secondaryBlue.opacity(0.8) : Color.secondaryBlue.opacity(0.15))
                             .cornerRadius(8)
                         }
                         .buttonStyle(.plain)
@@ -687,9 +684,12 @@ struct SpyGuessView: View {
         let roomRef = db.collection("rooms").document(roomCode)
         roomRef.addSnapshotListener { snap, _ in
             if let data = snap?.data(),
-               let info = data["info"] as? [String: Any],
-               let result = info["resultText"] as? String {
-                self.resultText = result
+               let info = data["info"] as? [String: Any] {
+
+                self.roomStatus = (info["status"] as? String) ?? ""
+                let newResult = info["resultText"] as? String
+
+                self.resultText = (self.roomStatus == "result") ? newResult : nil
             }
         }
     }
