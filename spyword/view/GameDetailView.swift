@@ -47,6 +47,17 @@ struct GameDetailView: View {
     private var cardBG: Color { colorScheme == .dark ? Color.black : Color.white }
     private var pageBG: Color { colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight }
 
+    init(roomCode: String) {
+        self.roomCode = roomCode
+
+        let did = UserDefaults.standard.string(forKey: "deviceId") ?? UUID().uuidString
+        let seenKey = "roleRevealed-\(roomCode)-\(did)"
+        let seen = UserDefaults.standard.bool(forKey: seenKey)
+        
+        _revealedOnce   = State(initialValue: seen)
+        _continuePressed = State(initialValue: seen)
+    }
+    
     var body: some View {
         ZStack(alignment: .top) {
             pageBG.ignoresSafeArea()
@@ -79,6 +90,7 @@ struct GameDetailView: View {
             if isResultPhase(status) && amSelected {
                 showGuessPopup = true
             }
+            if isGuessRelated(status) { continuePressed = true }
         }
         .onChange(of: status) { _, new in
             if isResultPhase(new) && amSelected {
@@ -86,7 +98,7 @@ struct GameDetailView: View {
             } else if !isGuessRelated(new) {
                 showGuessPopup = false
             }
-
+            if isGuessRelated(new) { continuePressed = true }
             if !isGameStatus(new) && !isGuessRelated(new) {
                 markRoleAs(revealStatus: false)
                 router.replace(with: RoomView(roomCode: roomCode))
@@ -182,7 +194,7 @@ extension GameDetailView {
                 if !amSelected {
                     notSelectedCard()
                 } else {
-                    if !continuePressed {
+                    if shouldShowRoleReveal {
                         roleRevealCard()
                     }
                     if continuePressed {
@@ -383,6 +395,11 @@ extension GameDetailView {
     private func isGuessRelated(_ s: String) -> Bool {
         let l = s.lowercased()
         return l == "guessready" || l == "guessing" || l == "result"
+    }
+    
+    private var shouldShowRoleReveal: Bool {
+        // rol kartı sadece oyun aşamasında ve tahmin fazında DEĞİLSE gösterilir
+        return !continuePressed && isGameStatus(status) && !isGuessRelated(status)
     }
 
     private func attachListeners() {
