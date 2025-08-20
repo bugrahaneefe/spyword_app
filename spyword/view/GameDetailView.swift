@@ -611,7 +611,7 @@ struct SpyGuessView: View {
                     .cornerRadius(12)
 
                     if isHost {
-                        ButtonText(title: "Finish") {
+                        ButtonText(title: "Finish Game") {
                             isPresented = false
                             router.replace(with: RoomView(roomCode: roomCode))
 
@@ -679,7 +679,7 @@ struct SpyGuessView: View {
                     }
 
                     if isHost {
-                        ButtonText(title: "Continue") {
+                        ButtonText(title: "Finish Voting") {
                             showResult()
                         }
                     }
