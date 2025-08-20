@@ -76,11 +76,25 @@ struct GameDetailView: View {
                 revealedOnce = true
                 continuePressed = true
             }
+            if isResultPhase(status) && amSelected {
+                showGuessPopup = true
+            }
         }
         .onChange(of: status) { _, new in
-            if !isGameStatus(new) && new != "guessing" && new != "guessReady" && new != "result" {
+            if isResultPhase(new) && amSelected {
+                showGuessPopup = true
+            } else if !isGuessRelated(new) {
+                showGuessPopup = false
+            }
+
+            if !isGameStatus(new) && !isGuessRelated(new) {
                 markRoleAs(revealStatus: false)
                 router.replace(with: RoomView(roomCode: roomCode))
+            }
+        }
+        .onChange(of: amSelected) { _, nowSelected in
+            if nowSelected && isResultPhase(status) {
+                showGuessPopup = true
             }
         }
         .onChange(of: status) { old, new in
@@ -360,6 +374,15 @@ extension GameDetailView {
     private func isGameStatus(_ s: String) -> Bool {
         let l = s.lowercased()
         return l == "the game" || l == "started" || l == "in game"
+    }
+    
+    private func isResultPhase(_ s: String) -> Bool {
+        s.lowercased() == "result"
+    }
+
+    private func isGuessRelated(_ s: String) -> Bool {
+        let l = s.lowercased()
+        return l == "guessready" || l == "guessing" || l == "result"
     }
 
     private func attachListeners() {

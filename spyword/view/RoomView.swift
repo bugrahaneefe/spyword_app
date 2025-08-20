@@ -202,16 +202,26 @@ extension RoomView {
 
     private func isGameStatus(_ s: String) -> Bool {
         switch s.lowercased() {
-        case "the game", "started", "in game": return true
-        default: return false
+        case "the game", "started", "in game", "guessready", "result":
+            return true
+        default:
+            return false
         }
     }
 
     private func checkAndNavigateToGame() {
         guard !navigatedToGame else { return }
-        guard isGameStatus(vm.status) else { return }
         guard amSelected else { return }
+
+        let st = vm.status.lowercased()
+        guard ["the game", "started", "in game", "guessready", "result"].contains(st) else { return }
+
         navigatedToGame = true
-        showStartSplash = true
+
+        if ["guessready", "result"].contains(st) {
+            router.replace(with: GameDetailView(roomCode: roomCode))
+        } else {
+            showStartSplash = true
+        }
     }
 }
