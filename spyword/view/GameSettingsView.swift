@@ -4,6 +4,7 @@ struct GameSettingsView: View {
     // MARK: - Inputs
     @ObservedObject var vm: RoomViewModel
     @EnvironmentObject var router: Router
+    @EnvironmentObject var lang: LanguageManager
     @Environment(\.colorScheme) var colorScheme
 
     let roomCode: String
@@ -112,7 +113,10 @@ struct GameSettingsView: View {
             enforceHostOnly()
             setDefaultSpyCount()
         }
-        .slidingPage(isPresented: $showStartSplash, text: "Game Starts !")
+        .slidingPage(
+            isPresented: $showStartSplash,
+            text: String.localized(key: "game_starts", code: lang.code)
+        )
         .onChange(of: showStartSplash) { _, isShowing in
             if !isShowing {
                 router.replace(with: GameDetailView(roomCode: roomCode))

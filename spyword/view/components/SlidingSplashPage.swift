@@ -56,14 +56,14 @@ struct SlidingSplashPage: View {
     private var enterAnimation: Animation {
         .timingCurve(0.15, 0.85, 0.35, 1.0, duration: slideDuration)
     }
-    private var exitAnimation: Animation {
-        .timingCurve(0.15, 0.85, 0.35, 1.0, duration: slideDuration)
-    }
+//    private var exitAnimation: Animation {
+//        .timingCurve(0.15, 0.85, 0.35, 1.0, duration: slideDuration)
+//    }
 
     private func animate() {
         withAnimation(enterAnimation) { phase = .on }
         DispatchQueue.main.asyncAfter(deadline: .now() + slideDuration + holdDuration) {
-            withAnimation(exitAnimation) { phase = .offLeft }
+//            withAnimation(exitAnimation) { phase = .offLeft }
             DispatchQueue.main.asyncAfter(deadline: .now() + slideDuration) {
                 isPresented = false
             }
