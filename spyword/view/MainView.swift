@@ -155,14 +155,14 @@ private struct LanguagePickerSheet: View {
 
     private func flag(for code: String) -> String {
         switch code.lowercased() {
-        case "tr": return "🇹🇷"
-        case "en": return "🇬🇧"
-        case "de": return "🇩🇪"
-        case "fr": return "🇫🇷"
-        case "es": return "🇪🇸"
-        case "pt": return "🇵🇹"
-        case "it": return "🇮🇹"
-        default:   return "🌐"
+        case "tr": return "\u{1F1F9}\u{1F1F7}" // 🇹🇷
+        case "en": return "\u{1F1EC}\u{1F1E7}" // 🇬🇧
+        case "de": return "\u{1F1E9}\u{1F1EA}" // 🇩🇪
+        case "fr": return "\u{1F1EB}\u{1F1F7}" // 🇫🇷
+        case "es": return "\u{1F1EA}\u{1F1F8}" // 🇪🇸
+        case "pt": return "\u{1F1F5}\u{1F1F9}" // 🇵🇹
+        case "it": return "\u{1F1EE}\u{1F1F9}" // 🇮🇹
+        default:   return "\u{1F310}"          // 🌐
         }
     }
 }
