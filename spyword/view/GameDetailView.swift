@@ -37,9 +37,11 @@ struct GameDetailView: View {
     @State private var spyCount: Int = 1
     
     @State private var showTurnSplash = false
-    @State private var lastSplashTurnIndex: Int? = nil
+    @State private var lastSplashKey: String? = nil
     
     @State private var categoryRaw: String? = nil
+
+    @State private var gameId: String = ""
 
     private var categoryTitleKey: LocalizedStringKey? {
         if let raw = categoryRaw {
@@ -48,6 +50,12 @@ struct GameDetailView: View {
             case "turkiye":       return "category_turkiye"
             case "worldFootball": return "category_world_football"
             case "nfl":           return "category_nfl"
+            case "movies":           return "category_movies"
+            case "science":           return "category_science"
+            case "history":           return "category_history"
+            case "geography":           return "category_geography"
+            case "music":           return "category_music"
+            case "literature":           return "category_literature"
             default:              return "category_custom"
             }
         } else {
@@ -67,6 +75,7 @@ struct GameDetailView: View {
 
     private var cardBG: Color { colorScheme == .dark ? Color.black : Color.white }
     private var pageBG: Color { colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight }
+    private var textFG: Color { colorScheme == .dark ? Color.backgroundLight : Color.backgroundDark }
 
     init(roomCode: String) {
         self.roomCode = roomCode
@@ -139,6 +148,7 @@ struct GameDetailView: View {
                     let db = Firestore.firestore()
                     let roomRef = db.collection("rooms").document(roomCode)
 
+                    let newGameId = UUID().uuidString
                     roomRef.collection("rounds").getDocuments { qs, _ in
                         qs?.documents.forEach { $0.reference.delete() }
                     }
@@ -149,7 +159,8 @@ struct GameDetailView: View {
                     roomRef.updateData([
                         "info.currentRound": 1,
                         "info.currentTurnIndex": 0,
-                        "info.resultText": FieldValue.delete()
+                        "info.resultText": FieldValue.delete(),
+                        "info.gameId": newGameId
                     ])
                 }
             }
@@ -343,10 +354,16 @@ extension GameDetailView {
     @ViewBuilder
     private func playersInputsCard() -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("players")
-                .font(.h2)
-                .foregroundColor(.primary)
-
+            HStack(alignment: .center) {
+                Spacer()
+                Text("players")
+                    .font(.h2)
+                    .foregroundColor(.primary)
+                Spacer()
+            }
+            
+            Divider()
+            
             if selectedPlayers.isEmpty {
                 Text("no_players")
                     .foregroundColor(.secondary)
@@ -354,12 +371,12 @@ extension GameDetailView {
                 ScrollView {
                     ForEach(selectedPlayers) { p in
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(p.name).bold().foregroundColor(.primary)
+                            Text("\(p.name):").bold().foregroundColor(.primary)
                             ForEach(playerInputs.keys.sorted(), id: \.self) { roundNum in
                                 if let word = playerInputs[roundNum]?[p.id] {
                                     Text(String.localized(key: "round_with_word", code: lang.code, roundNum, word))
                                         .font(.caption)
-                                        .foregroundColor(.primaryBlue)
+                                        .foregroundColor(textFG)
                                 }
                             }
                         }
@@ -439,8 +456,9 @@ extension GameDetailView {
 
     private func maybeShowTurnSplash() {
         guard continuePressed, isMyTurn else { return }
-        if lastSplashTurnIndex != currentTurnIndex {
-            lastSplashTurnIndex = currentTurnIndex
+        let key = "\(currentRound)#\(currentTurnIndex)"
+        if lastSplashKey != key {
+            lastSplashKey = key
             showTurnSplash = true
         }
     }
@@ -493,7 +511,8 @@ extension GameDetailView {
             self.status = (info["status"] as? String) ?? "started"
             self.hostId = (info["hostId"] as? String) ?? ""
             self.gameWord = info["word"] as? String
-
+            self.gameId = (info["gameId"] as? String) ?? self.gameId
+            
             self.currentRound = (info["currentRound"] as? Int) ?? 1
             self.totalRounds = (info["totalRounds"] as? Int) ?? 3
             self.turnOrder = (info["turnOrder"] as? [String]) ?? []
@@ -544,6 +563,14 @@ extension GameDetailView {
             self.playerInputs = updated
         }
     }
+    
+    private func revealKey() -> String {
+        if gameId.isEmpty {
+            return "roleRevealed-\(roomCode)-\(deviceId)"
+        } else {
+            return "roleRevealed-\(roomCode)-\(gameId)-\(deviceId)"
+        }
+    }
 
     private func endGameAndReset() {
         let db = Firestore.firestore()
@@ -575,11 +602,11 @@ extension GameDetailView {
 
     private func markRoleAs(revealStatus: Bool) {
         revealedOnce = revealStatus
-        UserDefaults.standard.set(revealStatus, forKey: "roleRevealed-\(roomCode)-\(deviceId)")
+        UserDefaults.standard.set(revealStatus, forKey: revealKey())
     }
 
     private func hasSeenRole() -> Bool {
-        UserDefaults.standard.bool(forKey: "roleRevealed-\(roomCode)-\(deviceId)")
+        UserDefaults.standard.bool(forKey: revealKey())
     }
 
     private func submitWord() {
@@ -632,7 +659,7 @@ extension GameDetailView {
 
         // içerik
         gameWord = nil
-        lastSplashTurnIndex = nil
+        lastSplashKey = nil
 
         // role reveal flag’i sıfırla (aynı odada yeni oyunda tekrar gösterilsin)
         markRoleAs(revealStatus: false)

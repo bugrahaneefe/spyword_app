@@ -184,7 +184,7 @@ struct RoomView: View {
                         }
                         .padding(.vertical, 10)
                         .padding(.horizontal, 12)
-                        .background(colorScheme == .dark ? Color.black : Color.white)
+                        .background(colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
                         .cornerRadius(12)
                         .shadow(color: .black.opacity(0.06), radius: 6, x: 0, y: 2)
                     }
