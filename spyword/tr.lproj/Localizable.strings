@@ -142,3 +142,15 @@
 "result_spies_escaped"    = "Olmadı! Casuslar kaçtı.";
 
 "your_turn" = "Sıra sende!";
+
+"how_to_play_title" = "Nasıl Oynanır";
+"how_intro" = "SpyWord bir sosyal çıkarım oyunudur. Bazı oyuncular gizli kelimeyi bilir; casus bilmez. Başlamak için adımları izleyin.";
+"how_step_1" = "1. Bir oda oluşturun ya da bir odaya katılın. Ev sahibi oyuncuları seçer ve kuralları belirler.";
+"how_step_2" = "2. Roller gizlice atanır (Bilen veya Casus). Rolünü göster ve Devam’a dokun.";
+"how_step_3" = "3. Bilenler gizli kelimeyi görür—kendine sakla.";
+"how_step_4" = "4. Sıra ile ilerlenir. Sıra sende olduğunda, kelimeyle ilgili tek bir ipucu yaz (kelimenin kendisini yazma).";
+"how_step_5" = "5. Casus, kelimeyi bilmeden araya karışmaya çalışır. Bilenler, kelimeyi ele vermeden takımına yardımcı olacak ipuçları verir.";
+"how_step_6" = "6. Birkaç tur ipucundan sonra oyun oylama aşamasına geçer.";
+"how_step_7" = "7. Oylama: Casus olduğunu düşündüğün oyuncu(ları) seç. Birden fazla casus varsa, tam casus sayısı kadar seçim yap.";
+"how_step_8" = "8. Sonuç: Tüm casuslar yakalanırsa Bilenler kazanır. Herhangi bir casus kaçarsa Casuslar kazanır.";
+"how_tips"      = "İpucu: İpuçların net ama çok da bariz olmasın. Fazla açık casusa yarar; fazla belirsiz de takımı şüph_

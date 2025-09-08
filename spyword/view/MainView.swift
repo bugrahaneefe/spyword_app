@@ -12,6 +12,7 @@ struct MainView: View {
     @Environment(\.colorScheme) var colorScheme
 
     @State private var showLanguageSheet = false
+    @State private var showHowToSheet = false   // NEW
 
     var body: some View {
         ZStack {
@@ -20,9 +21,8 @@ struct MainView: View {
 
             // centered content
             VStack(spacing: 24) {
-                
                 Spacer()
-                
+
                 Constant.appImage
                     .resizable()
                     .frame(width: 144, height: 144)
@@ -35,9 +35,9 @@ struct MainView: View {
                 ButtonText(title: "join_game") {
                     router.replace(with: JoinGameView())
                 }
-                
+
                 Spacer()
-                
+
                 ButtonIcon(iconName: "lock.shield") {
                     if let url = Constant.privacyPolicyUrl { UIApplication.shared.open(url) }
                 }
@@ -46,8 +46,8 @@ struct MainView: View {
             .padding()
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
 
-            // top-right language button
-            VStack {
+            // top-right: language + help (question mark) buttons
+            VStack(alignment: .trailing, spacing: 8) {
                 HStack {
                     Spacer()
                     ButtonIcon(iconName: "globe") {
@@ -55,17 +55,36 @@ struct MainView: View {
                     }
                     .padding(.trailing, 16)
                 }
+
+                HStack {
+                    Spacer()
+                    ButtonIcon(iconName: "questionmark.circle") {   // NEW
+                        showHowToSheet = true
+                    }
+                    .padding(.trailing, 16)
+                }
+
                 Spacer()
             }
             .padding(.top, 16)
         }
         .onAppear(perform: setupDeviceIDIfNeeded)
+
+        // Language sheet
         .sheet(isPresented: $showLanguageSheet) {
             LanguagePickerSheet(selected: lang.code) { newCode in
                 lang.set(newCode)
             }
             .presentationDetents([.medium])
             .presentationDragIndicator(.visible)
+        }
+
+        // How to play sheet
+        .sheet(isPresented: $showHowToSheet) {
+            HowToPlaySheet()       // NEW
+                .environment(\.locale, lang.locale)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
         }
     }
 
@@ -90,7 +109,6 @@ private struct LanguagePickerSheet: View {
                         onSelect("tr")
                         dismiss()
                     }
-                    
                     ButtonText(title: "language_english") {
                         onSelect("en")
                         dismiss()
@@ -99,6 +117,41 @@ private struct LanguagePickerSheet: View {
                 .padding(.vertical, 16)
             }
             .navigationTitle(Text("language_title"))
+            .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+}
+
+// NEW: How-to sheet
+private struct HowToPlaySheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("how_intro")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                        .padding(.bottom, 4)
+
+                    Group {
+                        Text("how_step_1").font(.body)
+                        Text("how_step_2").font(.body)
+                        Text("how_step_3").font(.body)
+                        Text("how_step_4").font(.body)
+                        Text("how_step_5").font(.body)
+                        Text("how_step_6").font(.body)
+                        Text("how_step_7").font(.body)
+                        Text("how_step_8").font(.body)
+                        Text("how_tips").font(.footnote).foregroundColor(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding(.vertical, 16)
+                .padding(.horizontal, 16)
+            }
+            .navigationTitle(Text("how_to_play_title"))
             .navigationBarTitleDisplayMode(.inline)
         }
     }

@@ -142,3 +142,15 @@
 "result_spies_escaped"    = "Nope! The spies escaped.";
 
 "your_turn" = "Your Turn!";
+
+"how_to_play_title" = "How to Play";
+"how_intro" = "SpyWord is a social deduction game. Some players know a secret word; the spy doesn’t. Follow the steps below to get started.";
+"how_step_1" = "1. Create or join a room. The host picks players and sets the rules.";
+"how_step_2" = "2. Roles are assigned in secret (Knower or Spy). Reveal your role and tap Continue.";
+"how_step_3" = "3. Knowers see the secret word—keep it to yourself.";
+"how_step_4" = "4. Turns go in order. On your turn, type a single clue related to the word (don’t use the word itself).";
+"how_step_5" = "5. The Spy tries to blend in without knowing the word. Knowers give hints that help teammates without exposing it.";
+"how_step_6" = "6. After several rounds of clues, the game moves to voting.";
+"how_step_7" = "7. Voting: Pick the player(s) you believe are the spy. If there are multiple spies, select exactly that many.";
+"how_step_8" = "8. Results: If all spies are caught, Knowers win. If any spy escapes, the Spies win.";
+"how_tips"      = "Tip: Keep clues specific but not obvious. Too clear helps the Spy; too vague makes your team suspicious.";
