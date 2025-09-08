@@ -141,7 +141,7 @@ extension GameSettingsView {
     }
 
     private func setDefaultSpyCount() {
-        vm.spyCount = min(1, maxSpyCount)
+        vm.spyCount = min(0, maxSpyCount)
     }
 
     private var canStart: Bool {

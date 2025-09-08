@@ -131,3 +131,12 @@
 
 "game_starts" = "Game starts!";
 "copied" = "Copied";
+
+"total_spies_count" = "Total Spies: %d";
+/* Multi-select voting helper (shown until the user has selected exactly N players) */
+"select_n_players" = "Select %d player(s).";
+
+/* Result texts for multiple spies */
+"result_all_spies_found" = "Excellent! All spies were found.";
+"result_some_spies_found" = "Partial success! Some spies were found.";
+"result_spies_escaped"    = "Nope! The spies escaped.";

@@ -34,6 +34,7 @@ struct GameDetailView: View {
     @State private var playerInputs: [Int: [String: String]] = [:]
     @State private var myWordInput: String = ""
     @State private var showGuessPopup = false
+    @State private var spyCount: Int = 1
 
     private let deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? UUID().uuidString
     private var isHost: Bool { hostId == deviceId }
@@ -267,6 +268,10 @@ extension GameDetailView {
                     .font(.title3).bold()
                     .foregroundColor(.primary)
 
+                Text(String.localized(key: "total_spies_count", code: lang.code, spyCount))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
                 if !iAmSpy, let word = gameWord {
                     Text(String.localized(key: "game_word", code: lang.code, word))
                         .font(.body)
@@ -428,6 +433,7 @@ extension GameDetailView {
             self.totalRounds = (info["totalRounds"] as? Int) ?? 3
             self.turnOrder = (info["turnOrder"] as? [String]) ?? []
             self.currentTurnIndex = (info["currentTurnIndex"] as? Int) ?? 0
+            self.spyCount = (info["spyCount"] as? Int) ?? 1
 
             self.isLoading = false
         }
@@ -576,9 +582,11 @@ struct SpyGuessView: View {
     var router: Router
 
     @State private var roomStatus: String = ""
-    @State private var selectedId: String? = nil
-    @State private var votes: [String: String] = [:]
+    @State private var selectedIds: Set<String> = []
+    @State private var votes: [String: [String]] = [:]
     @State private var resultText: String? = nil
+    @State private var spyCount: Int = 1
+    @State private var guessedSpyIds: Set<String> = []
     @Environment(\.colorScheme) var colorScheme
 
     private var cardBG: Color { colorScheme == .dark ? Color.black : Color.white }
@@ -608,9 +616,17 @@ struct SpyGuessView: View {
 
                     VStack(alignment: .leading, spacing: 4) {
                         ForEach(players) { p in
-                            Text("\(p.name) - \(p.role ?? "?")")
-                                .font(.body)
-                                .foregroundColor(.primary)
+                            HStack(spacing: 8) {
+                                Text("\(p.name) - \(p.role ?? "?")")
+                                    .font(.body)
+                                    .foregroundColor(.primary)
+
+                                if guessedSpyIds.contains(p.id) {
+                                    Image(systemName: "target")
+                                        .foregroundColor(.primaryBlue)
+                                        .imageScale(.medium)
+                                }
+                            }
                         }
                     }
                     .padding()
@@ -649,36 +665,49 @@ struct SpyGuessView: View {
 
                     ForEach(players) { p in
                         Button {
-                            selectedId = p.id
+                            if selectedIds.contains(p.id) {
+                                selectedIds.remove(p.id)
+                            } else if selectedIds.count < spyCount {
+                                selectedIds.insert(p.id)
+                            }
                         } label: {
                             HStack {
                                 Text(p.name).foregroundColor(.primary)
                                 Spacer()
-                                if votes.values.contains(p.id) {
-                                    Text("\(votes.values.filter{$0==p.id}.count)")
+                                let count = voteCount(for: p.id)
+                                if count > 0 {
+                                    Text("\(count)")
                                         .padding(6)
                                         .background(Color.primaryBlue)
                                         .foregroundColor(.white)
                                         .clipShape(Circle())
                                 }
+                                // visual selection
+                                Image(systemName: selectedIds.contains(p.id) ? "checkmark.circle.fill" : "circle")
                             }
                             .padding()
-                            .background(selectedId == p.id ? Color.secondaryBlue.opacity(0.8) : Color.secondaryBlue.opacity(0.15))
+                            .background(
+                                selectedIds.contains(p.id)
+                                ? Color.secondaryBlue.opacity(0.8)
+                                : Color.secondaryBlue.opacity(0.15)
+                            )
                             .cornerRadius(8)
                         }
                         .buttonStyle(.plain)
                         .disabled(votes[deviceId] != nil)
                     }
 
-                    if votes[deviceId] == nil, let sel = selectedId {
+                    if votes[deviceId] == nil, selectedIds.count == spyCount {
                         ButtonText(title: "vote") {
-                            castVote(for: sel)
+                            castVotes(Array(selectedIds))
                         }
                     }
-
-                    if votes[deviceId] != nil, votes.count != players.count {
-                        Text("voted_waiting_others")
+                    
+                    if votes[deviceId] == nil, selectedIds.count < spyCount {
+                        Text(String.localized(key: "select_n_players", code: lang.code, spyCount))
                             .foregroundColor(.secondary)
+                    } else if votes[deviceId] != nil, votes.count != players.count {
+                        Text("voted_waiting_others").foregroundColor(.secondary)
                     }
 
                     if votes.count == players.count {
@@ -703,16 +732,19 @@ struct SpyGuessView: View {
             attachGuessListener()
         }
     }
+    
+    private func voteCount(for targetId: String) -> Int {
+        votes.values.flatMap { $0 }.filter { $0 == targetId }.count
+    }
 
-    private func castVote(for targetId: String) {
-        selectedId = targetId
+    private func castVotes(_ targetIds: [String]) {
         let db = Firestore.firestore()
         let ref = db.collection("rooms")
             .document(roomCode)
             .collection("guesses")
             .document(deviceId)
 
-        ref.setData(["vote": targetId])
+        ref.setData(["votes": targetIds])
     }
 
     private func attachGuessListener() {
@@ -720,10 +752,13 @@ struct SpyGuessView: View {
         let ref = db.collection("rooms").document(roomCode).collection("guesses")
 
         ref.addSnapshotListener { qs, _ in
-            var dict: [String: String] = [:]
+            var dict: [String: [String]] = [:]
             qs?.documents.forEach { doc in
-                if let v = doc.data()["vote"] as? String {
-                    dict[doc.documentID] = v
+                let data = doc.data()
+                if let arr = data["votes"] as? [String] {
+                    dict[doc.documentID] = arr
+                } else if let single = data["vote"] as? String {
+                    dict[doc.documentID] = [single]
                 }
             }
             self.votes = dict
@@ -734,41 +769,52 @@ struct SpyGuessView: View {
             if let data = snap?.data(),
                let info = data["info"] as? [String: Any] {
 
+                if let ids = info["guessedSpyIds"] as? [String] {
+                    self.guessedSpyIds = Set(ids)
+                } else {
+                    self.guessedSpyIds = []
+                }
+                
                 self.roomStatus = (info["status"] as? String) ?? ""
+                self.spyCount = (info["spyCount"] as? Int) ?? 1
                 let newResult = info["resultText"] as? String
-
                 self.resultText = (self.roomStatus == "result") ? newResult : nil
             }
         }
     }
 
     private func showResult() {
-        let tally = Dictionary(grouping: votes.values, by: { $0 }).mapValues { $0.count }
-        if let maxId = tally.max(by: { $0.value < $1.value })?.key,
-           let spy = players.first(where: { $0.role == "spy" }) {
+        guard !players.isEmpty else { return }
 
-            let votedPlayerName = players.first(where: { $0.id == maxId })?.name ?? String.localized(key: "unknown", code: lang.code)
+        var tally: [String:Int] = [:]
+        votes.values.flatMap { $0 }.forEach { tally[$0, default: 0] += 1 }
 
-            if maxId == spy.id {
-                resultText = String.localized(key: "result_correct_spy_found", code: lang.code)
-            } else {
-                resultText = String.localized(key: "result_wrong_spy_escaped", code: lang.code)
-            }
+        let ordered = tally.sorted { $0.value > $1.value }.map { $0.key }
+        let topN = Array(ordered.prefix(max(0, spyCount)))
 
-            let db = Firestore.firestore()
-            let roomRef = db.collection("rooms").document(roomCode)
-            roomRef.updateData([
-                "info.status": "result",
-                "info.resultText": resultText ?? ""
-            ])
+        let actualSpies = Set(players.compactMap { $0.role == "spy" ? $0.id : nil })
+        let found = Set(topN)
+        let allCaught = found == actualSpies
+        let anyCaught = !found.intersection(actualSpies).isEmpty
+
+        if allCaught {
+            resultText = String.localized(key: "result_all_spies_found", code: lang.code)
+        } else if anyCaught {
+            resultText = String.localized(key: "result_some_spies_found", code: lang.code)
         } else {
-            resultText = String.localized(key: "result_no_clear", code: lang.code)
-            let db = Firestore.firestore()
-            let roomRef = db.collection("rooms").document(roomCode)
-            roomRef.updateData([
-                "info.status": "result",
-                "info.resultText": resultText ?? ""
-            ])
+            resultText = String.localized(key: "result_spies_escaped", code: lang.code)
         }
+
+        // persist + guessedSpyIds
+        let db = Firestore.firestore()
+        let roomRef = db.collection("rooms").document(roomCode)
+        roomRef.updateData([
+            "info.status": "result",
+            "info.resultText": resultText ?? "",
+            "info.guessedSpyIds": topN
+        ])
+
+        // local state de dolsun ki anında çizelim
+        self.guessedSpyIds = Set(topN)
     }
 }

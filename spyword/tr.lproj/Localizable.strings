@@ -131,3 +131,12 @@
 
 "game_starts" = "Oyun başlıyor!";
 "copied" = "Kopyalandı";
+
+"total_spies_count" = "Toplam Casus: %d";
+/* Çoklu seçim oylama uyarısı (kullanıcı tam N oyuncu seçene kadar) */
+"select_n_players" = "%d oyuncu seçin.";
+
+/* Birden fazla casus için sonuç metinleri */
+"result_all_spies_found" = "Harika! Tüm casuslar bulundu.";
+"result_some_spies_found" = "Kısmi başarı! Bazı casuslar bulundu.";
+"result_spies_escaped"    = "Olmadı! Casuslar kaçtı.";
