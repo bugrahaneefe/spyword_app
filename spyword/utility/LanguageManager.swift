@@ -1,7 +1,7 @@
 import SwiftUI
 
 final class LanguageManager: ObservableObject {
-    static let supported = ["en", "tr"]
+    static let supported = ["en", "tr", "de", "fr", "es", "pt", "it"]
     private let storageKey = "app.language"
 
     @AppStorage("app.language") private var stored: String = ""

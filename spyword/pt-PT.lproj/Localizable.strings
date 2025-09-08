@@ -1,0 +1,169 @@
+/* Main actions */
+"create_game" = "Criar jogo";
+"join_game" = "Entrar no jogo";
+"start" = "Iniciar";
+
+/* Language UI */
+"language_title" = "Seleção de idioma";
+"language_turkish" = "Turco";
+"language_english" = "Inglês";
+"close" = "Fechar";
+"change_language" = "Alterar idioma";
+
+/* Common / other screens */
+"main_menu" = "Menu principal";
+"preparing_room" = "Preparando a sala";
+"your_name" = "Seu nome";
+"copy" = "Copiar";
+"next" = "Avançar";
+"room_creation_failed" = "Não foi possível criar a sala: %@";
+"name_add_failed" = "Não foi possível adicionar o nome: %@";
+
+/* Status labels */
+"status_waiting" = "Aguardando";
+"status_arranging" = "Organizando";
+"status_started" = "Iniciado";
+"status_in_game" = "Em jogo";
+
+/* Accessibility */
+"room_status_accessibility" = "Status da sala:";
+
+"end_game" = "Encerrar jogo";
+"round_progress" = "Rodada: %1$d / %2$d";
+"not_selected" = "Você não foi selecionado para este jogo.";
+"back_to_room" = "Voltar à sala";
+"tap_to_reveal" = "Toque para revelar seu papel:";
+"show_role" = "Mostrar meu papel";
+"game_word" = "Palavra: %@";
+"continue" = "Continuar";
+"players" = "Jogadores";
+"no_players" = "Sem jogadores";
+
+/* Roles */
+"role_spy" = "Seu papel: ESPIÃO 🕵️‍♂️";
+"role_knower" = "Seu papel: Conhecedor ✅";
+"role_pending" = "Seu papel está sendo atribuído…";
+
+/* Errors */
+"room_info_error" = "Não foi possível carregar as informações da sala.";
+
+"game_settings_title" = "Configurações do jogo";
+
+"word_section" = "Palavra";
+"word_mode_random" = "Começar com uma palavra aleatória";
+"word_mode_custom" = "Inserir a sua";
+"enter_word" = "Inserir palavra";
+"custom_word_note" = "Observação: Se o anfitrião inserir a palavra, ele se torna automaticamente o Conhecedor.";
+
+"numeric_settings" = "Configurações numéricas";
+"spy_count" = "Número de espiões";
+"round_count" = "Número de rodadas";
+
+"join_room_title" = "Entrar na sala";
+"recent_rooms" = "Salas recentes";
+
+"join_button" = "Entrar";
+"loading_text" = "Carregando…";
+
+"room_code_placeholder" = "Código da sala (6 dígitos)";
+"nickname_placeholder" = "Apelido";
+
+"invalid_room_code_error" = "Insira um código de sala válido de 6 dígitos.";
+"empty_nickname_error" = "Insira um apelido.";
+"room_not_found_error" = "Sala não encontrada ou inválida.";
+"host_not_ready_error" = "Aguarde o anfitrião inserir um nome e tocar em «Avançar».";
+"join_failed_error" = "Falha ao entrar: %@";
+
+"room_code" = "Código da sala: %@";
+"you_are_here" = "Você está aqui";
+"remove" = "Remover";
+"start_game" = "Iniciar jogo";
+"removed_from_room_title" = "Você foi removido da sala";
+"removed_from_room_message" = "Você foi expulso pelo anfitrião.";
+
+"select_players" = "Selecionar jogadores";
+"selected_count" = "%d selecionado(s)";
+"select_all" = "Selecionar todos";
+"clear" = "Limpar";
+"options" = "Opções";
+"cancel" = "Cancelar";
+"continue" = "Continuar";
+
+/* Top bar */
+"room_title_with_code" = "Sala: %@";
+
+/* Countdown / reveal */
+"revealing_in_seconds" = "Revelando em %d segundos…";
+"spy" = "Espião";
+"knower" = "Conhecedor";
+"pending_role" = "Papel pendente…";
+
+/* Round lines */
+"round_with_word" = "Rodada %1$d: %2$@";
+
+/* Inputs */
+"send_word" = "Enviar palavra";
+
+/* Guess flow */
+"guess_the_spy" = "Adivinhar o espião";
+"who_is_the_spy" = "Quem é o espião?";
+"vote" = "Votar";
+"voted_waiting_others" = "Você votou. Aguardando os outros…";
+"all_voted_waiting_host" = "Todos votaram. Aguardando o anfitrião…";
+"finish_voting" = "Finalizar votação";
+
+/* Results */
+"result_correct_spy_found" = "Correto! O espião foi encontrado.";
+"result_wrong_spy_escaped" = "Errado! O espião escapou.";
+"result_no_clear" = "Sem resultado claro.";
+"unknown" = "Desconhecido";
+
+"game_starts" = "O jogo vai começar!";
+"copied" = "Copiado";
+
+"total_spies_count" = "Total de espiões: %d";
+/* Multi-select voting helper */
+"select_n_players" = "Selecione %d jogador(es).";
+
+"result_all_spies_found" = "Excelente! Todos os espiões foram encontrados.";
+"result_some_spies_found" = "Sucesso parcial! Alguns espiões foram encontrados.";
+"result_spies_escaped" = "Não! Os espiões escaparam.";
+
+"your_turn" = "Sua vez!";
+
+"how_to_play_title" = "Como jogar";
+"how_intro" = "SpyWord é um jogo de dedução social. Alguns jogadores sabem uma palavra secreta; o espião não. Siga os passos abaixo para começar.";
+"how_step_1" = "1. Crie ou entre em uma sala. O anfitrião escolhe jogadores e define as regras.";
+"how_step_2" = "2. Os papéis são atribuídos em segredo (Conhecedor ou Espião). Revele seu papel e toque em Continuar.";
+"how_step_3" = "3. Os Conhecedores veem a palavra secreta — mantenha-a em segredo.";
+"how_step_4" = "4. As jogadas seguem em ordem. Na sua vez, digite uma única pista relacionada à palavra (não use a palavra em si).";
+"how_step_5" = "5. O espião tenta se misturar sem conhecer a palavra. Os Conhecedores dão pistas que ajudam o time sem revelá-la.";
+"how_step_6" = "6. Após várias rodadas de pistas, ocorre a votação.";
+"how_step_7" = "7. Votação: Escolha os jogadores que você acredita serem o espião. Se houver vários, selecione exatamente esse número.";
+"how_step_8" = "8. Resultados: Se todos os espiões forem pegos, os Conhecedores vencem. Se algum espião escapar, os Espiões vencem.";
+"how_tips" = "Dica: Dê pistas específicas, mas não óbvias. Muito claro ajuda o espião; muito vago o torna suspeito.";
+
+"category_section" = "Categoria";
+"category_world" = "Mundo (Pessoas e personagens famosos)";
+"category_turkiye" = "Türkiye (Famosos locais)";
+"category_world_football" = "Futebol mundial";
+"category_nfl" = "NFL";
+"category_hint" = "Escolha um conjunto. Um nome/personagem aleatório desse conjunto será usado como a palavra secreta.";
+
+"category_custom" = "Palavra personalizada";
+
+"spy_guesses_title" = "Palpites do espião";
+"spy_guess_pending" = "Nenhum palpite ainda";
+"spy_guess_word" = "Adivinhar a palavra";
+"enter_guess" = "Digite seu palpite";
+"submit_guess" = "Enviar palpite";
+"reveal_secret_word" = "Revelar palavra secreta";
+"revealed_secret_word" = "Palavra secreta: %@";
+"result_spies_win_by_guess" = "Os Espiões vencem! Eles adivinharam a palavra secreta.";
+
+"category_movies" = "Cinema (Filmes e personagens famosos)";
+"category_science" = "Ciência (Cientistas e descobertas)";
+"category_history" = "História (Figuras e eventos)";
+"category_geography" = "Geografia (Lugares e marcos)";
+"category_music" = "Música (Cantores e bandas)";
+"category_literature" = "Literatura (Escritores e personagens)";
