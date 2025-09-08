@@ -154,3 +154,12 @@
 "how_step_7" = "7. Voting: Pick the player(s) you believe are the spy. If there are multiple spies, select exactly that many.";
 "how_step_8" = "8. Results: If all spies are caught, Knowers win. If any spy escapes, the Spies win.";
 "how_tips"      = "Tip: Keep clues specific but not obvious. Too clear helps the Spy; too vague makes your team suspicious.";
+
+"category_section" = "Category";
+"category_world" = "World (Famous people & characters)";
+"category_turkiye" = "Türkiye (Famous locally)";
+"category_world_football" = "World Football";
+"category_nfl" = "NFL";
+"category_hint" = "Pick a pool. A random name/character from that pool will be used as the secret word.";
+
+"category_custom" = "Custom Word";

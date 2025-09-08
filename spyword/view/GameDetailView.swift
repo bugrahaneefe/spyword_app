@@ -38,6 +38,22 @@ struct GameDetailView: View {
     
     @State private var showTurnSplash = false
     @State private var lastSplashTurnIndex: Int? = nil
+    
+    @State private var categoryRaw: String? = nil
+
+    private var categoryTitleKey: LocalizedStringKey? {
+        if let raw = categoryRaw {
+            switch raw {
+            case "world":         return "category_world"
+            case "turkiye":       return "category_turkiye"
+            case "worldFootball": return "category_world_football"
+            case "nfl":           return "category_nfl"
+            default:              return "category_world"
+            }
+        } else {
+            return "category_custom"
+        }
+    }
 
     private let deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? UUID().uuidString
     private var isHost: Bool { hostId == deviceId }
@@ -180,10 +196,10 @@ extension GameDetailView {
             .layoutPriority(2)
 
             Spacer(minLength: 8)
-
+            
             StatusBadge(status: status)
                 .layoutPriority(3)
-
+            
             if isHost && isGameStatus(status) {
                 Button(action: endGameAndReset) {
                     Image(systemName: "rectangle.portrait.and.arrow.right")
@@ -211,7 +227,27 @@ extension GameDetailView {
             Spacer()
         } else {
             VStack(spacing: 20) {
-                headerRound()
+                HStack {
+                    headerRound()
+                    
+                    Spacer(minLength: 8)
+                    
+                    if let key = categoryTitleKey {
+                        HStack(spacing: 6) {
+                            Image(systemName: "circle.fill")
+                                .font(.system(size: 8))
+                            Text(key)
+                                .font(.caption).bold()
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .foregroundColor(.primary)
+                        .background(Color.secondaryBlue.opacity(0.15))
+                        .cornerRadius(999)
+                    }
+                }
+                .padding()
+                
                 if !amSelected {
                     notSelectedCard()
                 } else {
@@ -463,6 +499,7 @@ extension GameDetailView {
             self.turnOrder = (info["turnOrder"] as? [String]) ?? []
             self.currentTurnIndex = (info["currentTurnIndex"] as? Int) ?? 0
             self.spyCount = (info["spyCount"] as? Int) ?? 1
+            self.categoryRaw = info["category"] as? String
 
             self.maybeShowTurnSplash()
             

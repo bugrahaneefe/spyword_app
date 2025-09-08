@@ -153,4 +153,12 @@
 "how_step_6" = "6. Birkaç tur ipucundan sonra oyun oylama aşamasına geçer.";
 "how_step_7" = "7. Oylama: Casus olduğunu düşündüğün oyuncu(ları) seç. Birden fazla casus varsa, tam casus sayısı kadar seçim yap.";
 "how_step_8" = "8. Sonuç: Tüm casuslar yakalanırsa Bilenler kazanır. Herhangi bir casus kaçarsa Casuslar kazanır.";
-"how_tips"      = "İpucu: İpuçların net ama çok da bariz olmasın. Fazla açık casusa yarar; fazla belirsiz de takımı şüph_
+"how_tips"      = "İpucu: İpuçların net ama çok da bariz olmasın. Fazla açık casusa yarar; fazla belirsiz de takımı şüphelendirir";
+
+"category_section" = "Kategori";
+"category_world" = "Dünya (Ünlü kişi & karakterler)";
+"category_turkiye" = "Türkiye (Ünlü kişi & karakterler)";
+"category_world_football" = "Dünya Futbolu";
+"category_nfl" = "NFL";
+"category_hint" = "Bir havuz seçin. Gizli kelime bu havuzdan rastgele seçilir.";
+"category_custom" = "Özel Kelime";

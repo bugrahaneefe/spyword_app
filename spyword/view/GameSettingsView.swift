@@ -45,8 +45,8 @@ struct GameSettingsView: View {
                         Text("word_mode_random").tag(GameSettings.WordMode.random)
                         Text("word_mode_custom").tag(GameSettings.WordMode.custom)
                     } label: {}
-                    .pickerStyle(.inline)
-
+                        .pickerStyle(.inline)
+                    
                     if vm.mode == .custom {
                         TextField("enter_word", text: $vm.customWord)
                             .textInputAutocapitalization(.never)
@@ -54,13 +54,29 @@ struct GameSettingsView: View {
                             .onChange(of: vm.customWord) { _, new in
                                 if new.count > 40 { vm.customWord = String(new.prefix(40)) }
                             }
-
+                        
                         Text("custom_word_note")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
+                    
+                    if vm.mode == .random {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                CategoryChip(titleKey: "category_world",    isSelected: vm.category == .world)        { vm.category = .world }
+                                CategoryChip(titleKey: "category_turkiye",  isSelected: vm.category == .turkiye)      { vm.category = .turkiye }
+                                CategoryChip(titleKey: "category_world_football", isSelected: vm.category == .worldFootball) { vm.category = .worldFootball }
+                                CategoryChip(titleKey: "category_nfl",      isSelected: vm.category == .nfl)           { vm.category = .nfl }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        
+                        Text("category_hint")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
-
+                
                 Section(header: Text("numeric_settings")) {
                     Stepper(value: $vm.spyCount, in: 0...maxSpyCount) {
                         HStack {
@@ -70,7 +86,7 @@ struct GameSettingsView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
-
+                    
                     Stepper(value: $vm.totalRounds, in: 1...10) {
                         HStack {
                             Text("round_count")
@@ -132,7 +148,8 @@ extension GameSettingsView {
             mode: vm.mode,
             customWord: vm.mode == .custom ? vm.customWord : nil,
             spyCount: vm.spyCount,
-            totalRounds: vm.totalRounds
+            totalRounds: vm.totalRounds,
+            category: vm.category
         )
         vm.startGame(selectedIds: selectedIds, settings: settings)
         showStartSplash = true
@@ -145,7 +162,7 @@ extension GameSettingsView {
     }
 
     private func setDefaultSpyCount() {
-        vm.spyCount = min(0, maxSpyCount)
+        vm.spyCount = min(1, maxSpyCount)
     }
 
     private var canStart: Bool {
@@ -154,5 +171,32 @@ extension GameSettingsView {
             return !vm.customWord.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         }
         return true
+    }
+}
+
+private struct CategoryChip: View {
+    let titleKey: LocalizedStringKey
+    let isSelected: Bool
+    let onTap: () -> Void
+    @Environment(\.colorScheme) var colorScheme
+
+    var body: some View {
+        Button {
+            onTap()
+        } label: {
+            Text(titleKey)
+                .font(.caption).bold()
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(isSelected ? Color.primaryBlue.opacity(0.9) : (colorScheme == .dark ? Color.black.opacity(0.2) : Color.white))
+                .foregroundColor(isSelected ? .white : .primary)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 999)
+                        .stroke(isSelected ? Color.primaryBlue : Color.primary.opacity(0.15), lineWidth: 1)
+                )
+                .cornerRadius(999)
+                .shadow(color: .black.opacity(isSelected ? 0.2 : 0.05), radius: 4, x: 0, y: 2)
+        }
+        .buttonStyle(.plain)
     }
 }
