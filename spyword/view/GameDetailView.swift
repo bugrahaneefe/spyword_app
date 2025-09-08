@@ -5,6 +5,7 @@ struct GameDetailView: View {
     let roomCode: String
 
     @EnvironmentObject var router: Router
+    @EnvironmentObject var lang: LanguageManager
     @Environment(\.colorScheme) var colorScheme
 
     @State private var isLoading = true
@@ -79,6 +80,7 @@ struct GameDetailView: View {
                     isPresented: $showGuessPopup,
                     router: router
                 )
+                .environmentObject(lang)
             }
         }
         .onAppear {
@@ -151,7 +153,7 @@ extension GameDetailView {
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "chevron.left")
-                    Text("Room: \(roomCode)")
+                    Text(String.localized(key: "room_title_with_code", code: lang.code, roomCode))
                 }
                 .font(.body)
                 .foregroundColor(.primary)
@@ -218,7 +220,11 @@ extension GameDetailView {
 
     @ViewBuilder
     private func headerRound() -> some View {
-        Text("Round \(currentRound) / \(totalRounds)")
+        Text(
+          .init(
+            String.localized(key: "round_progress", code: lang.code, currentRound, totalRounds)
+          )
+        )
             .font(.h2)
             .foregroundColor(.primary)
     }
@@ -226,11 +232,11 @@ extension GameDetailView {
     @ViewBuilder
     private func notSelectedCard() -> some View {
         VStack(spacing: 8) {
-            Text("You’re not selected for this game.")
+            Text("not_selected")
                 .font(.body)
                 .foregroundColor(.secondary)
 
-            ButtonText(title: "Back to room") {
+            ButtonText(title: "back_to_room") {
                 router.replace(with: RoomView(roomCode: roomCode))
             }
         }
@@ -246,28 +252,28 @@ extension GameDetailView {
         VStack(spacing: 12) {
             if !revealedOnce {
                 if showCountdown {
-                    Text("Revealing in \(countdown)…")
+                    Text(String.localized(key: "revealing_in_seconds", code: lang.code, countdown))
                         .font(.body)
                         .foregroundColor(.secondary)
                 } else {
-                    Text("Tap to reveal your role")
+                    Text("tap_to_reveal")
                         .font(.body)
-                    ButtonText(title: "Show Role") {
+                    ButtonText(title: "show_role") {
                         startCountdown()
                     }
                 }
             } else {
-                Text(roleTitleText)
+                Text(roleTitleTextLocalized)
                     .font(.title3).bold()
                     .foregroundColor(.primary)
 
                 if !iAmSpy, let word = gameWord {
-                    Text("Word: \(word)")
+                    Text(String.localized(key: "game_word", code: lang.code, word))
                         .font(.body)
                         .foregroundColor(.primaryBlue)
                 }
 
-                ButtonText(title: "Continue") {
+                ButtonText(title: "continue") {
                     continuePressed = true
                 }
             }
@@ -282,12 +288,12 @@ extension GameDetailView {
     @ViewBuilder
     private func playersInputsCard() -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Players")
+            Text("players")
                 .font(.h2)
                 .foregroundColor(.primary)
 
             if selectedPlayers.isEmpty {
-                Text("No players yet.")
+                Text("no_players")
                     .foregroundColor(.secondary)
             } else {
                 ScrollView {
@@ -296,7 +302,7 @@ extension GameDetailView {
                             Text(p.name).bold().foregroundColor(.primary)
                             ForEach(playerInputs.keys.sorted(), id: \.self) { roundNum in
                                 if let word = playerInputs[roundNum]?[p.id] {
-                                    Text("Round \(roundNum): \(word)")
+                                    Text(String.localized(key: "round_with_word", code: lang.code, roundNum, word))
                                         .font(.caption)
                                         .foregroundColor(.primaryBlue)
                                 }
@@ -323,7 +329,7 @@ extension GameDetailView {
             VStack(spacing: 12) {
                 Spacer(minLength: 16)
 
-                TextField("Enter a word…", text: $myWordInput)
+                TextField(String.localized(key: "enter_word", code: lang.code), text: $myWordInput)
                     .font(.body)
                     .padding()
                     .background(cardBG)
@@ -332,7 +338,7 @@ extension GameDetailView {
                     .shadow(color: .black.opacity(0.05), radius: 4)
                     .clearButton($myWordInput)
 
-                ButtonText(title: "Send Word") {
+                ButtonText(title: "send_word") {
                     submitWord()
                 }
             }
@@ -347,7 +353,7 @@ extension GameDetailView {
             Spacer(minLength: 16)
             
             ButtonText(
-                title: "Guess the Spy",
+                title: "guess_the_spy",
                 action: { showGuessPopup = true },
                 backgroundColor: .primaryBlue,
                 textColor: .white,
@@ -358,11 +364,11 @@ extension GameDetailView {
         }
     }
 
-    private var roleTitleText: String {
+    private var roleTitleTextLocalized: String {
         switch myRole {
-        case "spy":     return "Spy"
-        case "knower":  return "Knower"
-        default:        return "Pending role…"
+        case "spy":     return String.localized(key: "spy", code: lang.code)
+        case "knower":  return String.localized(key: "knower", code: lang.code)
+        default:        return String.localized(key: "pending_role", code: lang.code)
         }
     }
 }
@@ -410,7 +416,7 @@ extension GameDetailView {
         roomRef.addSnapshotListener { snap, _ in
             guard let data = snap?.data(),
                   let info = data["info"] as? [String: Any] else {
-                self.errorMessage = "Room info couldn’t be read."
+                self.errorMessage = String.localized(key: "room_info_error", code: lang.code)
                 self.isLoading = false
                 return
             }
@@ -560,6 +566,8 @@ extension GameDetailView {
 
 // MARK: - SpyGuessView
 struct SpyGuessView: View {
+    @EnvironmentObject var lang: LanguageManager
+
     let roomCode: String
     let players: [GameDetailView.PlayerRow]
     let deviceId: String
@@ -611,7 +619,7 @@ struct SpyGuessView: View {
                     .cornerRadius(12)
 
                     if isHost {
-                        ButtonText(title: "Finish Game") {
+                        ButtonText(title: "end_game") {
                             isPresented = false
                             router.replace(with: RoomView(roomCode: roomCode))
 
@@ -635,7 +643,7 @@ struct SpyGuessView: View {
 
                 } else {
                     // VOTING
-                    Text("Who is the spy?")
+                    Text("who_is_the_spy")
                         .font(.title2).bold()
                         .foregroundColor(.primary)
 
@@ -663,23 +671,23 @@ struct SpyGuessView: View {
                     }
 
                     if votes[deviceId] == nil, let sel = selectedId {
-                        ButtonText(title: "Vote") {
+                        ButtonText(title: "vote") {
                             castVote(for: sel)
                         }
                     }
 
                     if votes[deviceId] != nil, votes.count != players.count {
-                        Text("You’ve voted. Waiting for others…")
+                        Text("voted_waiting_others")
                             .foregroundColor(.secondary)
                     }
 
                     if votes.count == players.count {
-                        Text("All votes are in. Waiting for host…")
+                        Text("all_voted_waiting_host")
                             .foregroundColor(.secondary)
                     }
 
                     if isHost {
-                        ButtonText(title: "Finish Voting") {
+                        ButtonText(title: "finish_voting") {
                             showResult()
                         }
                     }
@@ -739,12 +747,12 @@ struct SpyGuessView: View {
         if let maxId = tally.max(by: { $0.value < $1.value })?.key,
            let spy = players.first(where: { $0.role == "spy" }) {
 
-            let votedPlayerName = players.first(where: { $0.id == maxId })?.name ?? "Unknown"
+            let votedPlayerName = players.first(where: { $0.id == maxId })?.name ?? String.localized(key: "unknown", code: lang.code)
 
             if maxId == spy.id {
-                resultText = "Correct! Spy is found."
+                resultText = String.localized(key: "result_correct_spy_found", code: lang.code)
             } else {
-                resultText = "Wrong! Spy has escaped."
+                resultText = String.localized(key: "result_wrong_spy_escaped", code: lang.code)
             }
 
             let db = Firestore.firestore()
@@ -754,7 +762,7 @@ struct SpyGuessView: View {
                 "info.resultText": resultText ?? ""
             ])
         } else {
-            resultText = "No clear result."
+            resultText = String.localized(key: "result_no_clear", code: lang.code)
             let db = Firestore.firestore()
             let roomRef = db.collection("rooms").document(roomCode)
             roomRef.updateData([

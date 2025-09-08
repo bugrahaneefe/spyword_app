@@ -6,7 +6,7 @@
 /* Language UI */
 "language_title" = "Dil Tercihi";
 "language_turkish" = "Türkçe";
-"language_english" = "English";
+"language_english" = "İngilizce";
 "close" = "Kapat";
 "change_language" = "Dili değiştir";
 
@@ -30,7 +30,7 @@
 
 "main_menu" = "Ana Menü";
 "end_game" = "Bitir";
-"round_progress %d %d" = "Tur: %d / %d";
+"round_progress" = "Tur: %1$d / %2$d";
 "not_selected" = "Bu oyun için seçilmediniz.";
 "back_to_room" = "Odaya Dön";
 "role_reveal_countdown" = "Rolün %d saniye içinde görünecek…";
@@ -42,7 +42,7 @@
 "no_players" = "Oyuncu yok";
 
 /* Roles */
-"role_spy" = "Rolün: SPY 🕵️‍♂️";
+"role_spy" = "Rolün: CASUS 🕵️‍♂️";
 "role_knower" = "Rolün: Bilen ✅";
 "role_pending" = "Rolün belirleniyor…";
 
@@ -56,10 +56,10 @@
 "word_mode_random" = "Rastgele kelimeyle başla";
 "word_mode_custom" = "Kendin gir";
 "enter_word" = "Kelimeyi yaz";
-"custom_word_note" = "Not: Kelimeyi host girerse, host otomatik bilen olur.";
+"custom_word_note" = "Not: Kelimeyi kurucu girerse, kurucu otomatik bilen olur.";
 
 "numeric_settings" = "Sayısal Ayarlar";
-"spy_count" = "Spy sayısı";
+"spy_count" = "Casus sayısı";
 "round_count" = "Tur sayısı";
 
 "start_game" = "Başlat";
@@ -72,10 +72,10 @@
 "loading_text" = "Bekleniyor...";
 
 "room_code_placeholder" = "Oda Kodu (6 haneli)";
-"nickname_placeholder" = "Nickname";
+"nickname_placeholder" = "İsim";
 
 "invalid_room_code_error" = "Geçerli 6 haneli oda kodu giriniz.";
-"empty_nickname_error" = "Lütfen bir nickname girin.";
+"empty_nickname_error" = "Lütfen bir isim girin.";
 "room_not_found_error" = "Oda bulunamadı veya geçerli değil.";
 "host_not_ready_error" = "Ev sahibinin ismini girip 'İleri' basmasını bekleyin.";
 "join_failed_error" = "Katılım başarısız: %@";
@@ -85,7 +85,7 @@
 "remove" = "Kaldır";
 "start_game" = "Oyunu Başlat";
 "removed_from_room_title" = "Odadan Kaldırıldınız";
-"removed_from_room_message" = "Host tarafından odadan çıkarıldınız.";
+"removed_from_room_message" = "Kurucu tarafından odadan çıkarıldınız.";
 "main_menu" = "Ana Menü";
 
 "select_players" = "Oyuncu Seç";
@@ -95,3 +95,36 @@
 "options" = "Seçenekler";
 "cancel" = "İptal";
 "continue" = "Devam";
+
+/* Fix/align with code usage */
+"back_to_room" = "Odaya Dön";
+"not_selected" = "Bu oyun için seçilmediniz.";
+
+/* Top bar */
+"room_title_with_code" = "Oda: %@";
+
+/* Countdown / reveal */
+"revealing_in_seconds" = "Rolün %d saniye içinde görünecek…";
+"spy" = "Casus";
+"knower" = "Bilen";
+"pending_role" = "Rol belirleniyor…";
+
+/* Round lines */
+"round_with_word" = "Tur %1$d: %2$@";
+
+/* Inputs */
+"send_word" = "Kelimeyi Gönder";
+
+/* Guess flow */
+"guess_the_spy" = "Casusu Tahmin Et";
+"who_is_the_spy" = "Casus kim?";
+"vote" = "Oy Ver";
+"voted_waiting_others" = "Oy verdiniz. Diğerleri bekleniyor…";
+"all_voted_waiting_host" = "Tüm oylar geldi. Ev sahibi bekleniyor…";
+"finish_voting" = "Oylamayı Bitir";
+
+/* Results */
+"result_correct_spy_found" = "Doğru! Casus bulundu.";
+"result_wrong_spy_escaped" = "Yanlış! Casus kaçtı.";
+"result_no_clear" = "Net bir sonuç yok.";
+"unknown" = "Bilinmiyor";

@@ -30,7 +30,7 @@
 
 "main_menu" = "Main Menu";
 "end_game" = "End Game";
-"round_progress %d %d" = "Round: %d / %d";
+"round_progress" = "Round: %1$d / %2$d";
 "not_selected" = "You were not selected for this game.";
 "back_to_room" = "Back to Room";
 "role_reveal_countdown" = "Your role will appear in %d seconds…";
@@ -95,3 +95,36 @@
 "options" = "Options";
 "cancel" = "Cancel";
 "continue" = "Continue";
+
+/* Fix/align with code usage */
+"back_to_room" = "Back to Room";
+"not_selected" = "You were not selected for this game.";
+
+/* Top bar */
+"room_title_with_code" = "Room: %@";
+
+/* Countdown / reveal */
+"revealing_in_seconds" = "Revealing in %d seconds…";
+"spy" = "Spy";
+"knower" = "Knower";
+"pending_role" = "Pending role…";
+
+/* Round lines */
+"round_with_word" = "Round %1$d: %2$@";
+
+/* Inputs */
+"send_word" = "Send Word";
+
+/* Guess flow */
+"guess_the_spy" = "Guess the Spy";
+"who_is_the_spy" = "Who is the spy?";
+"vote" = "Vote";
+"voted_waiting_others" = "You’ve voted. Waiting for others…";
+"all_voted_waiting_host" = "All votes are in. Waiting for host…";
+"finish_voting" = "Finish Voting";
+
+/* Results */
+"result_correct_spy_found" = "Correct! The spy was found.";
+"result_wrong_spy_escaped" = "Wrong! The spy escaped.";
+"result_no_clear" = "No clear result.";
+"unknown" = "Unknown";

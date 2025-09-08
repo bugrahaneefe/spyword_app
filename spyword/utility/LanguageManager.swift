@@ -33,12 +33,6 @@ final class LanguageManager: ObservableObject {
     }
 }
 
-extension String.StringInterpolation {
-    mutating func appendInterpolation(_ value: CVarArg, format: String = "%d") {
-        appendLiteral(String(format: format, value))
-    }
-}
-
 extension String {
     static func localized(key: String, code: String, _ args: CVarArg...) -> String {
         guard let path = Bundle.main.path(forResource: code, ofType: "lproj"),

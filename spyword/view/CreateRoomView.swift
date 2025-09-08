@@ -78,7 +78,7 @@ struct CreateRoomView: View {
                             }
                         }
                         
-                        TextField(String(localized: "your_name"), text: $hostName)
+                        TextField("your_name", text: $hostName)
                             .font(.body)
                             .padding()
                             .background(colorScheme == .dark ? Color.black : Color.white)
