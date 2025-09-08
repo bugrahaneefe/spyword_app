@@ -166,3 +166,10 @@
 "reveal_secret_word" = "Gizli Kelimeyi Aç";
 "revealed_secret_word" = "Gizli kelime: %@";
 "result_spies_win_by_guess" = "Casuslar kazandı! Gizli kelimeyi bildiler.";
+
+"category_movies" = "Filmler (Ünlü filmler & karakterler)";
+"category_science" = "Bilim (Bilim insanları & keşifler)";
+"category_history" = "Tarih (Şahsiyetler & olaylar)";
+"category_geography" = "Coğrafya (Yerler & simgeler)";
+"category_music" = "Müzik (Şarkıcılar & gruplar)";
+"category_literature" = "Edebiyat (Yazarlar & karakterler)";

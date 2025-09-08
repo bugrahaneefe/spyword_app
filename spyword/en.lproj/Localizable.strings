@@ -166,3 +166,10 @@
 "reveal_secret_word" = "Reveal Secret Word";
 "revealed_secret_word" = "Secret word: %@";
 "result_spies_win_by_guess" = "Spies win! They guessed the secret word.";
+
+"category_movies" = "Movies (Famous films & characters)";
+"category_science" = "Science (Scientists & discoveries)";
+"category_history" = "History (Figures & events)";
+"category_geography" = "Geography (Places & landmarks)";
+"category_music" = "Music (Singers & bands)";
+"category_literature" = "Literature (Writers & characters)";

@@ -61,16 +61,39 @@ struct GameSettingsView: View {
                     }
                     
                     if vm.mode == .random {
+                        let items: [(key: LocalizedStringKey, cat: GameSettings.WordCategory)] = [
+                            ("category_world", .world),
+                            ("category_turkiye", .turkiye),
+                            ("category_world_football", .worldFootball),
+                            ("category_nfl", .nfl),
+                            ("category_movies", .movies),
+                            ("category_science", .science),
+                            ("category_history", .history),
+                            ("category_geography", .geography),
+                            ("category_music", .music),
+                            ("category_literature", .literature)
+                        ]
+
                         ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                CategoryChip(titleKey: "category_world",    isSelected: vm.category == .world)        { vm.category = .world }
-                                CategoryChip(titleKey: "category_turkiye",  isSelected: vm.category == .turkiye)      { vm.category = .turkiye }
-                                CategoryChip(titleKey: "category_world_football", isSelected: vm.category == .worldFootball) { vm.category = .worldFootball }
-                                CategoryChip(titleKey: "category_nfl",      isSelected: vm.category == .nfl)           { vm.category = .nfl }
+                            FlowTagLayout(
+                                maxRows: 3,
+                                itemSpacing: 8,
+                                rowSpacing: 8,
+                                segmentSpacing: 8,
+                                rowHeight: 36,
+                                viewportWidthHint: 240
+                            ) {
+                                ForEach(items, id: \.cat) { item in
+                                    CategoryChip(titleKey: item.key, isSelected: vm.category == item.cat) {
+                                        vm.category = item.cat
+                                    }
+                                }
                             }
                             .padding(.vertical, 4)
+                            .padding(.trailing, 8)
                         }
-                        
+                        .frame(height: 3 * 36 + 2 * 8)
+
                         Text("category_hint")
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -198,5 +221,44 @@ private struct CategoryChip: View {
                 .shadow(color: .black.opacity(isSelected ? 0.2 : 0.05), radius: 4, x: 0, y: 2)
         }
         .buttonStyle(.plain)
+    }
+}
+
+struct FlowLayout: Layout {
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        var x = CGFloat.zero
+        var y = CGFloat.zero
+        var rowHeight = CGFloat.zero
+        let maxWidth = proposal.width ?? .infinity
+
+        for sub in subviews {
+            let size = sub.sizeThatFits(.unspecified)
+            if x + size.width > maxWidth {
+                x = 0
+                y += rowHeight
+                rowHeight = 0
+            }
+            x += size.width
+            rowHeight = max(rowHeight, size.height)
+        }
+        return CGSize(width: maxWidth, height: y + rowHeight)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        var x = bounds.minX
+        var y = bounds.minY
+        var rowHeight = CGFloat.zero
+
+        for sub in subviews {
+            let size = sub.sizeThatFits(.unspecified)
+            if x + size.width > bounds.maxX {
+                x = bounds.minX
+                y += rowHeight
+                rowHeight = 0
+            }
+            sub.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(size))
+            x += size.width
+            rowHeight = max(rowHeight, size.height)
+        }
     }
 }

@@ -4,10 +4,16 @@ import Firebase
 struct GameSettings {
     enum WordMode { case random, custom }
     enum WordCategory: String, CaseIterable {
-        case world          // dünyaca bilinen kişi/karakter
-        case turkiye        // Türkiye’de bilinen kişi/karakter
-        case worldFootball  // dünya futbolu
-        case nfl            // NFL
+        case world
+        case turkiye
+        case worldFootball
+        case nfl
+        case movies
+        case science
+        case history
+        case geography
+        case music
+        case literature
     }
 
     var mode: WordMode
@@ -191,6 +197,12 @@ enum WordPools {
         case .turkiye:       pool = turkiye
         case .worldFootball: pool = worldFootball
         case .nfl:           pool = nfl
+        case .movies:        pool = movies
+        case .science:       pool = science
+        case .history:       pool = history
+        case .geography:     pool = geography
+        case .music:         pool = music
+        case .literature:    pool = literature
         }
         return pool.randomElement() ?? "Kelime"
     }
@@ -250,5 +262,88 @@ enum WordPools {
         "Ed Reed","Troy Polamalu","Charles Woodson","Darrelle Revis","Richard Sherman",
         "Marshawn Lynch","Derrick Henry","Cooper Kupp","Odell Beckham Jr.","Saquon Barkley"
     ]
-}
+    
+    // 5) MOVIES – 50 (ünlü filmler & karakterler)
+    static let movies: [String] = [
+        "The Godfather","Titanic","Inception","The Matrix","Forrest Gump",
+        "The Dark Knight","Avatar","Pulp Fiction","Gladiator","Interstellar",
+        "Joker","Avengers","Toy Story","Frozen","Finding Nemo",
+        "Star Wars","Lord of the Rings","Jurassic Park","Shrek","The Lion King",
+        "Harry Potter","Spider-Man","Batman","Superman","Iron Man",
+        "Black Panther","Wonder Woman","Doctor Strange","Guardians of the Galaxy","Thor",
+        "Hulk","Captain America","Ant-Man","Deadpool","Wolverine",
+        "X-Men","The Shawshank Redemption","Fight Club","Se7en","The Silence of the Lambs",
+        "The Green Mile","The Prestige","Django Unchained","The Departed","Whiplash",
+        "La La Land","Coco","Up","Inside Out","Soul"
+    ]
 
+    // 6) SCIENCE – 50 (bilim insanları & kavramlar)
+    static let science: [String] = [
+        "Albert Einstein","Isaac Newton","Nikola Tesla","Galileo Galilei","Marie Curie",
+        "Charles Darwin","Stephen Hawking","Richard Feynman","Carl Sagan","Niels Bohr",
+        "Dmitri Mendeleev","Gregor Mendel","Alan Turing","Rosalind Franklin","Ada Lovelace",
+        "Michael Faraday","James Clerk Maxwell","Louis Pasteur","Robert Hooke","Max Planck",
+        "Erwin Schrödinger","Werner Heisenberg","Enrico Fermi","Paul Dirac","J.J. Thomson",
+        "Ernest Rutherford","Francis Crick","James Watson","Higgs boson","Quantum Mechanics",
+        "Relativity","DNA","RNA","Photosynthesis","Evolution",
+        "Black Hole","Big Bang","Gravity","Atom","Molecule",
+        "Cell","Neuron","Genome","Periodic Table","Electricity",
+        "Magnetism","Light","Laser","Microscope","Telescope"
+    ]
+
+    // 7) HISTORY – 50 (tarihi şahsiyetler & olaylar)
+    static let history: [String] = [
+        "Alexander the Great","Julius Caesar","Napoleon Bonaparte","Genghis Khan","Cleopatra",
+        "Winston Churchill","Abraham Lincoln","George Washington","Mahatma Gandhi","Mustafa Kemal Atatürk",
+        "Nelson Mandela","Martin Luther King Jr.","Queen Elizabeth I","Adolf Hitler","Joseph Stalin",
+        "Vladimir Lenin","Franklin D. Roosevelt","John F. Kennedy","Ronald Reagan","Barack Obama",
+        "Donald Trump","Angela Merkel","Margaret Thatcher","Suleiman the Magnificent","Charlemagne",
+        "Leonardo da Vinci","Michelangelo","Christopher Columbus","Ferdinand Magellan","Marco Polo",
+        "Albert Einstein","Isaac Newton","Nikola Tesla","Marie Curie","Galileo Galilei",
+        "French Revolution","American Revolution","Industrial Revolution","World War I","World War II",
+        "Cold War","Fall of Berlin Wall","Crusades","Renaissance","Reformation",
+        "Great Depression","Black Death","Battle of Waterloo","Signing of Magna Carta","Moon Landing"
+    ]
+
+    // 8) GEOGRAPHY – 50 (şehirler, ülkeler, coğrafi yerler)
+    static let geography: [String] = [
+        "Istanbul","Ankara","Izmir","London","Paris",
+        "New York","Los Angeles","Tokyo","Kyoto","Beijing",
+        "Shanghai","Moscow","Berlin","Rome","Madrid",
+        "Barcelona","Lisbon","Cairo","Cape Town","Nairobi",
+        "Rio de Janeiro","São Paulo","Buenos Aires","Mexico City","Toronto",
+        "Sydney","Melbourne","Auckland","Dubai","Abu Dhabi",
+        "Jerusalem","Mecca","Mount Everest","K2","Andes",
+        "Himalayas","Sahara Desert","Amazon Rainforest","Nile River","Danube River",
+        "Mississippi River","Great Wall of China","Grand Canyon","Niagara Falls","Eiffel Tower",
+        "Big Ben","Statue of Liberty","Colosseum","Machu Picchu","Petra"
+    ]
+
+    // 9) MUSIC – 50 (ünlü şarkıcılar & gruplar)
+    static let music: [String] = [
+        "The Beatles","The Rolling Stones","Queen","Pink Floyd","Led Zeppelin",
+        "Nirvana","Metallica","U2","Coldplay","Radiohead",
+        "Maroon 5","Imagine Dragons","OneRepublic","Linkin Park","Green Day",
+        "Taylor Swift","Beyoncé","Rihanna","Katy Perry","Lady Gaga",
+        "Adele","Ed Sheeran","Justin Bieber","Billie Eilish","Shakira",
+        "Jennifer Lopez","Madonna","Britney Spears","Christina Aguilera","Whitney Houston",
+        "Elvis Presley","Michael Jackson","Prince","Bob Dylan","Bruce Springsteen",
+        "Eminem","Drake","Kanye West","Jay-Z","Kendrick Lamar",
+        "Travis Scott","Post Malone","Harry Styles","Dua Lipa","Selena Gomez",
+        "Ariana Grande","The Weeknd","Bruno Mars","Snoop Dogg","50 Cent"
+    ]
+
+    // 10) LITERATURE – 50 (yazarlar & kitap karakterleri)
+    static let literature: [String] = [
+        "William Shakespeare","Charles Dickens","Jane Austen","George Orwell","Mark Twain",
+        "J.K. Rowling","J.R.R. Tolkien","C.S. Lewis","Agatha Christie","Leo Tolstoy",
+        "Fyodor Dostoevsky","Anton Chekhov","Homer","Virgil","Dante Alighieri",
+        "Victor Hugo","Gabriel García Márquez","Franz Kafka","Ernest Hemingway","F. Scott Fitzgerald",
+        "Harper Lee","John Steinbeck","Stephen King","Arthur Conan Doyle","Edgar Allan Poe",
+        "Emily Brontë","Charlotte Brontë","Mary Shelley","Oscar Wilde","H.G. Wells",
+        "George R.R. Martin","Suzanne Collins","Rick Riordan","Dan Brown","Paulo Coelho",
+        "Harry Potter","Hermione Granger","Ron Weasley","Sherlock Holmes","Dr. Watson",
+        "Jay Gatsby","Holden Caulfield","Atticus Finch","Anna Karenina","Elizabeth Bennet",
+        "Romeo","Juliet","Hamlet","Macbeth","Don Quixote"
+    ]
+}
