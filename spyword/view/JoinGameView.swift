@@ -208,7 +208,16 @@ extension JoinGameView {
                     "isSelected": false,
                     "joinedAt": FieldValue.serverTimestamp()
                 ]
-
+                
+                Task { @MainActor in
+                    let root = UIApplication.shared.topMostViewController()
+                    do {
+                        try await AdsManager.shared.showInterstitial(from: root)
+                    } catch {
+                        print("Interstitial error: \(error)")
+                    }
+                }
+                
                 roomRef.collection("players")
                     .document(deviceId)
                     .setData(playerData, merge: true) { setErr in
@@ -233,6 +242,15 @@ extension JoinGameView {
         let upper = code.uppercased()
         let roomRef = db.collection("rooms").document(upper)
 
+        Task { @MainActor in
+            let root = UIApplication.shared.topMostViewController()
+            do {
+                try await AdsManager.shared.showInterstitial(from: root)
+            } catch {
+                print("Interstitial error: \(error)")
+            }
+        }
+        
         roomRef.getDocument { snap, err in
             guard err == nil, let snap = snap, snap.exists else {
                 finish(error: String(localized: "room_not_found_error", bundle: .main, locale: lang.locale))

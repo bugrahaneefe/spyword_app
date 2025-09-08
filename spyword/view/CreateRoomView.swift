@@ -163,6 +163,15 @@ extension CreateRoomView {
             "joinedAt": FieldValue.serverTimestamp()
         ]
         
+        Task { @MainActor in
+            let root = UIApplication.shared.topMostViewController()
+            do {
+                try await AdsManager.shared.showInterstitial(from: root)
+            } catch {
+                print("Interstitial error: \(error)")
+            }
+        }
+        
         db.collection("rooms")
             .document(roomCode)
             .collection("players")

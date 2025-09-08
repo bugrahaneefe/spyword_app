@@ -277,6 +277,8 @@ extension GameDetailView {
                         }
                     }
                 }
+                
+                BannerAdView()
             }
             .padding()
             .scrollDismissesKeyboard(.interactively)
@@ -725,6 +727,17 @@ struct SpyGuessView: View {
                         .background(Color.primaryBlue)
                         .cornerRadius(12)
                         .multilineTextAlignment(.center)
+                        .onAppear {
+                            Task { @MainActor in
+                                let root = UIApplication.shared.topMostViewController()
+                                try await AdsManager.shared.showInterstitial(from: root, chance: 30)
+
+                                let reward = try await AdsManager.shared.showRewarded(from: root, chance: 75)
+                                if reward.amount != 0 {
+                                    print("Kazanç: \(reward.amount) \(reward.type)")
+                                }
+                            }
+                        }
 
                     // Players + target icon for voted-as-spy (existing)
                     VStack(alignment: .leading, spacing: 4) {
