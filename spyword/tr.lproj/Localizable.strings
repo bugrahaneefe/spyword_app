@@ -11,7 +11,7 @@
 "change_language" = "Dili değiştir";
 
 /* Common / other screens */
-"main_menu" = "Ana Menü";
+
 "preparing_room" = "Oda Hazırlanıyor";
 "your_name" = "Kendi isminiz";
 "copy" = "Kopyala";
@@ -28,12 +28,10 @@
 /* Accessibility */
 "room_status_accessibility" = "Oda durumu:";
 
-"main_menu" = "Ana Menü";
 "end_game" = "Bitir";
 "round_progress" = "Tur: %1$d / %2$d";
 "not_selected" = "Bu oyun için seçilmediniz.";
 "back_to_room" = "Odaya Dön";
-"role_reveal_countdown" = "Rolün %d saniye içinde görünecek…";
 "tap_to_reveal" = "Rolünü görmek için bas:";
 "show_role" = "Rolümü Göster";
 "game_word" = "Kelime: %@";
@@ -62,8 +60,6 @@
 "spy_count" = "Casus sayısı";
 "round_count" = "Tur sayısı";
 
-"start_game" = "Başlat";
-
 "main_menu" = "Ana Menü";
 "join_room_title" = "Odaya Katıl";
 "recent_rooms" = "Son Odalar";
@@ -86,7 +82,6 @@
 "start_game" = "Oyunu Başlat";
 "removed_from_room_title" = "Odadan Kaldırıldınız";
 "removed_from_room_message" = "Kurucu tarafından odadan çıkarıldınız.";
-"main_menu" = "Ana Menü";
 
 "select_players" = "Oyuncu Seç";
 "selected_count" = "%d seçili";

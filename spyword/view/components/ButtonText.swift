@@ -1,8 +1,8 @@
 import SwiftUI
 
 enum ButtonSize {
-    case big     // Half screen
-    case small   // Quarter screen
+    case big
+    case small
 }
 
 struct ButtonText: View {
@@ -13,7 +13,6 @@ struct ButtonText: View {
     var cornerRadius: CGFloat = 12
     var size: ButtonSize = .big
 
-    // Preferred initializer: pass a localization key, e.g. "create_game"
     init(title: LocalizedStringKey,
          action: @escaping () -> Void,
          backgroundColor: Color = .secondaryBlue,
@@ -28,14 +27,13 @@ struct ButtonText: View {
         self.size = size
     }
 
-    // Optional convenience for non-localized strings
     init(verbatim title: String,
          action: @escaping () -> Void,
          backgroundColor: Color = .secondaryBlue,
          textColor: Color = .white,
          cornerRadius: CGFloat = 12,
          size: ButtonSize = .big) {
-        self.titleKey = LocalizedStringKey(title) // treated verbatim
+        self.titleKey = LocalizedStringKey(title)
         self.action = action
         self.backgroundColor = backgroundColor
         self.textColor = textColor

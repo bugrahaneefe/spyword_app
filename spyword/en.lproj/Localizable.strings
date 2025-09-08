@@ -28,12 +28,10 @@
 /* Accessibility */
 "room_status_accessibility" = "Room status:";
 
-"main_menu" = "Main Menu";
 "end_game" = "End Game";
 "round_progress" = "Round: %1$d / %2$d";
 "not_selected" = "You were not selected for this game.";
 "back_to_room" = "Back to Room";
-"role_reveal_countdown" = "Your role will appear in %d seconds…";
 "tap_to_reveal" = "Tap to reveal your role:";
 "show_role" = "Show My Role";
 "game_word" = "Word: %@";
@@ -62,9 +60,6 @@
 "spy_count" = "Number of spies";
 "round_count" = "Number of rounds";
 
-"start_game" = "Start";
-
-"main_menu" = "Main Menu";
 "join_room_title" = "Join Room";
 "recent_rooms" = "Recent Rooms";
 
@@ -86,7 +81,6 @@
 "start_game" = "Start Game";
 "removed_from_room_title" = "You have been removed from the room";
 "removed_from_room_message" = "You were kicked out by the host.";
-"main_menu" = "Main Menu";
 
 "select_players" = "Select Players";
 "selected_count" = "%d selected";

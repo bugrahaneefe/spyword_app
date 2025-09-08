@@ -7,6 +7,7 @@ struct SelectPlayersView: View {
 
     // MARK: - Env
     @EnvironmentObject var router: Router
+    @EnvironmentObject var lang: LanguageManager
     @Environment(\.colorScheme) var colorScheme
 
     // MARK: - Device
@@ -17,8 +18,8 @@ struct SelectPlayersView: View {
             // Top bar
             HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(NSLocalizedString("select_players", comment: "")).font(.title3).bold()
-                    Text(String(format: NSLocalizedString("selected_count", comment: ""), vm.chosen.count))
+                    Text("select_players").font(.title3).bold()
+                    Text(String.localized(key: "selected_count", code: lang.code, vm.chosen.count))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -28,10 +29,10 @@ struct SelectPlayersView: View {
                 Spacer()
                 
                 Menu {
-                    Button(NSLocalizedString("select_all", comment: ""), action: selectAll)
-                    Button(NSLocalizedString("clear", comment: ""), action: clearAll)
+                    Button("select_all", action: selectAll)
+                    Button("clear", action: clearAll)
                 } label: {
-                    Label(NSLocalizedString("options", comment: ""), systemImage: "ellipsis.circle")
+                    Label("options", systemImage: "ellipsis.circle")
                         .labelStyle(.iconOnly)
                         .font(.title3)
                 }

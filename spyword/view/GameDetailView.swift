@@ -48,7 +48,7 @@ struct GameDetailView: View {
             case "turkiye":       return "category_turkiye"
             case "worldFootball": return "category_world_football"
             case "nfl":           return "category_nfl"
-            default:              return "category_world"
+            default:              return "category_custom"
             }
         } else {
             return "category_custom"
@@ -703,7 +703,7 @@ struct SpyGuessView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         ForEach(players) { p in
                             HStack(spacing: 8) {
-                                Text("\(p.name) - \(p.role ?? "?")")
+                                Text("\(p.name) - \(localizedRole(p.role))")
                                     .font(.body)
                                     .foregroundColor(.primary)
 
@@ -881,6 +881,19 @@ struct SpyGuessView: View {
     }
 
     // MARK: - Helpers
+    private func localizedRole(_ role: String?) -> String {
+        switch role {
+        case "spy":
+            return String.localized(key: "spy", code: lang.code)
+        case "knower":
+            return String.localized(key: "knower", code: lang.code)
+        case .some(let r) where !r.isEmpty:
+            return r
+        default:
+            return String.localized(key: "unknown", code: lang.code)
+        }
+    }
+
     private func voteCount(for targetId: String) -> Int {
         votes.values.flatMap { $0 }.filter { $0 == targetId }.count
     }

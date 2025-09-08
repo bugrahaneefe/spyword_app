@@ -11,10 +11,10 @@ struct GameSettings {
     }
 
     var mode: WordMode
-    var customWord: String?          // mode == .custom ise zorunlu
+    var customWord: String?
     var spyCount: Int
     var totalRounds: Int
-    var category: WordCategory       // NEW
+    var category: WordCategory
 }
 
 final class RoomViewModel: ObservableObject {
@@ -157,14 +157,14 @@ final class RoomViewModel: ObservableObject {
             // sıra
             let turnOrder = selectedIds.shuffled()
 
-            var info: [String:Any] = [
+            let info: [String:Any] = [
                 "status": "the game",
                 "word": word,
                 "spyCount": spyCount,
                 "totalRounds": settings.totalRounds,
                 "lockedPlayers": selectedIds,
                 "turnOrder": turnOrder,
-                "category": settings.category.rawValue   // NEW (isterseniz UI’da gösterebilirsiniz)
+                "category": settings.category.rawValue
             ]
 
             batch.setData(["info": info], forDocument: roomRef, merge: true)
@@ -176,7 +176,6 @@ final class RoomViewModel: ObservableObject {
             }
         }
 
-    // Var olan remove() fonksiyonun aynı
     func remove(player: Player) {
         roomRef.collection("players").document(player.id).delete { [weak self] error in
             if let err = error { self?.errorMessage = err.localizedDescription }

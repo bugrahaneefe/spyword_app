@@ -70,12 +70,13 @@ struct CreateRoomView: View {
                                         .foregroundColor(.green)
                                         .padding(8)
                                 } else {
-                                    Text("Copy")
+                                    Text("copy")
                                         .font(.caption)
                                         .foregroundColor(.primaryBlue)
                                         .padding(8)
                                 }
                             }
+                            .accessibilityLabel(Text("copy"))
                         }
                         
                         TextField("your_name", text: $hostName)
@@ -139,7 +140,7 @@ extension CreateRoomView {
         roomDoc.setData(["info": infoData], merge: true) { error in
             isLoading = false
             if let err = error {
-                let fmt = String(localized: "room_creation_failed", bundle: .main, locale: lang.locale)
+                let fmt = String.localized(key: "room_creation_failed", code: lang.code)
                 errorMessage = String(format: fmt, locale: lang.locale, err.localizedDescription)
             } else {
                 roomCode = code

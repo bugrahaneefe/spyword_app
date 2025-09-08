@@ -56,6 +56,7 @@ struct SlidingSplashPage: View {
     private var enterAnimation: Animation {
         .timingCurve(0.15, 0.85, 0.35, 1.0, duration: slideDuration)
     }
+    
 //    private var exitAnimation: Animation {
 //        .timingCurve(0.15, 0.85, 0.35, 1.0, duration: slideDuration)
 //    }

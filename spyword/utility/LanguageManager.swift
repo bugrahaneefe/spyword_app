@@ -4,11 +4,10 @@ final class LanguageManager: ObservableObject {
     static let supported = ["en", "tr"]
     private let storageKey = "app.language"
 
-    @AppStorage("app.language") private var stored: String = ""  // ok to keep
-    @Published var code: String = "en"  // give a temp default so it's initialized
+    @AppStorage("app.language") private var stored: String = ""
+    @Published var code: String = "en"
 
     init() {
-        // Read raw value without touching `self.stored` yet
         let storedValue = UserDefaults.standard.string(forKey: storageKey) ?? ""
         let initial: String
 

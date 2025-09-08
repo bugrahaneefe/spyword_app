@@ -332,7 +332,7 @@ extension JoinGameView {
         group.notify(queue: .main) {
             self.isLoading = false
             guard let info = info else {
-                self.errorMessage = "Oda bilgisi okunamadı."
+                self.errorMessage = String.localized(key: "room_info_error", code: lang.code)
                 return
             }
 
