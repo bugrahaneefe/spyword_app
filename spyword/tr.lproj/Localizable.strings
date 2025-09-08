@@ -140,3 +140,5 @@
 "result_all_spies_found" = "Harika! Tüm casuslar bulundu.";
 "result_some_spies_found" = "Kısmi başarı! Bazı casuslar bulundu.";
 "result_spies_escaped"    = "Olmadı! Casuslar kaçtı.";
+
+"your_turn" = "Sıra sende!";

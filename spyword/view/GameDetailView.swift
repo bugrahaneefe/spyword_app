@@ -35,6 +35,9 @@ struct GameDetailView: View {
     @State private var myWordInput: String = ""
     @State private var showGuessPopup = false
     @State private var spyCount: Int = 1
+    
+    @State private var showTurnSplash = false
+    @State private var lastSplashTurnIndex: Int? = nil
 
     private let deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? UUID().uuidString
     private var isHost: Bool { hostId == deviceId }
@@ -139,7 +142,22 @@ struct GameDetailView: View {
                 router.replace(with: RoomView(roomCode: roomCode))
             }
         }
-
+        .onChange(of: currentTurnIndex) { _, _ in
+            maybeShowTurnSplash()
+        }
+        .onChange(of: turnOrder) { _, _ in
+            maybeShowTurnSplash()
+        }
+        .onChange(of: status) { _, _ in
+            maybeShowTurnSplash()
+        }
+        .onChange(of: continuePressed) { _, new in
+            if new { maybeShowTurnSplash() }
+        }
+        .slidingPage(
+            isPresented: $showTurnSplash,
+            text: String.localized(key: "your_turn", code: lang.code)
+        )
         .navigationBarBackButtonHidden(true)
     }
 }
@@ -267,10 +285,6 @@ extension GameDetailView {
                 Text(roleTitleTextLocalized)
                     .font(.title3).bold()
                     .foregroundColor(.primary)
-
-                Text(String.localized(key: "total_spies_count", code: lang.code, spyCount))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
                 
                 if !iAmSpy, let word = gameWord {
                     Text(String.localized(key: "game_word", code: lang.code, word))
@@ -380,6 +394,21 @@ extension GameDetailView {
 
 // MARK: - Logic & Firestore
 extension GameDetailView {
+    private var isMyTurn: Bool {
+        turnOrder.indices.contains(currentTurnIndex)
+        && turnOrder[currentTurnIndex] == deviceId
+        && status != "guessReady"
+        && continuePressed
+    }
+
+    private func maybeShowTurnSplash() {
+        guard continuePressed, isMyTurn else { return }
+        if lastSplashTurnIndex != currentTurnIndex {
+            lastSplashTurnIndex = currentTurnIndex
+            showTurnSplash = true
+        }
+    }
+    
     private func startCountdown() {
         showCountdown = true
         countdown = 3
@@ -435,6 +464,8 @@ extension GameDetailView {
             self.currentTurnIndex = (info["currentTurnIndex"] as? Int) ?? 0
             self.spyCount = (info["spyCount"] as? Int) ?? 1
 
+            self.maybeShowTurnSplash()
+            
             self.isLoading = false
         }
 
@@ -564,6 +595,7 @@ extension GameDetailView {
 
         // içerik
         gameWord = nil
+        lastSplashTurnIndex = nil
 
         // role reveal flag’i sıfırla (aynı odada yeni oyunda tekrar gösterilsin)
         markRoleAs(revealStatus: false)

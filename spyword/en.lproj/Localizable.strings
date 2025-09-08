@@ -140,3 +140,5 @@
 "result_all_spies_found" = "Excellent! All spies were found.";
 "result_some_spies_found" = "Partial success! Some spies were found.";
 "result_spies_escaped"    = "Nope! The spies escaped.";
+
+"your_turn" = "Your Turn!";
