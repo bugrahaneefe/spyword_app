@@ -128,3 +128,6 @@
 "result_wrong_spy_escaped" = "Wrong! The spy escaped.";
 "result_no_clear" = "No clear result.";
 "unknown" = "Unknown";
+
+"game_starts" = "Game starts!";
+"copied" = "Copied";

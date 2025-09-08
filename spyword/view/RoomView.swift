@@ -4,6 +4,7 @@ import FirebaseFirestore
 
 struct RoomView: View {
     @EnvironmentObject var router: Router
+    @EnvironmentObject var lang: LanguageManager
     @Environment(\.colorScheme) var colorScheme
 
     let roomCode: String
@@ -42,7 +43,7 @@ struct RoomView: View {
 
                     Divider().frame(height: 20)
 
-                    Text(String(format: NSLocalizedString("room_code", comment: ""), roomCode))
+                    Text(String.localized(key: "room_code", code: lang.code, roomCode))
                         .font(.body)
                         .foregroundColor(.primary)
 
@@ -103,7 +104,7 @@ struct RoomView: View {
         .keyboardAdaptive()
         .slidingPage(
             isPresented: $showStartSplash,
-            text: "Game Starts !"
+            text: String.localized(key: "game_starts", code: lang.code)
         )
         .onChange(of: showStartSplash) { _, isShowing in
             if !isShowing {
@@ -120,12 +121,12 @@ struct RoomView: View {
             checkAndNavigateToGame()
         }
         .onAppear { checkAndNavigateToGame() }
-        .alert(NSLocalizedString("removed_from_room_title", comment: ""), isPresented: $showRemovedAlert) {
-            Button(NSLocalizedString("main_menu", comment: "")) {
+        .alert(LocalizedStringKey("removed_from_room_title"), isPresented: $showRemovedAlert) {
+            Button(LocalizedStringKey("main_menu")) {
                 router.replace(with: MainView())
             }
         } message: {
-            Text(NSLocalizedString("removed_from_room_message", comment: ""))
+            Text("removed_from_room_message")
         }
         .overlay(alignment: .top) {
             if showCopiedToast {
@@ -166,11 +167,11 @@ struct RoomView: View {
                             if p.id == deviceId {
                                 Image(systemName: "checkmark.seal.fill")
                                     .foregroundColor(.successGreen)
-                                    .help(NSLocalizedString("you_are_here", comment: ""))
+                                    .help(Text("you_are_here"))
                             }
 
                             if isHost && p.id != deviceId {
-                                Button(NSLocalizedString("remove", comment: "")) {
+                                Button(LocalizedStringKey("remove")) {
                                     vm.remove(player: p)
                                 }
                                 .font(.caption)

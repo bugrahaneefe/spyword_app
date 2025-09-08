@@ -128,3 +128,6 @@
 "result_wrong_spy_escaped" = "Yanlış! Casus kaçtı.";
 "result_no_clear" = "Net bir sonuç yok.";
 "unknown" = "Bilinmiyor";
+
+"game_starts" = "Oyun başlıyor!";
+"copied" = "Kopyalandı";
