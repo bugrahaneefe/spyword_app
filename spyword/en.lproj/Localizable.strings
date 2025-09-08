@@ -163,3 +163,12 @@
 "category_hint" = "Pick a pool. A random name/character from that pool will be used as the secret word.";
 
 "category_custom" = "Custom Word";
+
+"spy_guesses_title" = "Spy Guesses";
+"spy_guess_pending" = "No guess yet";
+"spy_guess_word" = "Guess the Word";
+"enter_guess" = "Type your guess";
+"submit_guess" = "Submit Guess";
+"reveal_secret_word" = "Reveal Secret Word";
+"revealed_secret_word" = "Secret word: %@";
+"result_spies_win_by_guess" = "Spies win! They guessed the secret word.";

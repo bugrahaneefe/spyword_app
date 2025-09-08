@@ -656,9 +656,25 @@ struct SpyGuessView: View {
     @State private var resultText: String? = nil
     @State private var spyCount: Int = 1
     @State private var guessedSpyIds: Set<String> = []
-    @Environment(\.colorScheme) var colorScheme
 
+    // NEW: spy word guess flow states
+    @State private var spyWordGuesses: [String:String] = [:]   // [spyId: guess]
+    @State private var wordRevealed: Bool = false              // host reveal flag
+    @State private var actualWord: String? = nil               // from info.word
+
+    @State private var showGuessSheet: Bool = false            // sheet control
+    @State private var mySpyGuess: String = ""                 // input text
+
+    @Environment(\.colorScheme) var colorScheme
     private var cardBG: Color { colorScheme == .dark ? Color.black : Color.white }
+
+    // convenience
+    private var iAmSpy: Bool {
+        players.first(where: { $0.id == deviceId })?.role == "spy"
+    }
+    private var alreadyGuessed: Bool {
+        spyWordGuesses[deviceId] != nil
+    }
 
     var body: some View {
         ZStack {
@@ -683,6 +699,7 @@ struct SpyGuessView: View {
                         .cornerRadius(12)
                         .multilineTextAlignment(.center)
 
+                    // Players + target icon for voted-as-spy (existing)
                     VStack(alignment: .leading, spacing: 4) {
                         ForEach(players) { p in
                             HStack(spacing: 8) {
@@ -703,31 +720,74 @@ struct SpyGuessView: View {
                     .background(cardBG)
                     .cornerRadius(12)
 
+                    // NEW: Spy guesses section
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("spy_guesses_title")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+
+                        ForEach(players.filter { $0.role == "spy" }) { spy in
+                            HStack(spacing: 6) {
+                                Text(spy.name)
+                                    .font(.body).bold()
+                                    .foregroundColor(.primary)
+                                Text("—")
+                                if let g = spyWordGuesses[spy.id], !g.isEmpty {
+                                    Text("“\(g)”")
+                                        .font(.body)
+                                        .foregroundColor(.primaryBlue)
+                                } else {
+                                    Text("spy_guess_pending")
+                                        .font(.body)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(cardBG)
+                    .cornerRadius(12)
+
+                    // NEW: Host reveal + word
+                    if isHost && !wordRevealed {
+                        ButtonText(title: "reveal_secret_word") {
+                            revealWordAndFinalize()
+                        }
+                        .padding(.top, 4)
+                    }
+
+                    if wordRevealed, let w = actualWord {
+                        HStack(spacing: 8) {
+                            Image(systemName: "eye")
+                            Text(String.localized(key: "revealed_secret_word", code: lang.code, w))
+                        }
+                        .font(.body)
+                        .foregroundColor(.primary)
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(cardBG)
+                        .cornerRadius(12)
+                    }
+
+                    // NEW: Spy self action - guess button (only spies, single-shot)
+                    if iAmSpy && !alreadyGuessed {
+                        ButtonText(title: "spy_guess_word") {
+                            showGuessSheet = true
+                        }
+                        .padding(.top, 4)
+                    }
+
+                    // Existing: host end game
                     if isHost {
                         ButtonText(title: "end_game") {
-                            isPresented = false
-                            router.replace(with: RoomView(roomCode: roomCode))
-
-                            let db = Firestore.firestore()
-                            let roomRef = db.collection("rooms").document(roomCode)
-                            roomRef.updateData([
-                                "info.status": "waiting",
-                                "info.currentRound": 1,
-                                "info.currentTurnIndex": 0
-                            ])
-
-                            roomRef.collection("rounds").getDocuments { qs, _ in
-                                qs?.documents.forEach { $0.reference.delete() }
-                            }
-                            roomRef.collection("guesses").getDocuments { qs, _ in
-                                qs?.documents.forEach { $0.reference.delete() }
-                            }
+                            endGame()
                         }
                         .padding(.top, 4)
                     }
 
                 } else {
-                    // VOTING
+                    // VOTING (unchanged)
                     Text("who_is_the_spy")
                         .font(.title2).bold()
                         .foregroundColor(.primary)
@@ -751,7 +811,6 @@ struct SpyGuessView: View {
                                         .foregroundColor(.white)
                                         .clipShape(Circle())
                                 }
-                                // visual selection
                                 Image(systemName: selectedIds.contains(p.id) ? "checkmark.circle.fill" : "circle")
                             }
                             .padding()
@@ -767,16 +826,15 @@ struct SpyGuessView: View {
                     }
 
                     if votes[deviceId] == nil, selectedIds.count == spyCount {
-                        ButtonText(title: "vote") {
-                            castVotes(Array(selectedIds))
-                        }
+                        ButtonText(title: "vote") { castVotes(Array(selectedIds)) }
                     }
-                    
+
                     if votes[deviceId] == nil, selectedIds.count < spyCount {
                         Text(String.localized(key: "select_n_players", code: lang.code, spyCount))
                             .foregroundColor(.secondary)
                     } else if votes[deviceId] != nil, votes.count != players.count {
-                        Text("voted_waiting_others").foregroundColor(.secondary)
+                        Text("voted_waiting_others")
+                            .foregroundColor(.secondary)
                     }
 
                     if votes.count == players.count {
@@ -785,41 +843,78 @@ struct SpyGuessView: View {
                     }
 
                     if isHost {
-                        ButtonText(title: "finish_voting") {
-                            showResult()
-                        }
+                        ButtonText(title: "finish_voting") { showResult() }
                     }
                 }
             }
             .padding()
-            .frame(maxWidth: 320)
+            .frame(maxWidth: 360)
             .background(cardBG)
             .cornerRadius(16)
             .shadow(radius: 12)
         }
-        .onAppear {
-            attachGuessListener()
+        .onAppear { attachGuessListener() }
+        // NEW: Spy guess sheet
+        .sheet(isPresented: $showGuessSheet) {
+            NavigationView {
+                VStack(spacing: 12) {
+                    TextField(String.localized(key: "enter_guess", code: lang.code), text: $mySpyGuess)
+                        .textInputAutocapitalization(.never)
+                        .disableAutocorrection(true)
+                        .padding()
+                        .background(Color(.secondarySystemBackground))
+                        .cornerRadius(10)
+
+                    ButtonText(title: "submit_guess") {
+                        submitSpyGuess()
+                    }
+                    .disabled(mySpyGuess.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+
+                    Spacer()
+                }
+                .padding()
+                .navigationTitle(Text("spy_guess_word"))
+                .navigationBarTitleDisplayMode(.inline)
+            }
+            .presentationDetents([.medium])
         }
     }
-    
+
+    // MARK: - Helpers
     private func voteCount(for targetId: String) -> Int {
         votes.values.flatMap { $0 }.filter { $0 == targetId }.count
     }
 
-    private func castVotes(_ targetIds: [String]) {
-        let db = Firestore.firestore()
-        let ref = db.collection("rooms")
-            .document(roomCode)
-            .collection("guesses")
-            .document(deviceId)
+    private func endGame() {
+        isPresented = false
+        router.replace(with: RoomView(roomCode: roomCode))
 
-        ref.setData(["votes": targetIds])
+        let db = Firestore.firestore()
+        let roomRef = db.collection("rooms").document(roomCode)
+        roomRef.updateData([
+            "info.status": "waiting",
+            "info.currentRound": 1,
+            "info.currentTurnIndex": 0,
+            "info.resultText": FieldValue.delete(),
+            "info.spyWordGuesses": FieldValue.delete(),
+            "info.wordRevealed": FieldValue.delete(),
+            "info.guessedSpyIds": FieldValue.delete()
+        ])
+
+        roomRef.collection("rounds").getDocuments { qs, _ in
+            qs?.documents.forEach { $0.reference.delete() }
+        }
+        roomRef.collection("guesses").getDocuments { qs, _ in
+            qs?.documents.forEach { $0.reference.delete() }
+        }
     }
 
+    // MARK: - Firestore listeners
     private func attachGuessListener() {
         let db = Firestore.firestore()
         let ref = db.collection("rooms").document(roomCode).collection("guesses")
 
+        // votes (existing)
         ref.addSnapshotListener { qs, _ in
             var dict: [String: [String]] = [:]
             qs?.documents.forEach { doc in
@@ -833,6 +928,7 @@ struct SpyGuessView: View {
             self.votes = dict
         }
 
+        // room info (extended)
         let roomRef = db.collection("rooms").document(roomCode)
         roomRef.addSnapshotListener { snap, _ in
             if let data = snap?.data(),
@@ -843,15 +939,77 @@ struct SpyGuessView: View {
                 } else {
                     self.guessedSpyIds = []
                 }
-                
+
                 self.roomStatus = (info["status"] as? String) ?? ""
                 self.spyCount = (info["spyCount"] as? Int) ?? 1
+                self.actualWord = info["word"] as? String
+                self.wordRevealed = (info["wordRevealed"] as? Bool) ?? false
+
+                if let guesses = info["spyWordGuesses"] as? [String:String] {
+                    self.spyWordGuesses = guesses
+                } else {
+                    self.spyWordGuesses = [:]
+                }
+
                 let newResult = info["resultText"] as? String
                 self.resultText = (self.roomStatus == "result") ? newResult : nil
             }
         }
     }
 
+    // MARK: - Actions
+    private func castVotes(_ targetIds: [String]) {
+        let db = Firestore.firestore()
+        let ref = db.collection("rooms")
+            .document(roomCode)
+            .collection("guesses")
+            .document(deviceId)
+
+        ref.setData(["votes": targetIds])
+    }
+
+    private func submitSpyGuess() {
+        let trimmed = mySpyGuess.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+
+        let db = Firestore.firestore()
+        let roomRef = db.collection("rooms").document(roomCode)
+
+        // Safer nested update for a single key in the dictionary
+        roomRef.updateData([
+            "info.spyWordGuesses.\(deviceId)": trimmed
+        ]) { _ in
+            self.showGuessSheet = false
+            self.mySpyGuess = ""
+        }
+    }
+
+    private func revealWordAndFinalize() {
+        let db = Firestore.firestore()
+        let roomRef = db.collection("rooms").document(roomCode)
+
+        // Decide if spies guessed correctly (case-insensitive, trimmed)
+        let word = (actualWord ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let spiesHit = spyWordGuesses.values.contains(where: { guess in
+            normalize(guess) == normalize(word)
+        })
+
+        var updates: [String:Any] = ["info.wordRevealed": true]
+
+        if spiesHit {
+            // override result text in favor of spies
+            updates["info.resultText"] = String.localized(key: "result_spies_win_by_guess", code: lang.code)
+        }
+
+        roomRef.updateData(updates)
+    }
+
+    private func normalize(_ s: String) -> String {
+        s.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+         .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    // Existing tally → result calc for voted spies (unchanged)
     private func showResult() {
         guard !players.isEmpty else { return }
 
@@ -883,7 +1041,7 @@ struct SpyGuessView: View {
             "info.guessedSpyIds": topN
         ])
 
-        // local state de dolsun ki anında çizelim
         self.guessedSpyIds = Set(topN)
     }
 }
+

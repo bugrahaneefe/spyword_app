@@ -162,3 +162,12 @@
 "category_nfl" = "NFL";
 "category_hint" = "Bir havuz seçin. Gizli kelime bu havuzdan rastgele seçilir.";
 "category_custom" = "Özel Kelime";
+
+"spy_guesses_title" = "Casus Tahminleri";
+"spy_guess_pending" = "Henüz tahmin yok";
+"spy_guess_word" = "Kelimeyi Tahmin Et";
+"enter_guess" = "Tahminini yaz";
+"submit_guess" = "Tahmini Gönder";
+"reveal_secret_word" = "Gizli Kelimeyi Aç";
+"revealed_secret_word" = "Gizli kelime: %@";
+"result_spies_win_by_guess" = "Casuslar kazandı! Gizli kelimeyi bildiler.";
