@@ -178,3 +178,8 @@
 "confirm_end_message" = "This will reset the room and clear all rounds and guesses.";
 "confirm_end_confirm" = "End Game";
 "confirm_end_cancel"  = "Cancel";
+
+"confirm_finish_title"        = "Finish Voting?";
+"confirm_finish_message_fmt"  = "%d of %d players have voted. Finish voting anyway?";
+"confirm_finish_confirm"      = "Finish";
+"confirm_finish_cancel"       = "Cancel";

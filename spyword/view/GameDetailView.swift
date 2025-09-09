@@ -177,10 +177,10 @@ struct GameDetailView: View {
         )
         .confirmPopup(
             isPresented: $showEndGameConfirm,
-            title: "confirm_end_title",
-            message: "confirm_end_message",
-            confirmTitle: "confirm_end_confirm",
-            cancelTitle: "confirm_end_cancel",
+            title: String.localized(key: "end_game_title", code: lang.code),
+            message: String.localized(key: "end_game_message", code: lang.code),
+            confirmTitle: String.localized(key: "end_game_confirm", code: lang.code),
+            cancelTitle: String.localized(key: "end_game_cancel", code: lang.code),
             isDestructive: true
         ) {
             endGameAndReset()
@@ -697,6 +697,8 @@ struct SpyGuessView: View {
     @State private var showGuessSheet: Bool = false            // sheet control
     @State private var mySpyGuess: String = ""                 // input text
 
+    @State private var showFinishVotingConfirm = false
+
     @Environment(\.colorScheme) var colorScheme
     private var cardBG: Color { colorScheme == .dark ? Color.black : Color.white }
 
@@ -886,7 +888,15 @@ struct SpyGuessView: View {
                     }
 
                     if isHost {
-                        ButtonText(title: "finish_voting") { showResult() }
+                        ButtonText(title: "finish_voting") {
+                            let total = players.count
+                            let voted = votes.count
+                            if voted < total {
+                                showFinishVotingConfirm = true
+                            } else {
+                                showResult()
+                            }
+                        }
                     }
                 }
             }
@@ -897,7 +907,21 @@ struct SpyGuessView: View {
             .shadow(radius: 12)
         }
         .onAppear { attachGuessListener() }
-        // NEW: Spy guess sheet
+        .confirmPopup(
+            isPresented: $showFinishVotingConfirm,
+            title: String.localized(key: "confirm_finish_title", code: lang.code),
+            message: String.localized(
+                key: "confirm_finish_message_fmt",
+                code: lang.code,
+                votes.count,
+                players.count 
+            ),
+            confirmTitle: String.localized(key: "confirm_finish_confirm", code: lang.code),
+            cancelTitle: String.localized(key: "confirm_finish_cancel", code: lang.code),
+            isDestructive: true
+        ) {
+            showResult()
+        }
         .sheet(isPresented: $showGuessSheet) {
             NavigationView {
                 VStack(spacing: 12) {

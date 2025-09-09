@@ -40,7 +40,7 @@ struct ConfirmPopup: View {
                             Text(cancelTitle)
                                 .font(.body.weight(.semibold))
                                 .frame(maxWidth: .infinity)
-                                .foregroundColor(.white)
+                                .foregroundColor(Color.backgroundDark)
                                 .padding(.vertical, 12)
                                 .background(Color.secondary.opacity(0.15))
                                 .cornerRadius(10)

@@ -172,3 +172,8 @@
 "confirm_end_message" = "Isso vai redefinir a sala e apagar todas as rodadas e palpites.";
 "confirm_end_confirm" = "Encerrar";
 "confirm_end_cancel"  = "Cancelar";
+
+"confirm_finish_title"        = "Encerrar votação?";
+"confirm_finish_message_fmt"  = "%1$d de %2$d jogadores votaram. Encerrar mesmo assim?";
+"confirm_finish_confirm"      = "Encerrar";
+"confirm_finish_cancel"       = "Cancelar";
