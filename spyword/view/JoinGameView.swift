@@ -212,7 +212,7 @@ extension JoinGameView {
                 Task { @MainActor in
                     let root = UIApplication.shared.topMostViewController()
                     do {
-                        try await AdsManager.shared.showInterstitial(from: root)
+                        try await AdsManager.shared.showInterstitial(from: root, chance: 80)
                     } catch {
                         print("Interstitial error: \(error)")
                     }
@@ -245,7 +245,7 @@ extension JoinGameView {
         Task { @MainActor in
             let root = UIApplication.shared.topMostViewController()
             do {
-                try await AdsManager.shared.showInterstitial(from: root)
+                try await AdsManager.shared.showInterstitial(from: root, chance: 45)
             } catch {
                 print("Interstitial error: \(error)")
             }

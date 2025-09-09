@@ -166,7 +166,7 @@ extension CreateRoomView {
         Task { @MainActor in
             let root = UIApplication.shared.topMostViewController()
             do {
-                try await AdsManager.shared.showInterstitial(from: root)
+                try await AdsManager.shared.showInterstitial(from: root, chance: 100)
             } catch {
                 print("Interstitial error: \(error)")
             }

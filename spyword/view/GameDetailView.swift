@@ -735,8 +735,7 @@ struct SpyGuessView: View {
                         .onAppear {
                             Task { @MainActor in
                                 let root = UIApplication.shared.topMostViewController()
-                                try await AdsManager.shared.showInterstitial(from: root, chance: 30)
-
+                                
                                 let reward = try await AdsManager.shared.showRewarded(from: root, chance: 75)
                                 if reward.amount != 0 {
                                     print("Kazanç: \(reward.amount) \(reward.type)")
