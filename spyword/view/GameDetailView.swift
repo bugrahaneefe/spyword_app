@@ -110,6 +110,11 @@ struct GameDetailView: View {
                 .environmentObject(lang)
             }
         }
+        .safeAreaInset(edge: .bottom) {
+            BannerAdView()
+                .background(pageBG)
+                .shadow(radius: 2)
+        }
         .onAppear {
             attachListeners()
             if isResultPhase(status) && amSelected {
@@ -283,8 +288,6 @@ extension GameDetailView {
                         }
                     }
                 }
-                
-                BannerAdView()
             }
             .padding()
             .scrollDismissesKeyboard(.interactively)
