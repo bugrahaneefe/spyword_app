@@ -101,7 +101,7 @@ struct GameSettingsView: View {
                 }
                 
                 Section(header: Text("numeric_settings")) {
-                    Stepper(value: $vm.spyCount, in: 0...maxSpyCount) {
+                    Stepper(value: $vm.spyCount, in: 1...maxSpyCount) {
                         HStack {
                             Text("spy_count")
                             Spacer()
