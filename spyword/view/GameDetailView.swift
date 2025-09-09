@@ -177,10 +177,10 @@ struct GameDetailView: View {
         )
         .confirmPopup(
             isPresented: $showEndGameConfirm,
-            title: String.localized(key: "end_game_title", code: lang.code),
-            message: String.localized(key: "end_game_message", code: lang.code),
-            confirmTitle: String.localized(key: "end_game_confirm", code: lang.code),
-            cancelTitle: String.localized(key: "end_game_cancel", code: lang.code),
+            title: String.localized(key: "confirm_end_title", code: lang.code),
+            message: String.localized(key: "confirm_end_message", code: lang.code),
+            confirmTitle: String.localized(key: "confirm_end_confirm", code: lang.code),
+            cancelTitle: String.localized(key: "confirm_end_cancel", code: lang.code),
             isDestructive: true
         ) {
             endGameAndReset()
