@@ -33,7 +33,7 @@ final class AdsManager: NSObject, ObservableObject {
     private override init() { super.init() }
 
     func start() {
-        MobileAds.shared.start(completionHandler: nil)
+        MobileAds.shared.start()
         preloadAll()
     }
 
