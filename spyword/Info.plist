@@ -11,5 +11,7 @@
 			<string>cstr6suwn9.skadnetwork</string>
 		</dict>
 	</array>
+    <key>NSUserTrackingUsageDescription</key>
+    <string>This identifier will be used to deliver more relevant ads and improve the app experience.</string>
 </dict>
 </plist>

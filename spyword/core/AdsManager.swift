@@ -12,9 +12,9 @@ import UIKit
 
 // MARK: - Ad Unit IDs (Google Test)
 enum AdUnitID {
-    static let banner = "ca-app-pub-3940256099942544/2934735716"
-    static let interstitial = "ca-app-pub-3940256099942544/4411468910"
-    static let rewarded = "ca-app-pub-3940256099942544/1712485313"
+    static let banner = "ca-app-pub-4424526592569602/3616395813"
+    static let interstitial = "ca-app-pub-4424526592569602/6569862214"
+    static let rewarded = "ca-app-pub-4424526592569602/7981934660"
 }
 
 // MARK: - AdsManager
