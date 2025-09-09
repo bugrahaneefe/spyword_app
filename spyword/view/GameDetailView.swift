@@ -104,6 +104,9 @@ struct GameDetailView: View {
                     isPresented: $showGuessPopup,
                     router: router
                 )
+                .onAppear(perform: {
+                    showTurnSplash = false
+                })
                 .environmentObject(lang)
             }
         }
@@ -905,7 +908,9 @@ struct SpyGuessView: View {
             .cornerRadius(16)
             .shadow(radius: 12)
         }
-        .onAppear { attachGuessListener() }
+        .onAppear {
+            attachGuessListener()
+        }
         .confirmPopup(
             isPresented: $showFinishVotingConfirm,
             title: String.localized(key: "confirm_finish_title", code: lang.code),
