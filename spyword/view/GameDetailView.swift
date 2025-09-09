@@ -79,13 +79,6 @@ struct GameDetailView: View {
 
     init(roomCode: String) {
         self.roomCode = roomCode
-
-        let did = UserDefaults.standard.string(forKey: "deviceId") ?? UUID().uuidString
-        let seenKey = "roleRevealed-\(roomCode)-\(did)"
-        let seen = UserDefaults.standard.bool(forKey: seenKey)
-        
-        _revealedOnce   = State(initialValue: seen)
-        _continuePressed = State(initialValue: seen)
     }
     
     var body: some View {
@@ -114,14 +107,9 @@ struct GameDetailView: View {
         }
         .onAppear {
             attachListeners()
-            if hasSeenRole() {
-                revealedOnce = true
-                continuePressed = true
-            }
             if isResultPhase(status) && amSelected {
                 showGuessPopup = true
             }
-            if isGuessRelated(status) { continuePressed = true }
         }
         .onChange(of: status) { _, new in
             if isResultPhase(new) && amSelected {
@@ -213,7 +201,7 @@ extension GameDetailView {
             
             if isHost && isGameStatus(status) {
                 Button(action: endGameAndReset) {
-                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                    Image(systemName: "xmark.octagon.fill")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.white)
                         .padding(10)
