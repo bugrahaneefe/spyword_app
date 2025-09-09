@@ -5,21 +5,29 @@ struct StatusBadge: View {
 
     private var label: LocalizedStringKey {
         switch status.lowercased() {
-        case "waiting":   return "status_waiting"
-        case "arranging": return "status_arranging"
-        case "started":   return "status_started"
-        case "the game":  return "status_in_game"
-        default:          return LocalizedStringKey(status.capitalized)
+        case "waiting":      return "status_waiting"
+        case "arranging":    return "status_arranging"
+        case "started":      return "status_started"
+        case "the game",
+             "in game":      return "status_in_game"
+        case "guessready":   return "status_guess_ready"
+        case "guessing":     return "status_guessing"
+        case "result":       return "status_result"
+        default:             return LocalizedStringKey(status.capitalized)
         }
     }
 
     private var color: Color {
         switch status.lowercased() {
-        case "waiting":   return .gray
-        case "arranging": return .orange
-        case "started":   return .blue
-        case "the game":  return .green
-        default:          return .secondary
+        case "waiting":      return .gray
+        case "arranging":    return .orange
+        case "started":      return .blue
+        case "the game",
+             "in game":      return .green
+        case "guessready":   return .purple
+        case "guessing":     return .yellow
+        case "result":       return .teal
+        default:             return .secondary
         }
     }
 

@@ -177,3 +177,6 @@
 "confirm_finish_message_fmt"  = "%1$d von %2$d Spielern haben abgestimmt. Trotzdem beenden?";
 "confirm_finish_confirm"      = "Beenden";
 "confirm_finish_cancel"       = "Abbrechen";
+"status_guess_ready"  = "Bereit zum Raten";
+"status_guessing"     = "Es wird geraten";
+"status_result"       = "Ergebnis";

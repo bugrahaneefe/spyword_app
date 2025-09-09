@@ -183,3 +183,7 @@
 "confirm_finish_message_fmt"  = "%d of %d players have voted. Finish voting anyway?";
 "confirm_finish_confirm"      = "Finish";
 "confirm_finish_cancel"       = "Cancel";
+
+"status_guess_ready"  = "Guess Ready";
+"status_guessing"     = "Guessing";
+"status_result"       = "Result";

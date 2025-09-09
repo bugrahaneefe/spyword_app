@@ -177,3 +177,6 @@
 "confirm_finish_message_fmt"  = "%1$d de %2$d jogadores votaram. Encerrar mesmo assim?";
 "confirm_finish_confirm"      = "Encerrar";
 "confirm_finish_cancel"       = "Cancelar";
+"status_guess_ready"  = "Pronto para adivinhar";
+"status_guessing"     = "Adivinhando";
+"status_result"       = "Resultado";

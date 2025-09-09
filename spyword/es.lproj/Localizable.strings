@@ -177,3 +177,6 @@
 "confirm_finish_message_fmt"  = "%1$d de %2$d jugadores han votado. ¿Finalizar de todos modos?";
 "confirm_finish_confirm"      = "Finalizar";
 "confirm_finish_cancel"       = "Cancelar";
+"status_guess_ready"  = "Listo para adivinar";
+"status_guessing"     = "Adivinando";
+"status_result"       = "Resultado";

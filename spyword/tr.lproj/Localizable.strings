@@ -20,10 +20,13 @@
 "name_add_failed" = "İsim eklenemedi: %@";
 
 /* Status labels */
-"status_waiting" = "Bekleniyor";
-"status_arranging" = "Düzenleniyor";
-"status_started" = "Başladı";
-"status_in_game" = "Oyunda";
+"status_waiting"      = "Bekleniyor";
+"status_arranging"    = "Düzenleniyor";
+"status_started"      = "Başladı";
+"status_in_game"      = "Oyunda";
+"status_guess_ready"  = "Tahmine Hazır";
+"status_guessing"     = "Tahmin Ediliyor";
+"status_result"       = "Sonuç";
 
 /* Accessibility */
 "room_status_accessibility" = "Oda durumu:";

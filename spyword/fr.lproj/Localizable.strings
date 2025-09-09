@@ -177,3 +177,6 @@
 "confirm_finish_message_fmt"  = "%1$d sur %2$d joueurs ont voté. Terminer quand même ?";
 "confirm_finish_confirm"      = "Terminer";
 "confirm_finish_cancel"       = "Annuler";
+"status_guess_ready"  = "Prêt à deviner";
+"status_guessing"     = "Deviner en cours";
+"status_result"       = "Résultat";
