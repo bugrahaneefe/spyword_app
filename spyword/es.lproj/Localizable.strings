@@ -167,3 +167,8 @@
 "category_geography" = "Geografía (Lugares y monumentos)";
 "category_music" = "Música (Cantantes y bandas)";
 "category_literature" = "Literatura (Escritores y personajes)";
+
+"confirm_end_title"   = "¿Terminar la partida?";
+"confirm_end_message" = "Esto restablecerá la sala y borrará todas las rondas y votos.";
+"confirm_end_confirm" = "Terminar";
+"confirm_end_cancel"  = "Cancelar";

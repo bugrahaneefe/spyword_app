@@ -168,3 +168,7 @@
 "category_music" = "Musica (Cantanti e band)";
 "category_literature" = "Letteratura (Scrittori e personaggi)";
 
+"confirm_end_title"   = "Terminare la partita?";
+"confirm_end_message" = "Questa operazione reimposterà la stanza e cancellerà tutti i round e i voti.";
+"confirm_end_confirm" = "Termina";
+"confirm_end_cancel"  = "Annulla";

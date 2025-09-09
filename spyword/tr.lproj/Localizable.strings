@@ -173,3 +173,8 @@
 "category_geography" = "Coğrafya (Yerler & simgeler)";
 "category_music" = "Müzik (Şarkıcılar & gruplar)";
 "category_literature" = "Edebiyat (Yazarlar & karakterler)";
+
+"confirm_end_title"   = "Oyunu Bitir?";
+"confirm_end_message" = "Bu işlem odayı sıfırlar ve tüm turları ile tahminleri temizler.";
+"confirm_end_confirm" = "Oyunu Bitir";
+"confirm_end_cancel"  = "İptal";

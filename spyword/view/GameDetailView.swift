@@ -43,6 +43,8 @@ struct GameDetailView: View {
 
     @State private var gameId: String = ""
 
+    @State private var showEndGameConfirm = false
+
     private var categoryTitleKey: LocalizedStringKey? {
         if let raw = categoryRaw {
             switch raw {
@@ -173,6 +175,16 @@ struct GameDetailView: View {
             isPresented: $showTurnSplash,
             text: String.localized(key: "your_turn", code: lang.code)
         )
+        .confirmPopup(
+            isPresented: $showEndGameConfirm,
+            title: "confirm_end_title",
+            message: "confirm_end_message",
+            confirmTitle: "confirm_end_confirm",
+            cancelTitle: "confirm_end_cancel",
+            isDestructive: true
+        ) {
+            endGameAndReset()
+        }
         .navigationBarBackButtonHidden(true)
     }
 }
@@ -200,15 +212,18 @@ extension GameDetailView {
                 .layoutPriority(3)
             
             if isHost && isGameStatus(status) {
-                Button(action: endGameAndReset) {
+                Button {
+                    showEndGameConfirm = true
+                } label: {
                     Image(systemName: "xmark.octagon.fill")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.white)
                         .padding(10)
                         .background(Color.errorRed)
-                        .cornerRadius(10)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                         .shadow(color: .black.opacity(0.4), radius: 4, x: 0, y: 2)
                 }
+                .accessibilityLabel(Text("End game"))
                 .frame(minWidth: 40, minHeight: 40)
                 .layoutPriority(3)
             }

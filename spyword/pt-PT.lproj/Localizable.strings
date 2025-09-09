@@ -167,3 +167,8 @@
 "category_geography" = "Geografia (Lugares e marcos)";
 "category_music" = "Música (Cantores e bandas)";
 "category_literature" = "Literatura (Escritores e personagens)";
+
+"confirm_end_title"   = "Encerrar o jogo?";
+"confirm_end_message" = "Isso vai redefinir a sala e apagar todas as rodadas e palpites.";
+"confirm_end_confirm" = "Encerrar";
+"confirm_end_cancel"  = "Cancelar";

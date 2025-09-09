@@ -173,3 +173,8 @@
 "category_geography" = "Geography (Places & landmarks)";
 "category_music" = "Music (Singers & bands)";
 "category_literature" = "Literature (Writers & characters)";
+
+"confirm_end_title"   = "End Game?";
+"confirm_end_message" = "This will reset the room and clear all rounds and guesses.";
+"confirm_end_confirm" = "End Game";
+"confirm_end_cancel"  = "Cancel";

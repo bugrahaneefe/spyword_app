@@ -167,3 +167,8 @@
 "category_geography" = "Geografie (Orte & Wahrzeichen)";
 "category_music" = "Musik (Sänger & Bands)";
 "category_literature" = "Literatur (Autoren & Figuren)";
+
+"confirm_end_title"   = "Spiel beenden?";
+"confirm_end_message" = "Dadurch wird der Raum zurückgesetzt und alle Runden sowie Vermutungen gelöscht.";
+"confirm_end_confirm" = "Spiel beenden";
+"confirm_end_cancel"  = "Abbrechen";
