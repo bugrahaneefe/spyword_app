@@ -115,6 +115,7 @@ struct CreateRoomView: View {
                 .safeAreaPadding(.bottom)
             }
         }
+        .swipeBack(to: MainView(), by: router)
         .onAppear{ createRoom() }
         .keyboardAdaptive()
     }

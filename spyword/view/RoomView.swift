@@ -101,6 +101,7 @@ struct RoomView: View {
             }
             .safeAreaPadding(.bottom)
         }
+        .swipeBack(to: MainView(), by: router)
         .keyboardAdaptive()
         .slidingPage(
             isPresented: $showStartSplash,

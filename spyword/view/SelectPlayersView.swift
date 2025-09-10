@@ -98,6 +98,7 @@ struct SelectPlayersView: View {
             }
             .padding()
         }
+        .swipeBack(to: RoomView(roomCode: roomCode), by: router)
         .background(colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
         .navigationBarBackButtonHidden(true)
         .onAppear {

@@ -44,3 +44,28 @@ extension View {
         }
     }
 }
+
+extension View {
+    func swipeBack<Destination: View>(
+        to destination: Destination,
+        by router: Router,
+        threshold: CGFloat = 60,
+        edgeWidth: CGFloat = 32
+    ) -> some View {
+        self.gesture(
+            DragGesture(minimumDistance: 20, coordinateSpace: .local)
+                .onEnded { value in
+                    let dx = value.translation.width
+                    let dy = value.translation.height
+                    let isHorizontal = abs(dx) > abs(dy)
+                    
+                    let startedFromLeftEdge = value.startLocation.x < edgeWidth
+                    let passedThreshold = dx > threshold
+                    
+                    if isHorizontal && startedFromLeftEdge && passedThreshold {
+                        router.replace(with: destination)
+                    }
+                }
+        )
+    }
+}

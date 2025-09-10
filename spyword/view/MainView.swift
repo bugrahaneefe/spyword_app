@@ -12,7 +12,7 @@ struct MainView: View {
     @Environment(\.colorScheme) var colorScheme
 
     @State private var showLanguageSheet = false
-    @State private var showHowToSheet = false   // NEW
+    @State private var showHowToSheet = false
 
     var body: some View {
         ZStack {
