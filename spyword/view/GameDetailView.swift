@@ -96,7 +96,7 @@ struct GameDetailView: View {
             }
             .safeAreaPadding(.bottom)
         }
-        .swipeBack(to: RoomView(roomCode: roomCode), by: router)
+        .swipeBack(to: MainView(), by: router)
         .overlay {
             if showGuessPopup {
                 SpyGuessView(
