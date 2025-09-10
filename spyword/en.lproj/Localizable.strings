@@ -187,3 +187,5 @@
 "status_guess_ready"  = "Guess Ready";
 "status_guessing"     = "Guessing";
 "status_result"       = "Result";
+
+"now_playing" = "Now playing";

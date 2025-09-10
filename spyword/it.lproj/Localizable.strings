@@ -180,3 +180,4 @@
 "status_guess_ready"  = "Pronto a indovinare";
 "status_guessing"     = "Si sta indovinando";
 "status_result"       = "Risultato";
+"now_playing" = "Sta giocando";

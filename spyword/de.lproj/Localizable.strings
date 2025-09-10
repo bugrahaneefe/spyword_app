@@ -180,3 +180,4 @@
 "status_guess_ready"  = "Bereit zum Raten";
 "status_guessing"     = "Es wird geraten";
 "status_result"       = "Ergebnis";
+"now_playing" = "Gerade am Zug";

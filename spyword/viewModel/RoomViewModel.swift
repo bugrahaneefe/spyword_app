@@ -120,67 +120,72 @@ final class RoomViewModel: ObservableObject {
 
     // MARK: - Start game with settings
     func startGame(selectedIds: [String], settings: GameSettings) {
-            // Kelime
-            let word: String = {
-                switch settings.mode {
-                case .random:
-                    return WordPools.randomWord(from: settings.category)
-                case .custom:
-                    return settings.customWord?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
-                    ? settings.customWord!.trimmingCharacters(in: .whitespacesAndNewlines)
-                    : "Kelime"
-                }
-            }()
-
-            // Roller
-            var eligibleForSpy = selectedIds
-            if settings.mode == .custom, let host = hostId {
-                // host kelimeyi girdiyse spy olamaz
-                eligibleForSpy.removeAll { $0 == host }
+        // Kelime
+        let word: String = {
+            switch settings.mode {
+            case .random:
+                return WordPools.randomWord(from: settings.category)
+            case .custom:
+                return settings.customWord?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
+                ? settings.customWord!.trimmingCharacters(in: .whitespacesAndNewlines)
+                : "Kelime"
             }
-
-            let spyCount = max(0, min(settings.spyCount, max(0, eligibleForSpy.count)))
-            let spies = Array(eligibleForSpy.shuffled().prefix(spyCount))
-            let spySet = Set(spies)
-
-            let batch = Firestore.firestore().batch()
-
-            // Oyuncular
-            for p in players {
-                let doc = roomRef.collection("players").document(p.id)
-                let isInGame = selectedIds.contains(p.id)
-                var updates: [String:Any] = ["isSelected": isInGame]
-                if isInGame {
-                    let role = spySet.contains(p.id) ? "spy" : "knower"
-                    updates["role"] = role
-                    updates["isEliminated"] = false
-                } else {
-                    updates["role"] = FieldValue.delete()
-                }
-                batch.updateData(updates, forDocument: doc)
+        }()
+        
+        // Roller
+        var eligibleForSpy = selectedIds
+        if settings.mode == .custom, let host = hostId {
+            // host kelimeyi girdiyse spy olamaz
+            eligibleForSpy.removeAll { $0 == host }
+        }
+        
+        let spyCount = max(0, min(settings.spyCount, max(0, eligibleForSpy.count)))
+        let spies = Array(eligibleForSpy.shuffled().prefix(spyCount))
+        let spySet = Set(spies)
+        
+        let batch = Firestore.firestore().batch()
+        
+        // Oyuncular
+        for p in players {
+            let doc = roomRef.collection("players").document(p.id)
+            let isInGame = selectedIds.contains(p.id)
+            var updates: [String:Any] = ["isSelected": isInGame]
+            if isInGame {
+                let role = spySet.contains(p.id) ? "spy" : "knower"
+                updates["role"] = role
+                updates["isEliminated"] = false
+            } else {
+                updates["role"] = FieldValue.delete()
             }
-
-            // sıra
-            let turnOrder = selectedIds.shuffled()
-
-            let info: [String:Any] = [
-                "status": "the game",
-                "word": word,
-                "spyCount": spyCount,
-                "totalRounds": settings.totalRounds,
-                "lockedPlayers": selectedIds,
-                "turnOrder": turnOrder,
-                "category": settings.category.rawValue
-            ]
-
-            batch.setData(["info": info], forDocument: roomRef, merge: true)
-
-            batch.commit { [weak self] error in
-                if let err = error {
-                    DispatchQueue.main.async { self?.errorMessage = err.localizedDescription }
-                }
+            batch.updateData(updates, forDocument: doc)
+        }
+        
+        // sıra
+        let turnOrder = selectedIds.shuffled()
+        
+        var info: [String:Any] = [
+            "status": "the game",
+            "word": word,
+            "spyCount": spyCount,
+            "totalRounds": settings.totalRounds,
+            "lockedPlayers": selectedIds,
+            "turnOrder": turnOrder
+        ]
+        
+        if settings.mode == .random {
+            info["category"] = settings.category.rawValue
+        } else {
+            info["category"] = "custom"
+        }
+        
+        batch.setData(["info": info], forDocument: roomRef, merge: true)
+        
+        batch.commit { [weak self] error in
+            if let err = error {
+                DispatchQueue.main.async { self?.errorMessage = err.localizedDescription }
             }
         }
+    }
 
     func remove(player: Player) {
         roomRef.collection("players").document(player.id).delete { [weak self] error in

@@ -186,3 +186,5 @@
 "confirm_finish_message_fmt"  = "%2$d oyuncudan %1$d'i oy kullandı. Oylamayı bitirmek istiyor musun?";
 "confirm_finish_confirm"      = "Bitir";
 "confirm_finish_cancel"       = "İptal";
+
+"now_playing" = "Şu anda oynuyor";

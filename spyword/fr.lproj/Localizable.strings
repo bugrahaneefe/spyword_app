@@ -180,3 +180,4 @@
 "status_guess_ready"  = "Prêt à deviner";
 "status_guessing"     = "Deviner en cours";
 "status_result"       = "Résultat";
+"now_playing" = "En train de jouer";

@@ -11,7 +11,8 @@ struct ConfirmPopup: View {
     let onConfirm: () -> Void
 
     @Environment(\.colorScheme) private var scheme
-    private var cardBG: Color { scheme == .dark ? .black : .white }
+    private var cardBG: Color { scheme == .dark ? .backgroundDark : .backgroundLight }
+    private var cardFG: Color { scheme == .dark ? .backgroundLight : .backgroundDark }
 
     var body: some View {
         if isPresented {
@@ -40,7 +41,7 @@ struct ConfirmPopup: View {
                             Text(cancelTitle)
                                 .font(.body.weight(.semibold))
                                 .frame(maxWidth: .infinity)
-                                .foregroundColor(Color.backgroundDark)
+                                .foregroundColor(cardFG)
                                 .padding(.vertical, 12)
                                 .background(Color.secondary.opacity(0.15))
                                 .cornerRadius(10)

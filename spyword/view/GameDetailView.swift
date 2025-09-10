@@ -33,6 +33,7 @@ struct GameDetailView: View {
     @State private var currentTurnIndex: Int = 0
     @State private var playerInputs: [Int: [String: String]] = [:]
     @State private var myWordInput: String = ""
+    @FocusState private var isWordFieldFocused: Bool
     @State private var showGuessPopup = false
     @State private var spyCount: Int = 1
     
@@ -58,6 +59,7 @@ struct GameDetailView: View {
             case "geography":           return "category_geography"
             case "music":           return "category_music"
             case "literature":           return "category_literature"
+            case "custom":        return "category_custom"
             default:              return "category_custom"
             }
         } else {
@@ -264,7 +266,7 @@ extension GameDetailView {
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)
                         .foregroundColor(.primary)
-                        .background(Color.secondaryBlue.opacity(0.15))
+                        .background(Color.primaryBlue.opacity(0.5))
                         .cornerRadius(999)
                     }
                 }
@@ -292,6 +294,15 @@ extension GameDetailView {
             .padding()
             .scrollDismissesKeyboard(.interactively)
             .keyboardAdaptive()
+            .contentShape(Rectangle())
+            .simultaneousGesture(
+                TapGesture().onEnded { isWordFieldFocused = false }
+            )
+            .gesture(
+                DragGesture().onChanged { _ in
+                    if isWordFieldFocused { isWordFieldFocused = false }
+                }
+            )
         }
     }
 
@@ -381,8 +392,18 @@ extension GameDetailView {
             } else {
                 ScrollView {
                     ForEach(selectedPlayers) { p in
+                        let isCurrent = (p.id == currentTurnPlayerId)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("\(p.name):").bold().foregroundColor(.primary)
+                            HStack(spacing: 8) {
+                                Text("\(p.name):").bold().foregroundColor(.primary)
+                                if isCurrent {
+                                    Text(String.localized(key: "now_playing", code: lang.code))
+                                        .font(.caption2).bold()
+                                        .padding(.horizontal, 8).padding(.vertical, 2)
+                                        .background(Color.primaryBlue.opacity(0.5))
+                                        .clipShape(Capsule())
+                                }
+                            }
                             ForEach(playerInputs.keys.sorted(), id: \.self) { roundNum in
                                 if let word = playerInputs[roundNum]?[p.id] {
                                     Text(String.localized(key: "round_with_word", code: lang.code, roundNum, word))
@@ -392,6 +413,13 @@ extension GameDetailView {
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(8)
+                        .background(
+                            isCurrent
+                            ? Color.primaryBlue.opacity(0.10)
+                            : Color.clear
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     }
                 }
             }
@@ -420,6 +448,7 @@ extension GameDetailView {
                     .foregroundColor(.primary)
                     .shadow(color: .black.opacity(0.05), radius: 4)
                     .clearButton($myWordInput)
+                    .focused($isWordFieldFocused)
 
                 ButtonText(title: "send_word") {
                     submitWord()
@@ -458,6 +487,11 @@ extension GameDetailView {
 
 // MARK: - Logic & Firestore
 extension GameDetailView {
+    private var currentTurnPlayerId: String? {
+        guard turnOrder.indices.contains(currentTurnIndex) else { return nil }
+        return turnOrder[currentTurnIndex]
+    }
+    
     private var isMyTurn: Bool {
         turnOrder.indices.contains(currentTurnIndex)
         && turnOrder[currentTurnIndex] == deviceId
