@@ -777,7 +777,7 @@ struct SpyGuessView: View {
                 }
 
                 if roomStatus == "result", let result = resultText {
-                    // RESULT
+                    // result
                     Text(result)
                         .font(.title2).bold()
                         .foregroundColor(.white)
@@ -788,15 +788,18 @@ struct SpyGuessView: View {
                         .onAppear {
                             Task { @MainActor in
                                 let root = UIApplication.shared.topMostViewController()
-                                
                                 let reward = try await AdsManager.shared.showRewarded(from: root, chance: 75)
-                                if reward.amount != 0 {
-                                    print("Kazanç: \(reward.amount) \(reward.type)")
+                                
+                                let db = Firestore.firestore()
+                                let snap = try? await db.collection("rooms").document(roomCode).getDocument()
+                                if let info = snap?.data()?["info"] as? [String: Any],
+                                   let st = (info["status"] as? String)?.lowercased(),
+                                   st == "waiting" {
+                                    router.replace(with: RoomView(roomCode: roomCode))
                                 }
                             }
                         }
-
-                    // Players + target icon for voted-as-spy (existing)
+                    
                     VStack(alignment: .leading, spacing: 4) {
                         ForEach(players) { p in
                             HStack(spacing: 8) {
@@ -817,7 +820,6 @@ struct SpyGuessView: View {
                     .background(cardBG)
                     .cornerRadius(12)
 
-                    // NEW: Spy guesses section
                     VStack(alignment: .leading, spacing: 10) {
                         Text("spy_guesses_title")
                             .font(.headline)
@@ -846,7 +848,6 @@ struct SpyGuessView: View {
                     .background(cardBG)
                     .cornerRadius(12)
 
-                    // NEW: Host reveal + word
                     if isHost && !wordRevealed {
                         ButtonText(title: "reveal_secret_word") {
                             revealWordAndFinalize()
