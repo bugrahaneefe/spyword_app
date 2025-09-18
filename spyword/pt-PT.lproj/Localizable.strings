@@ -181,3 +181,8 @@
 "status_guessing"     = "Adivinhando";
 "status_result"       = "Resultado";
 "now_playing" = "A jogar agora";
+"category_technology" = "Tecnologia";
+"category_animals" = "Animais";
+"category_mythology" = "Mitologia";
+"category_festivals" = "Festivais";
+"category_cuisine" = "Gastronomia";

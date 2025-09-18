@@ -14,6 +14,11 @@ struct GameSettings {
         case geography
         case music
         case literature
+        case technology
+        case animals
+        case mythology
+        case festivals
+        case cuisine
     }
 
     var mode: WordMode
@@ -208,6 +213,11 @@ enum WordPools {
         case .geography:     pool = geography
         case .music:         pool = music
         case .literature:    pool = literature
+        case .technology:    pool = technology
+        case .animals:       pool = animals
+        case .mythology:     pool = mythology
+        case .festivals:     pool = festivals
+        case .cuisine:       pool = cuisine
         }
         return pool.randomElement() ?? "Kelime"
     }
@@ -350,5 +360,75 @@ enum WordPools {
         "Harry Potter","Hermione Granger","Ron Weasley","Sherlock Holmes","Dr. Watson",
         "Jay Gatsby","Holden Caulfield","Atticus Finch","Anna Karenina","Elizabeth Bennet",
         "Romeo","Juliet","Hamlet","Macbeth","Don Quixote"
+    ]
+    
+    // 11) TECHNOLOGY – 50 (global tech kavramları)
+    static let technology: [String] = [
+        "Smartphone","Internet","Artificial Intelligence","Blockchain","Quantum Computing",
+        "Cloud Computing","5G","Wi-Fi","GPS","Drone",
+        "Robotics","Machine Learning","Virtual Reality","Augmented Reality","Cybersecurity",
+        "Encryption","Microchip","Semiconductor","Battery","Solar Panel",
+        "Electric Vehicle","3D Printing","Nanotechnology","Open Source","Linux",
+        "GitHub","Streaming","Podcast","Smartwatch","Wearable",
+        "Internet of Things","Smart Home","Voice Assistant","Touchscreen","USB-C",
+        "Solid State Drive","GPU","CPU","Router","Modem",
+        "Data Center","API","Database","Algorithm","Big Data",
+        "Software as a Service","Container","Kubernetes","Docker","Edge Computing"
+    ]
+
+    // 12) ANIMALS – 50 (dünya genelinde bilinen hayvanlar)
+    static let animals: [String] = [
+        "Lion","Tiger","Elephant","Giraffe","Zebra",
+        "Panda","Koala","Kangaroo","Penguin","Polar Bear",
+        "Wolf","Fox","Eagle","Falcon","Owl",
+        "Dolphin","Whale","Shark","Octopus","Squid",
+        "Turtle","Crocodile","Alligator","Hippopotamus","Rhinoceros",
+        "Cheetah","Leopard","Gorilla","Chimpanzee","Orangutan",
+        "Camel","Llama","Alpaca","Bison","Buffalo",
+        "Moose","Reindeer","Horse","Donkey","Sheep",
+        "Goat","Cow","Pig","Chicken","Duck",
+        "Goose","Swan","Bee","Butterfly","Tortoise"
+    ]
+
+    // 13) MYTHOLOGY – 50 (çok kültürlü mitoloji & folklor)
+    static let mythology: [String] = [
+        "Zeus","Hera","Poseidon","Athena","Ares",
+        "Apollo","Artemis","Hades","Hermes","Aphrodite",
+        "Hephaestus","Dionysus","Odin","Thor","Loki",
+        "Freya","Tyr","Balder","Heimdall","Ra",
+        "Osiris","Isis","Anubis","Horus","Bastet",
+        "Shiva","Vishnu","Brahma","Ganesha","Kali",
+        "Amaterasu","Susanoo","Tsukuyomi","Quetzalcoatl","Tezcatlipoca",
+        "Kukulkan","Fenrir","Medusa","Minotaur","Pegasus",
+        "Kraken","Phoenix","Dragon","Griffin","Hydra",
+        "Jinn","Baba Yaga","Raven","Coyote","Yeti"
+    ]
+
+    // 14) FESTIVALS – 50 (dünya çapı bayram & festivaller)
+    static let festivals: [String] = [
+        "New Year’s Day","Lunar New Year","Diwali","Holi","Eid al-Fitr",
+        "Eid al-Adha","Christmas","Hanukkah","Easter","Passover",
+        "Nowruz","Obon","Day of the Dead","Carnival","Mardi Gras",
+        "Oktoberfest","Songkran","Mid-Autumn Festival","Vesak","Lantern Festival",
+        "Dragon Boat Festival","Thaipusam","Pongal","Chuseok","Tet",
+        "St. Patrick’s Day","Valentine’s Day","Halloween","Thanksgiving","Independence Day",
+        "Pride Parade","La Tomatina","Yi Peng","Running of the Bulls","Hogmanay",
+        "Guy Fawkes Night","Carnival of Venice","Harbin Ice Festival","Gion Matsuri","Cannes Film Festival",
+        "Glastonbury","Burning Man","Coachella","White Nights Festival","Hajj",
+        "Song and Dance Festival","Sinulog","Up Helly Aa","Rio Carnival","Hanami"
+    ]
+
+    // 15) CUISINE – 50 (dünya mutfaklarından yemek/öğe)
+    static let cuisine: [String] = [
+        "Pizza","Sushi","Tacos","Paella","Pho",
+        "Ramen","Kimchi","Bibimbap","Curry","Biryani",
+        "Pad Thai","Dim Sum","Peking Duck","Falafel","Hummus",
+        "Shawarma","Kebab","Baklava","Tiramisu","Gelato",
+        "Croissant","Baguette","Cheese Fondue","Schnitzel","Goulash",
+        "Pierogi","Borscht","Fish and Chips","Roast Beef","Apple Pie",
+        "Burrito","Arepa","Empanada","Ceviche","Feijoada",
+        "Churrasco","Poutine","Pancakes","Chow Mein","Fried Rice",
+        "Satay","Laksa","Tom Yum","Nasi Goreng","Samosa",
+        "Naan","Tortilla","Couscous","Jollof Rice","Injera"
     ]
 }

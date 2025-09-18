@@ -181,3 +181,8 @@
 "status_guessing"     = "Deviner en cours";
 "status_result"       = "Résultat";
 "now_playing" = "En train de jouer";
+"category_technology" = "Technologie";
+"category_animals" = "Animaux";
+"category_mythology" = "Mythologie";
+"category_festivals" = "Festivals";
+"category_cuisine" = "Cuisine";

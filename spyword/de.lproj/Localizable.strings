@@ -181,3 +181,8 @@
 "status_guessing"     = "Es wird geraten";
 "status_result"       = "Ergebnis";
 "now_playing" = "Gerade am Zug";
+"category_technology" = "Technologie";
+"category_animals" = "Tiere";
+"category_mythology" = "Mythologie";
+"category_festivals" = "Feste & Festivals";
+"category_cuisine" = "Küche";

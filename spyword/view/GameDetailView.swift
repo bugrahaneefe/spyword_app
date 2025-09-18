@@ -59,6 +59,11 @@ struct GameDetailView: View {
             case "geography":           return "category_geography"
             case "music":           return "category_music"
             case "literature":           return "category_literature"
+            case "technology":   return "category_technology"
+            case "animals":      return "category_animals"
+            case "mythology":    return "category_mythology"
+            case "festivals":    return "category_festivals"
+            case "cuisine":      return "category_cuisine"
             case "custom":        return "category_custom"
             default:              return "category_custom"
             }
@@ -779,7 +784,8 @@ struct SpyGuessView: View {
                 if roomStatus == "result", let result = resultText {
                     // result
                     Text(result)
-                        .font(.title2).bold()
+                        .font(.title2)
+                        .bold()
                         .foregroundColor(.white)
                         .padding()
                         .background(Color.primaryBlue)

@@ -188,3 +188,8 @@
 "confirm_finish_cancel"       = "İptal";
 
 "now_playing" = "Şu anda oynuyor";
+"category_technology" = "Teknoloji";
+"category_animals" = "Hayvanlar";
+"category_mythology" = "Mitoloji";
+"category_festivals" = "Festivaller";
+"category_cuisine" = "Mutfak";
