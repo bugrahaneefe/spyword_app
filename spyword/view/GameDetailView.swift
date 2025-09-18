@@ -97,21 +97,18 @@ struct GameDetailView: View {
             .safeAreaPadding(.bottom)
         }
         .swipeBack(to: MainView(), by: router)
-        .overlay {
-            if showGuessPopup {
-                SpyGuessView(
-                    roomCode: roomCode,
-                    players: playersInPlayOrder,
-                    deviceId: deviceId,
-                    isHost: isHost,
-                    isPresented: $showGuessPopup,
-                    router: router
-                )
-                .onAppear(perform: {
-                    showTurnSplash = false
-                })
-                .environmentObject(lang)
-            }
+        .sheet(isPresented: $showGuessPopup) {
+            SpyGuessView(
+                roomCode: roomCode,
+                players: playersInPlayOrder,
+                deviceId: deviceId,
+                isHost: isHost,
+                isPresented: $showGuessPopup,
+                router: router
+            )
+            .environmentObject(lang)
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
         }
         .safeAreaInset(edge: .bottom) {
             BannerAdView()
