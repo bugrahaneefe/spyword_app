@@ -451,15 +451,11 @@ enum WordPools {
 
     // 18) TÜRKİYE – İNTERNET KÜLTÜRÜ & MİZAH (meme/ikonik ifade & yer)
     static let trMemes: [String] = [
-        "Kadıköy Boğa","Yok Artık","Abi Bu Ne","Kappa","Recep İvedik",
-        "İbo Show","Gibi","Leyla ile Mecnun","Kısmetse Olur","Çılgın Sedat",
-        "Ne alaka","Nereden Biliyorsun","Oha Diyorum","Tiki Takı","N’apıyorsun",
-        "Alkışlarla Yaşıyorum","Dayı","Kekolar","Yapma Etme","Helal Olsun",
-        "Aga Be","Şekil A","Çakallarla Dans","Erşan Kuneri","Aşk-ı Memnu",
-        "Behlül","Fatmagül","Arka Sokaklar","Yalan Dünya","Kiralık Aşk",
-        "Çukur","Ezel","Behzat Ç.","Sütlaç","Kavga Var",
-        "Dönerci Abi","Çay Kaşık Sesi","Sahilde Mısır","Kuleli Sahil","Moda Sahil",
-        "Kaldırım Muhabbeti","Abi Bi Dal Sigaraya","Dert Dinleme","Kira Ne Oldu","Hızlı Tren"
+        "Kadıköy Boğası","Beyaz Show","Recep İvedik",
+        "İbo Show","Testo Taylan","Derbeder Berk","Konsol Oyun",
+        "Konyalı John Wick","Erşan Kuneri","Behlül","Garip Kont",
+        "Ezel","Behzat Ç.","Süleyman Çakır","Polat Alemdar","Saniye",
+        "Altın Çocuk","Hayrettin","Kadir Hoca"
     ]
 
     // 19) TÜRKİYE – SOKAK LEZZETLERİ (yerel & ikonik)
@@ -474,5 +470,4 @@ enum WordPools {
         "Halka Tatlısı","Lokma","Akçaabat Köfte","Islama Köfte","Çubuk Turşu",
         "Kokoreç Tırnak","Tavuklu Pilav","Sütlaç","Turan Tava","Atom Midye"
     ]
-
 }
