@@ -4,21 +4,8 @@ import Firebase
 struct GameSettings {
     enum WordMode { case random, custom }
     enum WordCategory: String, CaseIterable {
-        case world
-        case turkiye
-        case worldFootball
-        case nfl
-        case movies
-        case science
-        case history
-        case geography
-        case music
-        case literature
-        case technology
-        case animals
-        case mythology
-        case festivals
-        case cuisine
+        case world, worldFootball, nfl, movies, science, history, geography, music, literature, technology, animals, mythology, festivals, cuisine
+        case turkiye, trInfluencers, trPoliticians, trMemes, trStreetFood
     }
 
     var mode: WordMode
@@ -218,6 +205,10 @@ enum WordPools {
         case .mythology:     pool = mythology
         case .festivals:     pool = festivals
         case .cuisine:       pool = cuisine
+        case .trInfluencers: pool = trInfluencers
+        case .trPoliticians: pool = trPoliticians
+        case .trMemes:       pool = trMemes
+        case .trStreetFood:  pool = trStreetFood
         }
         return pool.randomElement() ?? "Kelime"
     }
@@ -431,4 +422,57 @@ enum WordPools {
         "Satay","Laksa","Tom Yum","Nasi Goreng","Samosa",
         "Naan","Tortilla","Couscous","Jollof Rice","Injera"
     ]
+    
+    // 16) TÜRKİYE – SOSYAL MEDYA ÜNLÜLERİ (influencer/streamer/creator)
+    static let trInfluencers: [String] = [
+        "Enes Batur","Reynmen","Danla Bilic","Orkun Işıtmak","Berkcan Güven",
+        "Ruhi Çenet","Barış Özcan","Uras Benlioğlu","Alper Rende","Meryem Can",
+        "Merve Özkaynak","Duygu Köseoğlu","Oğuzhan Uğur","Emre Durmuş","Yorekok",
+        "CZN Burak","Nusret","Kerimcan Durmaz","Mithrain","wtcnn",
+        "Elraenn","Jahrein","Pqueen","Unlost","Efe Uygaç",
+        "Batu Akdeniz","Kafalar","Deli Mi Ne","Varol Şahin","Murat Soner",
+        "Doğan Kabak","Alfa","Doğanay","Büşra Pekin","Burak Güngör",
+        "Ahmet Şengül","Zeynep Bastık","Berkcan","Fester Abdü","Babala TV",
+        "Barış G","Burak Oyunda","Hepimiz Biriz","Boran Kuzum","Merve Boluğur"
+    ]
+
+    // 17) TÜRKİYE – SİYASETÇİLER (tarih + güncel)
+    static let trPoliticians: [String] = [
+        "Mustafa Kemal Atatürk","İsmet İnönü","Süleyman Demirel","Bülent Ecevit","Turgut Özal",
+        "Mesut Yılmaz","Necmettin Erbakan","Alparslan Türkeş","Tansu Çiller","Devlet Bahçeli",
+        "Recep Tayyip Erdoğan","Abdullah Gül","Ahmet Davutoğlu","Ali Babacan","Binali Yıldırım",
+        "Süleyman Soylu","Kemal Kılıçdaroğlu","Özgür Özel","Meral Akşener","Ümit Özdağ",
+        "Sinan Oğan","Doğu Perinçek","Temel Karamollaoğlu","Selahattin Demirtaş","Pervin Buldan",
+        "Ekrem İmamoğlu","Mansur Yavaş","Melih Gökçek","Kadir Topbaş","Ahmet Necdet Sezer",
+        "Rauf Denktaş","Deniz Baykal","İsmail Cem","Hikmet Çetin","Mehmet Ali Şahin",
+        "Nurettin Nebati","Berat Albayrak","Fuat Oktay","Numan Kurtulmuş","Bekir Bozdağ",
+        "Mevlüt Çavuşoğlu","Hakan Fidan","Yılmaz Büyükerşen","Abdüllatif Şener","İlhan Kesici"
+    ]
+
+    // 18) TÜRKİYE – İNTERNET KÜLTÜRÜ & MİZAH (meme/ikonik ifade & yer)
+    static let trMemes: [String] = [
+        "Kadıköy Boğa","Yok Artık","Abi Bu Ne","Kappa","Recep İvedik",
+        "İbo Show","Gibi","Leyla ile Mecnun","Kısmetse Olur","Çılgın Sedat",
+        "Ne alaka","Nereden Biliyorsun","Oha Diyorum","Tiki Takı","N’apıyorsun",
+        "Alkışlarla Yaşıyorum","Dayı","Kekolar","Yapma Etme","Helal Olsun",
+        "Aga Be","Şekil A","Çakallarla Dans","Erşan Kuneri","Aşk-ı Memnu",
+        "Behlül","Fatmagül","Arka Sokaklar","Yalan Dünya","Kiralık Aşk",
+        "Çukur","Ezel","Behzat Ç.","Sütlaç","Kavga Var",
+        "Dönerci Abi","Çay Kaşık Sesi","Sahilde Mısır","Kuleli Sahil","Moda Sahil",
+        "Kaldırım Muhabbeti","Abi Bi Dal Sigaraya","Dert Dinleme","Kira Ne Oldu","Hızlı Tren"
+    ]
+
+    // 19) TÜRKİYE – SOKAK LEZZETLERİ (yerel & ikonik)
+    static let trStreetFood: [String] = [
+        "Simit","Çay","Döner","Lahmacun","Kokoreç",
+        "Midye Dolma","Islak Hamburger","Tantuni","Pilav Üstü Tavuk","Kumpir",
+        "Balık Ekmek","Çiğ Köfte","Kelle Paça","Mercimek Çorbası","İskender",
+        "Kuzu Çevirme","Adana Dürüm","Urfa Dürüm","Pide","Künefe",
+        "Katmer","Süt Mısır","Boza","Ayran","Şalgam",
+        "Atom Kokteyl","Nohut Dürüm","Börek","Boyoz","Gözleme",
+        "Kestane","Sahlep","Kokoreç Yarım","Ciğer Şiş","Sokak Dondurması",
+        "Halka Tatlısı","Lokma","Akçaabat Köfte","Islama Köfte","Çubuk Turşu",
+        "Kokoreç Tırnak","Tavuklu Pilav","Sütlaç","Turan Tava","Atom Midye"
+    ]
+
 }

@@ -61,9 +61,30 @@ struct GameSettingsView: View {
                     }
                     
                     if vm.mode == .random {
-                        let items: [(key: LocalizedStringKey, cat: GameSettings.WordCategory)] = [
-                            ("category_world", .world),
+                        var itemsTR: [(key: LocalizedStringKey, cat: GameSettings.WordCategory)] = [
                             ("category_turkiye", .turkiye),
+                            ("category_tr_memes",       .trMemes),
+                            ("category_tr_politicians", .trPoliticians),
+                            ("category_tr_influencers", .trInfluencers),
+                            ("category_tr_streetfood",  .trStreetFood),
+                            ("category_world", .world),
+                            ("category_world_football", .worldFootball),
+                            ("category_nfl", .nfl),
+                            ("category_movies", .movies),
+                            ("category_science", .science),
+                            ("category_history", .history),
+                            ("category_geography", .geography),
+                            ("category_music", .music),
+                            ("category_literature", .literature),
+                            ("category_technology", .technology),
+                            ("category_animals", .animals),
+                            ("category_mythology", .mythology),
+                            ("category_festivals", .festivals),
+                            ("category_cuisine", .cuisine)
+                        ]
+                        
+                        var commons: [(key: LocalizedStringKey, cat: GameSettings.WordCategory)] = [
+                            ("category_world", .world),
                             ("category_world_football", .worldFootball),
                             ("category_nfl", .nfl),
                             ("category_movies", .movies),
@@ -88,7 +109,7 @@ struct GameSettingsView: View {
                                 rowHeight: 36,
                                 viewportWidthHint: 240
                             ) {
-                                ForEach(items, id: \.cat) { item in
+                                ForEach((lang.code == "tr") ? itemsTR : commons, id: \.cat) { item in
                                     CategoryChip(titleKey: item.key, isSelected: vm.category == item.cat) {
                                         vm.category = item.cat
                                     }

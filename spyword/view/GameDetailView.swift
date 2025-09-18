@@ -64,6 +64,10 @@ struct GameDetailView: View {
             case "mythology":    return "category_mythology"
             case "festivals":    return "category_festivals"
             case "cuisine":      return "category_cuisine"
+            case "trInfluencers":  return "category_tr_influencers"
+            case "trPoliticians":  return "category_tr_politicians"
+            case "trMemes":        return "category_tr_memes"
+            case "trStreetFood":   return "category_tr_streetfood"
             case "custom":        return "category_custom"
             default:              return "category_custom"
             }
