@@ -101,7 +101,7 @@ struct GameDetailView: View {
             if showGuessPopup {
                 SpyGuessView(
                     roomCode: roomCode,
-                    players: selectedPlayers,
+                    players: playersInPlayOrder,
                     deviceId: deviceId,
                     isHost: isHost,
                     isPresented: $showGuessPopup,
@@ -392,10 +392,17 @@ extension GameDetailView {
                     .foregroundColor(.secondary)
             } else {
                 ScrollView {
-                    ForEach(selectedPlayers) { p in
+                    ForEach(Array(playersInPlayOrder.enumerated()), id: \.element.id) { idx, p in
                         let isCurrent = (p.id == currentTurnPlayerId)
                         VStack(alignment: .leading, spacing: 4) {
                             HStack(spacing: 8) {
+                                Text("\(idx + 1)")
+                                    .font(.caption).bold()
+                                    .padding(.horizontal, 8).padding(.vertical, 2)
+                                    .background(isCurrent ? Color.primaryBlue : Color.secondary.opacity(0.3))
+                                    .foregroundColor(isCurrent ? .white : .primary)
+                                    .clipShape(Capsule())
+                                
                                 Text("\(p.name):").bold().foregroundColor(.primary)
                                 if isCurrent {
                                     Text(String.localized(key: "now_playing", code: lang.code))
@@ -499,6 +506,14 @@ extension GameDetailView {
         && status != "guessReady"
         && continuePressed
     }
+    
+    private var playersInPlayOrder: [PlayerRow] {
+        let selectedIds = Set(selectedPlayers.map { $0.id })
+        let orderedIds = turnOrder.filter { selectedIds.contains($0) }
+        var list = orderedIds.compactMap { id in selectedPlayers.first { $0.id == id } }
+        for p in selectedPlayers where !orderedIds.contains(p.id) { list.append(p) }
+        return list
+    }
 
     private func maybeShowTurnSplash() {
         guard continuePressed, isMyTurn else { return }
@@ -591,7 +606,7 @@ extension GameDetailView {
                 }
             }
 
-            self.selectedPlayers = picked.sorted { $0.name < $1.name }
+            self.selectedPlayers = picked
             self.amSelected = meSelected
             self.myRole = myRoleLocal
         }
