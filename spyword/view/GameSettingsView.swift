@@ -177,6 +177,8 @@ extension GameSettingsView {
         )
         vm.startGame(selectedIds: selectedIds, settings: settings)
         showStartSplash = true
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                        to: nil, from: nil, for: nil)
     }
 
     private func enforceHostOnly() {
