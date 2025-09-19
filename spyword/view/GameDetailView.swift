@@ -116,7 +116,7 @@ struct GameDetailView: View {
                 router: router
             )
             .environmentObject(lang)
-            .presentationDetents([.medium, .large])
+            .presentationDetents([.large])
             .presentationDragIndicator(.visible)
         }
         .safeAreaInset(edge: .bottom) {
@@ -419,7 +419,7 @@ extension GameDetailView {
     private func myTurnInputCard() -> some View {
         if turnOrder.indices.contains(currentTurnIndex),
            turnOrder[currentTurnIndex] == deviceId,
-           status != "guessReady" {
+           status != "guessReady", status != "result" {
             VStack(spacing: 12) {
                 TextField(String.localized(key: "enter_word", code: lang.code), text: $myWordInput)
                     .font(.body)
@@ -445,6 +445,16 @@ extension GameDetailView {
         if status == "guessReady" {
             ButtonText(
                 title: "guess_the_spy",
+                action: { showGuessPopup = true },
+                backgroundColor: .primaryBlue,
+                textColor: .white,
+                cornerRadius: 12,
+                size: .big
+            )
+            .padding()
+        } else if status == "result" {
+            ButtonText(
+                title: "see_result",
                 action: { showGuessPopup = true },
                 backgroundColor: .primaryBlue,
                 textColor: .white,
@@ -507,15 +517,15 @@ extension GameDetailView {
         .background(softBG)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
 
-        if isCurrentTurn {
+        if isCurrentTurn && status == "the game" {
             base
             .overlay(
                 TimelineView(.animation) { timeline in
                     // smooth single-color pulse in primaryBlue
                     let t = timeline.date.timeIntervalSinceReferenceDate
-                    let phase = (sin((t * (2 * .pi)) / 1.6) + 1) * 0.5      // 0...1
-                    let opacity = 0.25 + 0.75 * phase                       // 0.25...1.0
-                    let width   = 2.0 + 2.0 * phase                          // 2...4
+                    let phase = (sin((t * (2 * .pi)) / 1.6) + 1) * 0.5
+                    let opacity = 0.25 + 0.75 * phase
+                    let width   = 2.0 + 2.0 * phase
 
                     return RoundedRectangle(cornerRadius: 12, style: .continuous)
                         .strokeBorder(Color.primaryBlue.opacity(opacity), lineWidth: width)
@@ -533,7 +543,6 @@ extension GameDetailView {
         }
     }
 }
-
 
 // MARK: - Logic & Firestore
 extension GameDetailView {
@@ -787,13 +796,12 @@ struct SpyGuessView: View {
     @State private var spyCount: Int = 1
     @State private var guessedSpyIds: Set<String> = []
 
-    // NEW: spy word guess flow states
-    @State private var spyWordGuesses: [String:String] = [:]   // [spyId: guess]
-    @State private var wordRevealed: Bool = false              // host reveal flag
-    @State private var actualWord: String? = nil               // from info.word
+    @State private var spyWordGuesses: [String:String] = [:]
+    @State private var wordRevealed: Bool = false
+    @State private var actualWord: String? = nil
 
-    @State private var showGuessSheet: Bool = false            // sheet control
-    @State private var mySpyGuess: String = ""                 // input text
+    @State private var showGuessSheet: Bool = false
+    @State private var mySpyGuess: String = ""
 
     @State private var showFinishVotingConfirm = false
 
@@ -821,7 +829,7 @@ struct SpyGuessView: View {
                         .foregroundColor(.secondary)
                 }
 
-                if roomStatus == "result", let result = resultText {
+                if (roomStatus == "result" || resultText != nil), let result = resultText {
                     // result
                     Text(result)
                         .font(.title2)
@@ -1213,7 +1221,9 @@ struct SpyGuessView: View {
             resultText = String.localized(key: "result_spies_escaped", code: lang.code)
         }
 
-        // persist + guessedSpyIds
+        // ✨ Lokalde de hemen result'a çek
+        self.roomStatus = "result"
+
         let db = Firestore.firestore()
         let roomRef = db.collection("rooms").document(roomCode)
         roomRef.updateData([
