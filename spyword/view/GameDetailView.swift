@@ -45,7 +45,8 @@ struct GameDetailView: View {
     @State private var gameId: String = ""
 
     @State private var showEndGameConfirm = false
-
+    @State private var isGuessTime = false
+    
     private var categoryTitleKey: LocalizedStringKey? {
         if let raw = categoryRaw {
             switch raw {
@@ -191,6 +192,10 @@ struct GameDetailView: View {
         .slidingPage(
             isPresented: $showTurnSplash,
             text: String.localized(key: "your_turn", code: lang.code)
+        )
+        .slidingPage(
+            isPresented: $isGuessTime,
+            text: String.localized(key: "guess_the_spy", code: lang.code)
         )
         .confirmPopup(
             isPresented: $showEndGameConfirm,
@@ -744,6 +749,7 @@ extension GameDetailView {
                 ])
             } else {
                 roomRef.updateData(["info.status": "guessReady"])
+                self.isGuessTime = true
             }
         }
 
