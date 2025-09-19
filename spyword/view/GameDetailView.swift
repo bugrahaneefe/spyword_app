@@ -487,11 +487,26 @@ extension GameDetailView {
                     wordsByRound: [Int: String],
                     isCurrentTurn: Bool) -> some View {
 
-        let softBG: Color = colorScheme == .dark
-            ? Color.secondaryBlue.opacity(0.22)
-            : Color.secondaryBlue.opacity(0.12)
+        let isMe = player.id == deviceId
 
+        // arka plan — seninki yeşil, diğerleri yumuşak mavi
+        let softBG: Color = {
+            if isMe {
+                return colorScheme == .dark
+                    ? Color.successGreen.opacity(0.28)
+                    : Color.successGreen.opacity(0.18)
+            } else {
+                return colorScheme == .dark
+                    ? Color.secondaryBlue.opacity(0.22)
+                    : Color.secondaryBlue.opacity(0.12)
+            }
+        }()
+
+        // metin rengi — açık zeminlerde koyu, koyu zeminlerde beyaz
         let textColor: Color = colorScheme == .dark ? .white : .primary
+
+        // pulse rengi — senin kartında yeşil, diğerlerinde mavi
+        let pulseColor: Color = isMe ? .successGreen : .primaryBlue
 
         let base = VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 8) {
@@ -526,15 +541,14 @@ extension GameDetailView {
             base
             .overlay(
                 TimelineView(.animation) { timeline in
-                    // smooth single-color pulse in primaryBlue
                     let t = timeline.date.timeIntervalSinceReferenceDate
                     let phase = (sin((t * (2 * .pi)) / 1.6) + 1) * 0.5
                     let opacity = 0.25 + 0.75 * phase
                     let width   = 2.0 + 2.0 * phase
 
                     return RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .strokeBorder(Color.primaryBlue.opacity(opacity), lineWidth: width)
-                        .shadow(color: Color.primaryBlue.opacity(0.35 * phase),
+                        .strokeBorder(pulseColor.opacity(opacity), lineWidth: width)
+                        .shadow(color: pulseColor.opacity(0.35 * phase),
                                 radius: 8 * phase, x: 0, y: 2 * phase)
                 }
             )
@@ -542,12 +556,13 @@ extension GameDetailView {
             base
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .strokeBorder(Color.primaryBlue.opacity(colorScheme == .dark ? 0.35 : 0.25),
+                    .strokeBorder(pulseColor.opacity(colorScheme == .dark ? 0.35 : 0.25),
                                   lineWidth: 1.5)
             )
         }
     }
 }
+
 
 // MARK: - Logic & Firestore
 extension GameDetailView {
