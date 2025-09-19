@@ -827,14 +827,6 @@ struct SpyGuessView: View {
             Color.black.opacity(0.4).ignoresSafeArea()
 
             VStack(spacing: 16) {
-                // counter
-                HStack {
-                    Spacer()
-                    Text("\(votes.count)/\(players.count)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-
                 if (roomStatus == "result" || resultText != nil), let result = resultText {
                     // result
                     Text(result)
@@ -945,6 +937,14 @@ struct SpyGuessView: View {
                     }
                     
                 } else if roomStatus == "guessing" || roomStatus == "guessReady" {
+                    // counter
+                    HStack {
+                        Spacer()
+                        Text("\(votes.count)/\(players.count)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
                     // VOTING (unchanged)
                     Text("who_is_the_spy")
                         .font(.title2).bold()
