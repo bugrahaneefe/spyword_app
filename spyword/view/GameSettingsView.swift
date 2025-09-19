@@ -61,7 +61,7 @@ struct GameSettingsView: View {
                     }
                     
                     if vm.mode == .random {
-                        var itemsTR: [(key: LocalizedStringKey, cat: GameSettings.WordCategory)] = [
+                        let itemsTR: [(key: LocalizedStringKey, cat: GameSettings.WordCategory)] = [
                             ("category_turkiye", .turkiye),
                             ("category_tr_memes",       .trMemes),
                             ("category_tr_politicians", .trPoliticians),
@@ -83,7 +83,7 @@ struct GameSettingsView: View {
                             ("category_cuisine", .cuisine)
                         ]
                         
-                        var commons: [(key: LocalizedStringKey, cat: GameSettings.WordCategory)] = [
+                        let commons: [(key: LocalizedStringKey, cat: GameSettings.WordCategory)] = [
                             ("category_world", .world),
                             ("category_world_football", .worldFootball),
                             ("category_nfl", .nfl),

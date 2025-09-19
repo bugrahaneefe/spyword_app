@@ -258,27 +258,6 @@ extension GameDetailView {
             Spacer()
         } else {
             VStack(spacing: 20) {
-                HStack {
-                    headerRound()
-                    
-                    Spacer(minLength: 8)
-                    
-                    if let key = categoryTitleKey {
-                        HStack(spacing: 6) {
-                            Image(systemName: "circle.fill")
-                                .font(.system(size: 8))
-                            Text(key)
-                                .font(.caption).bold()
-                        }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .foregroundColor(.primary)
-                        .background(Color.primaryBlue.opacity(0.5))
-                        .cornerRadius(999)
-                    }
-                }
-                .padding()
-                
                 if !amSelected {
                     notSelectedCard()
                 } else {
@@ -316,12 +295,12 @@ extension GameDetailView {
     @ViewBuilder
     private func headerRound() -> some View {
         Text(
-          .init(
-            String.localized(key: "round_progress", code: lang.code, currentRound, totalRounds)
-          )
+            .init(
+                String.localized(key: "round_progress", code: lang.code, currentRound, totalRounds)
+            )
         )
-            .font(.h2)
-            .foregroundColor(.primary)
+        .font(.callout)
+        .foregroundColor(.primary)
     }
 
     @ViewBuilder
@@ -383,12 +362,24 @@ extension GameDetailView {
     @ViewBuilder
     private func playersInputsCard() -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .center) {
-                Spacer()
-                Text("players")
-                    .font(.h2)
+            HStack {
+                headerRound()
+                
+                Spacer(minLength: 8)
+                
+                if let key = categoryTitleKey {
+                    HStack(spacing: 6) {
+                        Image(systemName: "circle.fill")
+                            .font(.system(size: 8))
+                        Text(key)
+                            .font(.caption).bold()
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
                     .foregroundColor(.primary)
-                Spacer()
+                    .background(Color.primaryBlue.opacity(0.5))
+                    .cornerRadius(999)
+                }
             }
             
             Divider()
@@ -410,6 +401,7 @@ extension GameDetailView {
                                     .clipShape(Capsule())
                                 
                                 Text("\(p.name):").bold().foregroundColor(.primary)
+                                
                                 if isCurrent {
                                     Text(String.localized(key: "now_playing", code: lang.code))
                                         .font(.caption2).bold()
@@ -418,6 +410,7 @@ extension GameDetailView {
                                         .clipShape(Capsule())
                                 }
                             }
+                            
                             ForEach(playerInputs.keys.sorted(), id: \.self) { roundNum in
                                 if let word = playerInputs[roundNum]?[p.id] {
                                     Text(String.localized(key: "round_with_word", code: lang.code, roundNum, word))
@@ -439,8 +432,6 @@ extension GameDetailView {
             }
         }
         .padding()
-        .frame(maxWidth: .infinity)
-        .frame(height: 320)
         .background(cardBG)
         .cornerRadius(12)
         .shadow(radius: 2)
@@ -452,8 +443,6 @@ extension GameDetailView {
            turnOrder[currentTurnIndex] == deviceId,
            status != "guessReady" {
             VStack(spacing: 12) {
-                Spacer(minLength: 16)
-
                 TextField(String.localized(key: "enter_word", code: lang.code), text: $myWordInput)
                     .font(.body)
                     .padding()
@@ -463,7 +452,7 @@ extension GameDetailView {
                     .shadow(color: .black.opacity(0.05), radius: 4)
                     .clearButton($myWordInput)
                     .focused($isWordFieldFocused)
-
+                
                 ButtonText(title: "send_word") {
                     submitWord()
                 }
@@ -476,8 +465,6 @@ extension GameDetailView {
     @ViewBuilder
     private func guessCTA() -> some View {
         if status == "guessReady" {
-            Spacer(minLength: 16)
-            
             ButtonText(
                 title: "guess_the_spy",
                 action: { showGuessPopup = true },
@@ -486,7 +473,7 @@ extension GameDetailView {
                 cornerRadius: 12,
                 size: .big
             )
-            .padding(.horizontal)
+            .padding()
         }
     }
 
@@ -798,7 +785,7 @@ struct SpyGuessView: View {
                         .onAppear {
                             Task { @MainActor in
                                 let root = UIApplication.shared.topMostViewController()
-                                let reward = try await AdsManager.shared.showRewarded(from: root, chance: 75)
+                                _ = try await AdsManager.shared.showRewarded(from: root, chance: 75)
                                 
                                 let db = Firestore.firestore()
                                 let snap = try? await db.collection("rooms").document(roomCode).getDocument()
@@ -1182,7 +1169,7 @@ struct SpyGuessView: View {
         let roomRef = db.collection("rooms").document(roomCode)
         roomRef.updateData([
             "info.status": "result",
-            "info.resultText": resultText ?? "",
+            "info.resultText": resultText as Any,
             "info.guessedSpyIds": topN
         ])
 
