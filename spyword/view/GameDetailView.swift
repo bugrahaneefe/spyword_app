@@ -860,7 +860,7 @@ struct SpyGuessView: View {
                                 Text("\(p.name) - \(localizedRole(p.role))")
                                     .font(.body)
                                     .foregroundColor(.primary)
-
+                                
                                 if guessedSpyIds.contains(p.id) {
                                     Image(systemName: "target")
                                         .foregroundColor(.primaryBlue)
@@ -873,12 +873,12 @@ struct SpyGuessView: View {
                     .frame(maxWidth: .infinity)
                     .background(cardBG)
                     .cornerRadius(12)
-
+                    
                     VStack(alignment: .leading, spacing: 10) {
                         Text("spy_guesses_title")
                             .font(.headline)
                             .foregroundColor(.primary)
-
+                        
                         ForEach(players.filter { $0.role == "spy" }) { spy in
                             HStack(spacing: 6) {
                                 Text(spy.name)
@@ -901,14 +901,14 @@ struct SpyGuessView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(cardBG)
                     .cornerRadius(12)
-
+                    
                     if isHost && !wordRevealed {
                         ButtonText(title: "reveal_secret_word") {
                             revealWordAndFinalize()
                         }
                         .padding(.top, 4)
                     }
-
+                    
                     if wordRevealed, let w = actualWord {
                         HStack(spacing: 8) {
                             Image(systemName: "eye")
@@ -921,7 +921,7 @@ struct SpyGuessView: View {
                         .background(cardBG)
                         .cornerRadius(12)
                     }
-
+                    
                     // NEW: Spy self action - guess button (only spies, single-shot)
                     if iAmSpy && !alreadyGuessed {
                         ButtonText(title: "spy_guess_word") {
@@ -929,7 +929,7 @@ struct SpyGuessView: View {
                         }
                         .padding(.top, 4)
                     }
-
+                    
                     // Existing: host end game
                     if isHost {
                         ButtonText(title: "end_game") {
@@ -937,8 +937,8 @@ struct SpyGuessView: View {
                         }
                         .padding(.top, 4)
                     }
-
-                } else {
+                    
+                } else if roomStatus == "guessing" || roomStatus == "guessReady" {
                     // VOTING (unchanged)
                     Text("who_is_the_spy")
                         .font(.title2).bold()
@@ -1005,6 +1005,9 @@ struct SpyGuessView: View {
                             }
                         }
                     }
+                } else {
+                    ProgressView()
+                        .padding()
                 }
             }
             .padding()
@@ -1221,7 +1224,6 @@ struct SpyGuessView: View {
             resultText = String.localized(key: "result_spies_escaped", code: lang.code)
         }
 
-        // ✨ Lokalde de hemen result'a çek
         self.roomStatus = "result"
 
         let db = Firestore.firestore()
