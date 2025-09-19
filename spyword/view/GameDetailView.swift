@@ -391,42 +391,20 @@ extension GameDetailView {
                 ScrollView {
                     ForEach(Array(playersInPlayOrder.enumerated()), id: \.element.id) { idx, p in
                         let isCurrent = (p.id == currentTurnPlayerId)
-                        VStack(alignment: .leading, spacing: 4) {
-                            HStack(spacing: 8) {
-                                Text("\(idx + 1)")
-                                    .font(.caption).bold()
-                                    .padding(.horizontal, 8).padding(.vertical, 2)
-                                    .background(isCurrent ? Color.primaryBlue : Color.secondary.opacity(0.3))
-                                    .foregroundColor(isCurrent ? .white : .primary)
-                                    .clipShape(Capsule())
-                                
-                                Text("\(p.name):").bold().foregroundColor(.primary)
-                                
-                                if isCurrent {
-                                    Text(String.localized(key: "now_playing", code: lang.code))
-                                        .font(.caption2).bold()
-                                        .padding(.horizontal, 8).padding(.vertical, 2)
-                                        .background(Color.primaryBlue.opacity(0.5))
-                                        .clipShape(Capsule())
+                        let roundsForPlayer: [Int: String] =
+                            Dictionary(uniqueKeysWithValues:
+                                playerInputs.keys.sorted().compactMap { r in
+                                    if let word = playerInputs[r]?[p.id] { return (r, word) } else { return nil }
                                 }
-                            }
-                            
-                            ForEach(playerInputs.keys.sorted(), id: \.self) { roundNum in
-                                if let word = playerInputs[roundNum]?[p.id] {
-                                    Text(String.localized(key: "round_with_word", code: lang.code, roundNum, word))
-                                        .font(.caption)
-                                        .foregroundColor(textFG)
-                                }
-                            }
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(8)
-                        .background(
-                            isCurrent
-                            ? Color.primaryBlue.opacity(0.10)
-                            : Color.clear
+                            )
+
+                        playerCard(
+                            index: idx + 1,
+                            player: p,
+                            wordsByRound: roundsForPlayer,
+                            isCurrentTurn: isCurrent
                         )
-                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .padding(.vertical, 4)
                     }
                 }
             }
@@ -485,6 +463,77 @@ extension GameDetailView {
         }
     }
 }
+
+// MARK: - Player Card
+extension GameDetailView {
+    @ViewBuilder
+    func playerCard(index: Int,
+                    player: PlayerRow,
+                    wordsByRound: [Int: String],
+                    isCurrentTurn: Bool) -> some View {
+
+        let softBG: Color = colorScheme == .dark
+            ? Color.secondaryBlue.opacity(0.22)
+            : Color.secondaryBlue.opacity(0.12)
+
+        let textColor: Color = colorScheme == .dark ? .white : .primary
+
+        let base = VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                Text("\(index)")
+                    .font(.caption).bold()
+                    .padding(.horizontal, 8).padding(.vertical, 2)
+                    .background(textColor.opacity(0.20))
+                    .foregroundColor(textColor)
+                    .clipShape(Capsule())
+
+                Text(player.name)
+                    .font(.body).bold()
+                    .foregroundColor(textColor)
+
+                Spacer(minLength: 0)
+            }
+
+            ForEach(wordsByRound.keys.sorted(), id: \.self) { round in
+                if let w = wordsByRound[round] {
+                    Text("R\(round): \(w)")
+                        .font(.caption)
+                        .foregroundColor(textColor.opacity(0.9))
+                }
+            }
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(softBG)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+        if isCurrentTurn {
+            base
+            .overlay(
+                TimelineView(.animation) { timeline in
+                    // smooth single-color pulse in primaryBlue
+                    let t = timeline.date.timeIntervalSinceReferenceDate
+                    let phase = (sin((t * (2 * .pi)) / 1.6) + 1) * 0.5      // 0...1
+                    let opacity = 0.25 + 0.75 * phase                       // 0.25...1.0
+                    let width   = 2.0 + 2.0 * phase                          // 2...4
+
+                    return RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .strokeBorder(Color.primaryBlue.opacity(opacity), lineWidth: width)
+                        .shadow(color: Color.primaryBlue.opacity(0.35 * phase),
+                                radius: 8 * phase, x: 0, y: 2 * phase)
+                }
+            )
+        } else {
+            base
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(Color.primaryBlue.opacity(colorScheme == .dark ? 0.35 : 0.25),
+                                  lineWidth: 1.5)
+            )
+        }
+    }
+}
+
 
 // MARK: - Logic & Firestore
 extension GameDetailView {
