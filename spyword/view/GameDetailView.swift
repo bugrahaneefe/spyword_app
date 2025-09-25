@@ -268,9 +268,6 @@ extension GameDetailView {
                 if !amSelected {
                     notSelectedCard()
                 } else {
-                    if shouldShowRoleReveal {
-                        roleRevealCard()
-                    }
                     if continuePressed {
                         playersInputsCard()
                         myTurnInputCard()
@@ -281,6 +278,8 @@ extension GameDetailView {
                                 .foregroundColor(.errorRed)
                                 .padding(.horizontal)
                         }
+                    } else {
+                        roleRevealCard()
                     }
                 }
             }
@@ -355,7 +354,7 @@ extension GameDetailView {
                 }
 
                 ButtonText(title: "continue") {
-                    continuePressed = true
+                    setContinuePressed(true)
                 }
             }
         }
@@ -659,6 +658,17 @@ extension GameDetailView {
             self.spyCount = (info["spyCount"] as? Int) ?? 1
             self.categoryRaw = info["category"] as? String
 
+            if let map = info["continuePressed"] as? [String: Any],
+               let mine = map[self.deviceId] as? Bool {
+                if self.continuePressed != mine {
+                    self.continuePressed = mine
+                }
+            } else {
+                if self.continuePressed != false {
+                    self.continuePressed = false
+                }
+            }
+            
             self.maybeShowTurnSplash()
             
             self.isLoading = false
@@ -701,6 +711,16 @@ extension GameDetailView {
             }
             self.playerInputs = updated
         }
+    }
+    
+    private func setContinuePressed(_ pressed: Bool) {
+        continuePressed = pressed
+        
+        let db = Firestore.firestore()
+        let roomRef = db.collection("rooms").document(roomCode)
+        roomRef.updateData([
+            "info.continuePressed.\(deviceId)": pressed
+        ])
     }
     
     private func revealKey() -> String {

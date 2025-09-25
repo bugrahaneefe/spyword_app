@@ -47,11 +47,6 @@ struct JoinGameView: View {
                 Divider()
 
                 VStack(spacing: 24) {
-                    Text("join_room_title")
-                        .font(.h2)
-                        .foregroundColor(.primary)
-                        .padding(.top, 8)
-
                     if !recent.codes.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("recent_rooms")
