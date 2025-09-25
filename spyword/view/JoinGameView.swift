@@ -88,11 +88,14 @@ struct JoinGameView: View {
                                             rejoin(code)
                                         }
                                         .font(.body)
-                                        .padding(.vertical, 6)
+                                        .padding(.vertical, 12)
                                         .padding(.horizontal, 16)
                                         .background(Color.primaryBlue)
                                         .foregroundColor(.white)
                                         .cornerRadius(12)
+                                        .padding(.vertical, 6)
+                                        .padding(.trailing, 6)
+
                                     }
                                     .onTapGesture {
                                         rejoin(code)
@@ -100,6 +103,7 @@ struct JoinGameView: View {
                                     .listRowBackground((colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight).opacity(0.001))
                                 }
                             }
+                            .scrollIndicators(.hidden)
                             .listStyle(.plain)
                             .scrollContentBackground(.hidden)
                             .frame(height: 200)
