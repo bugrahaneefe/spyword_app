@@ -206,3 +206,4 @@
 "game_detail_description" = "Uygun kelimelerle anlat; casussan fark edilmeden gizli kelimeyi çöz, değilsen kendini kanıtla ama kelimeyi ele verme.";
 "room_description" = "Oda kodunu paylaş, arkadaşlarınla bir araya gel ve oyuna başla.";
 "create_room_description" = "Odanı oluştur, sonra arkadaşlarını davet et.";
+"join_room_description" = "Oda kodunu ve adını gir, arkadaşlarına katıl. İstersen eski odalarına da hızlıca dönebilirsin.";

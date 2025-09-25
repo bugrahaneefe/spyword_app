@@ -198,3 +198,4 @@
 "game_detail_description" = "Utilisez des mots adaptés : si vous êtes l’espion, fondez-vous et devinez le mot secret ; sinon, prouvez-le sans le dévoiler.";
 "room_description" = "Partage le code de la salle et joue avec tes amis.";
 "create_room_description" = "Crée ta salle puis invite tes amis.";
+"join_room_description" = "Saisis le code de la salle et ton nom pour rejoindre tes amis, ou retrouve rapidement une ancienne salle.";

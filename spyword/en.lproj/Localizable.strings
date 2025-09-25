@@ -206,3 +206,4 @@
 "game_detail_description" = "Describe with fitting words—if you are the spy, blend in and guess the secret word; if not, prove yourself without revealing it.";
 "room_description" = "Share the room code and gather your friends to play.";
 "create_room_description" = "Create your room and then invite your friends.";
+"join_room_description" = "Enter the room code and your name to join your friends — or quickly rejoin a previous room.";
