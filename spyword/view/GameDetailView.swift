@@ -871,84 +871,98 @@ struct SpyGuessView: View {
                                 }
                             }
                         }
-                    
-                    VStack(alignment: .leading, spacing: 4) {
-                        ForEach(players) { p in
-                            HStack(spacing: 8) {
-                                Text("\(p.name) - \(localizedRole(p.role))")
-                                    .font(.body)
-                                    .foregroundColor(.primary)
-                                
-                                if guessedSpyIds.contains(p.id) {
-                                    Image(systemName: "target")
-                                        .foregroundColor(.primaryBlue)
-                                        .imageScale(.medium)
+
+                    // MARK: Players & roles (SCROLLABLE + CLEAR ROLES)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("players")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+
+                        ScrollView {
+                            LazyVStack(spacing: 8) {
+                                ForEach(players) { p in
+                                    PlayerResultRow(
+                                        name: p.name,
+                                        role: p.role,
+                                        isGuessedTarget: guessedSpyIds.contains(p.id),
+                                        colorScheme: colorScheme
+                                    )
                                 }
                             }
+                            .padding(.vertical, 2)
                         }
+                        .frame(maxHeight: 240)
                     }
-                    .padding()
-                    .frame(maxWidth: .infinity)
                     .background(cardBG)
                     .cornerRadius(12)
-                    
+
+                    // MARK: Spy guesses
                     VStack(alignment: .leading, spacing: 10) {
                         Text("spy_guesses_title")
                             .font(.headline)
                             .foregroundColor(.primary)
                         
-                        ForEach(players.filter { $0.role == "spy" }) { spy in
-                            HStack(spacing: 6) {
-                                Text(spy.name)
-                                    .font(.body).bold()
-                                    .foregroundColor(.primary)
-                                Text("—")
-                                if let g = spyWordGuesses[spy.id], !g.isEmpty {
-                                    Text("“\(g)”")
-                                        .font(.body)
-                                        .foregroundColor(.primaryBlue)
-                                } else {
-                                    Text("spy_guess_pending")
-                                        .font(.body)
-                                        .foregroundColor(.secondary)
+                        ScrollView {
+                            LazyVStack(alignment: .leading, spacing: 8) {
+                                ForEach(players.filter { $0.role == "spy" }) { spy in
+                                    HStack(spacing: 8) {
+                                        RoleBadge(role: "spy")
+                                        Text(spy.name)
+                                            .font(.body).bold()
+                                            .foregroundColor(.primary)
+                                        Text("—")
+                                        if let g = spyWordGuesses[spy.id], !g.isEmpty {
+                                            Text("“\(g)”")
+                                                .font(.body)
+                                                .foregroundColor(.primaryBlue)
+                                        } else {
+                                            Text("spy_guess_pending")
+                                                .font(.body)
+                                                .foregroundColor(.secondary)
+                                        }
+                                    }
                                 }
                             }
                         }
+                        .frame(maxHeight: 160)
                     }
-                    .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(cardBG)
                     .cornerRadius(12)
-                    
+
+                    // Reveal button (unchanged)
                     if isHost && !wordRevealed {
                         ButtonText(title: "reveal_secret_word") {
                             revealWordAndFinalize()
                         }
                         .padding(.top, 4)
                     }
-                    
+
+                    // Revealed word (unchanged)
                     if wordRevealed, let w = actualWord {
-                        HStack(spacing: 8) {
+                        HStack(alignment: .center,spacing: 8) {
+                            Spacer()
                             Image(systemName: "eye")
                             Text(String.localized(key: "revealed_secret_word", code: lang.code, w))
+                            Spacer()
                         }
                         .font(.body)
                         .foregroundColor(.primary)
-                        .padding()
+                        .padding(.horizontal)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(cardBG)
                         .cornerRadius(12)
                     }
-                    
-                    // NEW: Spy self action - guess button (only spies, single-shot)
+
+                    // Spy self action (unchanged)
                     if iAmSpy && !alreadyGuessed {
                         ButtonText(title: "spy_guess_word") {
                             showGuessSheet = true
                         }
                         .padding(.top, 4)
                     }
-                    
-                    // Existing: host end game
+
+                    // Host end game (unchanged)
                     if isHost {
                         ButtonText(title: "end_game") {
                             endGame()
@@ -1264,3 +1278,96 @@ struct SpyGuessView: View {
     }
 }
 
+// MARK: - UI Helpers (Result Screen)
+
+private func roleIconName(for role: String?) -> String {
+    switch role?.lowercased() {
+    case "spy":     return "eye.trianglebadge.exclamationmark.fill"
+    case "knower":  return "lightbulb.fill"
+    default:        return "questionmark.circle.fill"
+    }
+}
+
+private func roleTint(for role: String?, _ colorScheme: ColorScheme) -> Color {
+    switch role?.lowercased() {
+    case "spy":     return Color.errorRed
+    case "knower":  return Color.successGreen
+    default:        return colorScheme == .dark ? .gray : .secondary
+    }
+}
+
+private struct RoleBadge: View {
+    var role: String?
+    @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var lang: LanguageManager
+    
+    var body: some View {
+        let tint = roleTint(for: role, colorScheme)
+        HStack(spacing: 6) {
+            Image(systemName: roleIconName(for: role))
+                .imageScale(.small)
+            Text(roleLabel(role))
+                .font(.caption).bold()
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .foregroundColor(.white)
+        .background(tint)
+        .clipShape(Capsule())
+        .accessibilityLabel(roleLabel(role))
+    }
+
+    private func roleLabel(_ role: String?) -> String {
+        switch role?.lowercased() {
+        case "spy":     return String.localized(key: "spy", code: lang.code)
+        case "knower":  return String.localized(key: "knower", code: lang.code)
+        default:        return String.localized(key: "unknown", code: lang.code)
+        }
+    }
+}
+
+private struct PlayerResultRow: View {
+    var name: String
+    var role: String?
+    var isGuessedTarget: Bool
+    var colorScheme: ColorScheme
+    @EnvironmentObject var lang: LanguageManager
+
+    var body: some View {
+        let tint = roleTint(for: role, colorScheme)
+        let bg = (colorScheme == .dark ? tint.opacity(0.12) : tint.opacity(0.10))
+        let border = isGuessedTarget ? tint : tint.opacity(0.35)
+
+        HStack(spacing: 10) {
+            RoleBadge(role: role)
+            Text(name)
+                .font(.body).bold()
+                .foregroundColor(.primary)
+
+            Spacer(minLength: 0)
+
+            if isGuessedTarget {
+                HStack(spacing: 6) {
+                    Image(systemName: "target")
+                        .imageScale(.medium)
+                    Text(String.localized(key: "guessed", code: lang.code))
+                        .font(.caption).bold()
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .foregroundColor(.white)
+                .background(Color.primaryBlue)
+                .clipShape(Capsule())
+                .accessibilityLabel("Guessed as spy")
+            }
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(bg)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(border, lineWidth: isGuessedTarget ? 2.0 : 1.0)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+}
