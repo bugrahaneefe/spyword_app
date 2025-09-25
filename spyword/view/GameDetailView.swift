@@ -170,7 +170,8 @@ struct GameDetailView: View {
                         "info.currentRound": 1,
                         "info.currentTurnIndex": 0,
                         "info.resultText": FieldValue.delete(),
-                        "info.gameId": newGameId
+                        "info.gameId": newGameId,
+                        "info.continuePressed": FieldValue.delete()
                     ])
                 }
             }
@@ -739,7 +740,8 @@ extension GameDetailView {
             "info.status": "waiting",
             "info.currentRound": 1,
             "info.currentTurnIndex": 0,
-            "info.resultText": FieldValue.delete()
+            "info.resultText": FieldValue.delete(),
+            "info.continuePressed": FieldValue.delete()
         ]) { err in
             if let err = err {
                 self.errorMessage = err.localizedDescription
