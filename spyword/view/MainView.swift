@@ -9,32 +9,28 @@ private enum Constant {
 struct MainView: View {
     @EnvironmentObject var router: Router
     @EnvironmentObject var lang: LanguageManager
+    @EnvironmentObject var avatar: AvatarManager
     @Environment(\.colorScheme) var colorScheme
 
     @State private var showLanguageSheet = false
     @State private var showHowToSheet = false
+    @State private var showAvatarSheet = false
 
     var body: some View {
         ZStack {
             (colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
                 .ignoresSafeArea()
 
-            // centered content
+            // centered content (unchanged)
             VStack(spacing: 24) {
                 Spacer()
-
                 Constant.appImage
                     .resizable()
                     .frame(width: 144, height: 144)
                     .cornerRadius(8)
 
-                ButtonText(title: "create_game") {
-                    router.replace(with: CreateRoomView())
-                }
-
-                ButtonText(title: "join_game") {
-                    router.replace(with: JoinGameView())
-                }
+                ButtonText(title: "create_game") { router.replace(with: CreateRoomView()) }
+                ButtonText(title: "join_game")   { router.replace(with: JoinGameView()) }
 
                 Spacer()
 
@@ -44,161 +40,70 @@ struct MainView: View {
                 .padding(.top, 8)
             }
             .padding()
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
 
-            // top-right: language + help (question mark) buttons
+            VStack {
+                HStack {
+                    Button {
+                        showAvatarSheet = true
+                    } label: {
+                        avatar.image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 64, height: 64)
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.white.opacity(0.6), lineWidth: 1))
+                            .shadow(radius: 2)
+                            .accessibilityLabel(Text("Edit avatar"))
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.leading, 16)
+
+                    Spacer()
+                }
+                .padding(.top, 16)
+                .shadow(color: .black, radius: 8)
+
+                Spacer()
+            }
+            .padding(16)
+
+            // TOP-RIGHT: language + help (unchanged)
             VStack(alignment: .trailing, spacing: 8) {
-                HStack {
-                    Spacer()
-                    ButtonIcon(iconName: "globe") {
-                        showLanguageSheet = true
-                    }
-                    .padding(.trailing, 16)
+                HStack { Spacer()
+                    ButtonIcon(iconName: "globe") { showLanguageSheet = true }
+                        .padding(.trailing, 16)
                 }
-
-                HStack {
-                    Spacer()
-                    ButtonIcon(iconName: "questionmark.circle") {   // NEW
-                        showHowToSheet = true
-                    }
-                    .padding(.trailing, 16)
+                HStack { Spacer()
+                    ButtonIcon(iconName: "questionmark.circle") { showHowToSheet = true }
+                        .padding(.trailing, 16)
                 }
-
                 Spacer()
             }
             .padding(.top, 16)
         }
         .onAppear(perform: setupDeviceIDIfNeeded)
-
-        // Language sheet
         .sheet(isPresented: $showLanguageSheet) {
-            LanguagePickerSheet(selected: lang.code) { newCode in
-                lang.set(newCode)
-            }
-            .presentationDetents([.medium])
-            .presentationDragIndicator(.visible)
+            LanguagePickerSheet(selected: lang.code) { lang.set($0) }
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
         }
-
-        // How to play sheet
         .sheet(isPresented: $showHowToSheet) {
-            HowToPlaySheet()       // NEW
+            HowToPlaySheet()
                 .environment(\.locale, lang.locale)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $showAvatarSheet) {
+            AvatarPickerSheet()
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
     }
 
     private func setupDeviceIDIfNeeded() {
-        let defaults = UserDefaults.standard
-        if defaults.string(forKey: Constant.deviceIdKey) == nil {
-            defaults.set(UUID().uuidString, forKey: Constant.deviceIdKey)
-        }
-    }
-}
-
-private struct LanguagePickerSheet: View {
-    let selected: String
-    let onSelect: (String) -> Void
-    @Environment(\.dismiss) private var dismiss
-    @State private var isDragging = false
-    
-    var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(spacing: 12) {
-                    languageButton(code: "tr")
-                    languageButton(code: "en")
-                    languageButton(code: "de")
-                    languageButton(code: "fr")
-                    languageButton(code: "es")
-                    languageButton(code: "pt")
-                    languageButton(code: "it")
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 20)
-                .padding(.horizontal, 16)
-            }
-            .contentShape(Rectangle())
-            .gesture(
-                DragGesture(minimumDistance: 2)
-                    .onChanged { _ in
-                        if !isDragging { isDragging = true }
-                    }
-                    .onEnded { _ in
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                            isDragging = false
-                        }
-                    }
-            )
-            .navigationTitle(Text("language_title"))
-            .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-
-    // MARK: - Helpers
-
-    private func languageButton(code: String) -> some View {
-        let label = "\(flag(for: code)) \(endonym(for: code))" + (code == selected ? "  ✓" : "")
-
-        return ButtonText(title: LocalizedStringKey(label)) {
-            onSelect(code)
-            dismiss()
-        }
-    }
-
-    private func endonym(for code: String) -> String {
-        Locale(identifier: code)
-            .localizedString(forLanguageCode: code)?
-            .capitalized(with: Locale(identifier: code))
-        ?? code.uppercased()
-    }
-
-    private func flag(for code: String) -> String {
-        switch code.lowercased() {
-        case "tr": return "\u{1F1F9}\u{1F1F7}" // 🇹🇷
-        case "en": return "\u{1F1EC}\u{1F1E7}" // 🇬🇧
-        case "de": return "\u{1F1E9}\u{1F1EA}" // 🇩🇪
-        case "fr": return "\u{1F1EB}\u{1F1F7}" // 🇫🇷
-        case "es": return "\u{1F1EA}\u{1F1F8}" // 🇪🇸
-        case "pt": return "\u{1F1F5}\u{1F1F9}" // 🇵🇹
-        case "it": return "\u{1F1EE}\u{1F1F9}" // 🇮🇹
-        default:   return "\u{1F310}"          // 🌐
-        }
-    }
-}
-
-
-// NEW: How-to sheet
-private struct HowToPlaySheet: View {
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("how_intro")
-                        .font(.body)
-                        .foregroundColor(.secondary)
-                        .padding(.bottom, 4)
-
-                    Group {
-                        Text("how_step_1").font(.body)
-                        Text("how_step_2").font(.body)
-                        Text("how_step_3").font(.body)
-                        Text("how_step_4").font(.body)
-                        Text("how_step_5").font(.body)
-                        Text("how_step_6").font(.body)
-                        Text("how_step_7").font(.body)
-                        Text("how_step_8").font(.body)
-                        Text("how_tips").font(.footnote).foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .padding(.vertical, 16)
-                .padding(.horizontal, 16)
-            }
-            .navigationTitle(Text("how_to_play_title"))
-            .navigationBarTitleDisplayMode(.inline)
+        let k = "deviceId"
+        if UserDefaults.standard.string(forKey: k) == nil {
+            UserDefaults.standard.set(UUID().uuidString, forKey: k)
         }
     }
 }

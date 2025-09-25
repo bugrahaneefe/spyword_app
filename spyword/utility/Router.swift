@@ -39,7 +39,8 @@ final class Router: ObservableObject {
 struct RootContainer: View {
     @StateObject private var router = Router()
     @StateObject private var lang = LanguageManager()
-
+    @StateObject private var avatar = AvatarManager()
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -52,6 +53,7 @@ struct RootContainer: View {
                 }
                 .environmentObject(router)
                 .environmentObject(lang)
+                .environmentObject(avatar)
                 .environment(\.locale, lang.locale)
 
                 .navigationDestination(isPresented: Binding(
