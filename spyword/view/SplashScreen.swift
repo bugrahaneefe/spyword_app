@@ -13,21 +13,19 @@ struct SplashScreen: View {
             Constant.splashImage
                 .resizable()
                 .ignoresSafeArea()
-
-            if showButton {
-                VStack {
-                    Spacer()
-                    ButtonText(title: "start") {
-                        router.replace(with: MainView())
-                    }
-                    .transition(.opacity)
-                }
-                .padding(.bottom, 96)
+            
+            VStack {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
             }
+            .padding(.bottom, 96)
         }
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                withAnimation(.easeOut(duration: 0.5)) { showButton = true }
+            let delay = Double.random(in: 1.0...2.5)
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                withAnimation(.easeOut(duration: 0.5)) {
+                    router.replace(with: MainView())
+                }
             }
         }
     }
