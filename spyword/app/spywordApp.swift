@@ -15,6 +15,7 @@ struct SpyWordApp: App {
                         requestTrackingPermission()
                     }
                 }
+                .preferredColorScheme(.light)
         }
     }
     
@@ -23,10 +24,10 @@ struct SpyWordApp: App {
         if #available(iOS 14, *) {
             ATTrackingManager.requestTrackingAuthorization { status in
                 switch status {
-                case .authorized:   print("✅ ATT: Authorized")
-                case .denied:       print("❌ ATT: Denied")
-                case .notDetermined:print("ℹ️ ATT: Not determined")
-                case .restricted:   print("⚠️ ATT: Restricted")
+                case .authorized:       print("✅ ATT: Authorized")
+                case .denied:           print("❌ ATT: Denied")
+                case .notDetermined:    print("ℹ️ ATT: Not determined")
+                case .restricted:       print("⚠️ ATT: Restricted")
                 @unknown default:   break
                 }
                 
