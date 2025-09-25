@@ -152,6 +152,7 @@
 "category_section" = "Category";
 "category_world" = "World (Famous people & characters)";
 "category_turkiye" = "Türkiye (Famous locally)";
+"category_tr_actors" = "Turkish Actors";
 "category_world_football" = "World Football";
 "category_nfl" = "NFL";
 "category_hint" = "Pick a pool. A random name/character from that pool will be used as the secret word.";

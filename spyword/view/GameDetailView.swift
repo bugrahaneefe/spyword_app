@@ -61,7 +61,6 @@ struct GameDetailView: View {
             case "music":           return "category_music"
             case "literature":           return "category_literature"
             case "technology":   return "category_technology"
-            case "animals":      return "category_animals"
             case "mythology":    return "category_mythology"
             case "festivals":    return "category_festivals"
             case "cuisine":      return "category_cuisine"
@@ -69,6 +68,7 @@ struct GameDetailView: View {
             case "trPoliticians":  return "category_tr_politicians"
             case "trMemes":        return "category_tr_memes"
             case "trStreetFood":   return "category_tr_streetfood"
+            case "trActors": return "category_tr_actors"
             case "custom":        return "category_custom"
             default:              return "category_custom"
             }

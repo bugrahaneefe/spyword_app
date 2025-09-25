@@ -77,7 +77,7 @@ struct GameSettingsView: View {
                             ("category_music", .music),
                             ("category_literature", .literature),
                             ("category_technology", .technology),
-                            ("category_animals", .animals),
+                            ("category_tr_actors", .trActors),
                             ("category_mythology", .mythology),
                             ("category_festivals", .festivals),
                             ("category_cuisine", .cuisine)
@@ -94,7 +94,6 @@ struct GameSettingsView: View {
                             ("category_music", .music),
                             ("category_literature", .literature),
                             ("category_technology", .technology),
-                            ("category_animals", .animals),
                             ("category_mythology", .mythology),
                             ("category_festivals", .festivals),
                             ("category_cuisine", .cuisine)

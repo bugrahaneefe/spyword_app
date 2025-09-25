@@ -4,8 +4,8 @@ import Firebase
 struct GameSettings {
     enum WordMode { case random, custom }
     enum WordCategory: String, CaseIterable {
-        case world, worldFootball, nfl, movies, science, history, geography, music, literature, technology, animals, mythology, festivals, cuisine
-        case turkiye, trInfluencers, trPoliticians, trMemes, trStreetFood
+        case world, worldFootball, nfl, movies, science, history, geography, music, literature, technology, mythology, festivals, cuisine
+        case turkiye, trInfluencers, trPoliticians, trMemes, trStreetFood, trActors
     }
 
     var mode: WordMode
@@ -201,7 +201,6 @@ enum WordPools {
         case .music:         pool = music
         case .literature:    pool = literature
         case .technology:    pool = technology
-        case .animals:       pool = animals
         case .mythology:     pool = mythology
         case .festivals:     pool = festivals
         case .cuisine:       pool = cuisine
@@ -209,6 +208,7 @@ enum WordPools {
         case .trPoliticians: pool = trPoliticians
         case .trMemes:       pool = trMemes
         case .trStreetFood:  pool = trStreetFood
+        case .trActors: pool = trActors
         }
         return pool.randomElement() ?? "Kelime"
     }
@@ -269,19 +269,59 @@ enum WordPools {
         "Marshawn Lynch","Derrick Henry","Cooper Kupp","Odell Beckham Jr.","Saquon Barkley"
     ]
     
-    // 5) MOVIES – 50 (ünlü filmler & karakterler)
     static let movies: [String] = [
-        "The Godfather","Titanic","Inception","The Matrix","Forrest Gump",
-        "The Dark Knight","Avatar","Pulp Fiction","Gladiator","Interstellar",
-        "Joker","Avengers","Toy Story","Frozen","Finding Nemo",
-        "Star Wars","Lord of the Rings","Jurassic Park","Shrek","The Lion King",
-        "Harry Potter","Spider-Man","Batman","Superman","Iron Man",
-        "Black Panther","Wonder Woman","Doctor Strange","Guardians of the Galaxy","Thor",
-        "Hulk","Captain America","Ant-Man","Deadpool","Wolverine",
-        "X-Men","The Shawshank Redemption","Fight Club","Se7en","The Silence of the Lambs",
-        "The Green Mile","The Prestige","Django Unchained","The Departed","Whiplash",
-        "La La Land","Coco","Up","Inside Out","Soul"
+        "Vito Corleone",
+        "Jack Dawson",
+        "Dom Cobb",
+        "Neo",
+        "Forrest Gump",
+        "Batman",
+        "Jake Sully",
+        "Vincent Vega",
+        "Maximus",
+        "Cooper",
+        "Joker",
+        "Iron Man",
+        "Woody",
+        "Elsa",
+        "Nemo",
+        "Luke Skywalker",
+        "Frodo Baggins",
+        "Dr. Alan Grant",
+        "Shrek",
+        "Simba",
+        "Harry Potter",
+        "Spider-Man",
+        "Batman",
+        "Superman",
+        "Iron Man",
+        "Black Panther",
+        "Wonder Woman",
+        "Doctor Strange",
+        "Star-Lord",
+        "Thor",
+        "Hulk",
+        "Captain America",
+        "Ant-Man",
+        "Deadpool",
+        "Wolverine",
+        "Professor X",
+        "Andy Dufresne",
+        "Tyler Durden",
+        "Detective Mills",
+        "Hannibal Lecter",
+        "John Coffey",
+        "Robert Angier",
+        "Django",
+        "Billy Costigan",
+        "Andrew Neiman",
+        "Mia Dolan",
+        "Miguel",
+        "Carl Fredricksen",
+        "Joy",
+        "Joe Gardner"
     ]
+
 
     // 6) SCIENCE – 50 (bilim insanları & kavramlar)
     static let science: [String] = [
@@ -290,11 +330,7 @@ enum WordPools {
         "Dmitri Mendeleev","Gregor Mendel","Alan Turing","Rosalind Franklin","Ada Lovelace",
         "Michael Faraday","James Clerk Maxwell","Louis Pasteur","Robert Hooke","Max Planck",
         "Erwin Schrödinger","Werner Heisenberg","Enrico Fermi","Paul Dirac","J.J. Thomson",
-        "Ernest Rutherford","Francis Crick","James Watson","Higgs boson","Quantum Mechanics",
-        "Relativity","DNA","RNA","Photosynthesis","Evolution",
-        "Black Hole","Big Bang","Gravity","Atom","Molecule",
-        "Cell","Neuron","Genome","Periodic Table","Electricity",
-        "Magnetism","Light","Laser","Microscope","Telescope"
+        "Ernest Rutherford","Francis Crick","James Watson"
     ]
 
     // 7) HISTORY – 50 (tarihi şahsiyetler & olaylar)
@@ -305,10 +341,7 @@ enum WordPools {
         "Vladimir Lenin","Franklin D. Roosevelt","John F. Kennedy","Ronald Reagan","Barack Obama",
         "Donald Trump","Angela Merkel","Margaret Thatcher","Suleiman the Magnificent","Charlemagne",
         "Leonardo da Vinci","Michelangelo","Christopher Columbus","Ferdinand Magellan","Marco Polo",
-        "Albert Einstein","Isaac Newton","Nikola Tesla","Marie Curie","Galileo Galilei",
-        "French Revolution","American Revolution","Industrial Revolution","World War I","World War II",
-        "Cold War","Fall of Berlin Wall","Crusades","Renaissance","Reformation",
-        "Great Depression","Black Death","Battle of Waterloo","Signing of Magna Carta","Moon Landing"
+        "Albert Einstein","Isaac Newton","Nikola Tesla","Marie Curie","Galileo Galilei"
     ]
 
     // 8) GEOGRAPHY – 50 (şehirler, ülkeler, coğrafi yerler)
@@ -355,30 +388,55 @@ enum WordPools {
     
     // 11) TECHNOLOGY – 50 (global tech kavramları)
     static let technology: [String] = [
-        "Smartphone","Internet","Artificial Intelligence","Blockchain","Quantum Computing",
-        "Cloud Computing","5G","Wi-Fi","GPS","Drone",
-        "Robotics","Machine Learning","Virtual Reality","Augmented Reality","Cybersecurity",
-        "Encryption","Microchip","Semiconductor","Battery","Solar Panel",
-        "Electric Vehicle","3D Printing","Nanotechnology","Open Source","Linux",
-        "GitHub","Streaming","Podcast","Smartwatch","Wearable",
-        "Internet of Things","Smart Home","Voice Assistant","Touchscreen","USB-C",
-        "Solid State Drive","GPU","CPU","Router","Modem",
-        "Data Center","API","Database","Algorithm","Big Data",
-        "Software as a Service","Container","Kubernetes","Docker","Edge Computing"
-    ]
-
-    // 12) ANIMALS – 50 (dünya genelinde bilinen hayvanlar)
-    static let animals: [String] = [
-        "Lion","Tiger","Elephant","Giraffe","Zebra",
-        "Panda","Koala","Kangaroo","Penguin","Polar Bear",
-        "Wolf","Fox","Eagle","Falcon","Owl",
-        "Dolphin","Whale","Shark","Octopus","Squid",
-        "Turtle","Crocodile","Alligator","Hippopotamus","Rhinoceros",
-        "Cheetah","Leopard","Gorilla","Chimpanzee","Orangutan",
-        "Camel","Llama","Alpaca","Bison","Buffalo",
-        "Moose","Reindeer","Horse","Donkey","Sheep",
-        "Goat","Cow","Pig","Chicken","Duck",
-        "Goose","Swan","Bee","Butterfly","Tortoise"
+        "Steve Jobs",            // Smartphone, Apple
+        "Tim Berners-Lee",       // Internet (World Wide Web)
+        "Geoffrey Hinton",       // Artificial Intelligence pioneer
+        "Satoshi Nakamoto",      // Blockchain / Bitcoin
+        "John Preskill",         // Quantum Computing
+        "Marc Andreessen",       // Cloud Computing, Netscape/VC influence
+        "Ajit Pai",              // 5G (FCC policy figure)
+        "Hedy Lamarr",           // Wi-Fi co-inventor
+        "Bradford Parkinson",    // GPS creator
+        "Frank Wang",            // DJI founder, Drone industry leader
+        "Isaac Asimov",          // Robotics visionary (laws of robotics)
+        "Andrew Ng",             // Machine Learning
+        "Palmer Luckey",         // Virtual Reality (Oculus)
+        "Tim Sweeney",           // Augmented Reality / Unreal Engine
+        "Eugene Kaspersky",      // Cybersecurity
+        "Whitfield Diffie",      // Encryption pioneer
+        "Jack Kilby",            // Microchip
+        "Morris Chang",          // Semiconductor industry (TSMC)
+        "John B. Goodenough",    // Lithium-ion Battery
+        "Elon Musk",             // Solar, EVs, SpaceX
+        "James Dyson",           // Electric Vehicle / Engineering innovations
+        "Chuck Hull",            // 3D Printing inventor
+        "Richard Feynman",       // Nanotechnology visionary
+        "Richard Stallman",      // Open Source
+        "Linus Torvalds",        // Linux creator
+        "Chris Wanstrath",       // GitHub co-founder
+        "Reed Hastings",         // Streaming (Netflix)
+        "Adam Curry",            // Podcast pioneer
+        "James Park",            // Smartwatch/Wearables (Fitbit)
+        "Kevin Ashton",          // Internet of Things (coined the term)
+        "Jeff Bezos",            // Smart Home (Alexa)
+        "Dag Kittlaus",          // Voice Assistant (Siri co-creator)
+        "E.A. Johnson",          // Touchscreen pioneer
+        "Ajay Bhatt",            // USB creator (USB-C legacy)
+        "Mark Kryder",           // Solid State Drive
+        "Jensen Huang",          // GPU (NVIDIA)
+        "Gordon Moore",          // CPU (Intel co-founder)
+        "Leonard Kleinrock",     // Router / Internet protocols
+        "John Cioffi",           // Modem DSL father
+        "Michael Dell",          // Data Centers
+        "Roy Fielding",          // API & REST
+        "Edgar F. Codd",         // Database (relational model)
+        "Ada Lovelace",          // Algorithm pioneer
+        "Clive Humby",           // Big Data quote “data is the new oil”
+        "Marc Benioff",          // SaaS (Salesforce)
+        "Solomon Hykes",         // Containerization (Docker)
+        "Brendan Burns",         // Kubernetes co-creator
+        "Solomon Hykes",         // Docker founder
+        "Satya Nadella"          // Edge Computing, Microsoft Azure
     ]
 
     // 13) MYTHOLOGY – 50 (çok kültürlü mitoloji & folklor)
@@ -394,19 +452,55 @@ enum WordPools {
         "Kraken","Phoenix","Dragon","Griffin","Hydra",
         "Jinn","Baba Yaga","Raven","Coyote","Yeti"
     ]
-
-    // 14) FESTIVALS – 50 (dünya çapı bayram & festivaller)
+    
     static let festivals: [String] = [
-        "New Year’s Day","Lunar New Year","Diwali","Holi","Eid al-Fitr",
-        "Eid al-Adha","Christmas","Hanukkah","Easter","Passover",
-        "Nowruz","Obon","Day of the Dead","Carnival","Mardi Gras",
-        "Oktoberfest","Songkran","Mid-Autumn Festival","Vesak","Lantern Festival",
-        "Dragon Boat Festival","Thaipusam","Pongal","Chuseok","Tet",
-        "St. Patrick’s Day","Valentine’s Day","Halloween","Thanksgiving","Independence Day",
-        "Pride Parade","La Tomatina","Yi Peng","Running of the Bulls","Hogmanay",
-        "Guy Fawkes Night","Carnival of Venice","Harbin Ice Festival","Gion Matsuri","Cannes Film Festival",
-        "Glastonbury","Burning Man","Coachella","White Nights Festival","Hajj",
-        "Song and Dance Festival","Sinulog","Up Helly Aa","Rio Carnival","Hanami"
+        "Julius Caesar",
+        "Emperor Wu of Han",
+        "Lakshmi",
+        "Krishna",
+        "Jesus Christ",
+        "Judah Maccabee",
+        "Jesus Christ",
+        "Moses",
+        "Zoroaster",
+        "Buddha",
+        "Mictecacihuatl",
+        "Various Saints",
+        "Dionysus",
+        "King Ludwig I",
+        "Indra",
+        "Chang’e",
+        "Gautama Buddha",
+        "Yu the Great",
+        "Qu Yuan",
+        "Murugan",
+        "Shiva",
+        "Dangun",
+        "Emperor Hung Kings",
+        "Saint Patrick",
+        "Saint Valentine",
+        "Celtic Druids",
+        "Pilgrims & Native Leaders",
+        "Thomas Jefferson",
+        "Marsha P. Johnson",
+        "Spanish Villagers",
+        "Buddha",
+        "San Fermín",
+        "Scottish Clans",
+        "Guy Fawkes",
+        "Doge of Venice",
+        "Chinese Emperors",
+        "Kyoto Nobles",
+        "Lumière Brothers",
+        "Michael Eavis",
+        "Larry Harvey",
+        "Paul Tollett",
+        "Fyodor Dostoevsky",
+        "Latvian Choral Leaders",
+        "Santo Niño",
+        "Vikings",
+        "Carioca Samba Schools",
+        "Emperor Saga",
     ]
 
     // 15) CUISINE – 50 (dünya mutfaklarından yemek/öğe)
@@ -447,6 +541,29 @@ enum WordPools {
         "Rauf Denktaş","Deniz Baykal","İsmail Cem","Hikmet Çetin","Mehmet Ali Şahin",
         "Nurettin Nebati","Berat Albayrak","Fuat Oktay","Numan Kurtulmuş","Bekir Bozdağ",
         "Mevlüt Çavuşoğlu","Hakan Fidan","Yılmaz Büyükerşen","Abdüllatif Şener","İlhan Kesici"
+    ]
+    
+    static let trActors: [String] = [
+        "Kıvanç Tatlıtuğ",
+        "Engin Akyürek",
+        "Burak Özçivit",
+        "Çağatay Ulusoy",
+        "Kenan İmirzalıoğlu",
+        "Halit Ergenç",
+        "Tuba Büyüküstün",
+        "Beren Saat",
+        "Bergüzar Korel",
+        "Hazal Kaya",
+        "Serenay Sarıkaya",
+        "Demet Özdemir",
+        "Elçin Sangu",
+        "Hande Erçel",
+        "Neslihan Atagül",
+        "Fahriye Evcen",
+        "Meryem Uzerli",
+        "Songül Öden",
+        "Oktay Kaynarca",
+        "Haluk Bilginer"
     ]
 
     // 18) TÜRKİYE – İNTERNET KÜLTÜRÜ & MİZAH (meme/ikonik ifade & yer)
