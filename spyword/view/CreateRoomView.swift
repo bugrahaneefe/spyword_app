@@ -5,6 +5,7 @@ import FirebaseFirestore
 struct CreateRoomView: View {
     @EnvironmentObject var router: Router
     @EnvironmentObject var lang: LanguageManager
+    @EnvironmentObject var avatar: AvatarManager
     @Environment(\.colorScheme) var colorScheme
     
     @StateObject private var recent = RecentRoomsManager.shared
@@ -22,6 +23,9 @@ struct CreateRoomView: View {
         ZStack {
             (colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
                 .ignoresSafeArea()
+                .onAppear {
+                    hostName = avatar.displayName
+                }
             
             VStack(spacing: 0) {
                 HStack(spacing: 12) {
@@ -82,16 +86,29 @@ struct CreateRoomView: View {
                             .accessibilityLabel(Text("copy"))
                         }
                         
-                        TextField("your_name", text: $hostName)
-                            .font(.body)
-                            .padding()
-                            .background(colorScheme == .dark ? Color.black : Color.white)
-                            .cornerRadius(8)
-                            .foregroundColor(.primary)
-                            .shadow(color: .black.opacity(0.05), radius: 4)
-                            .autocapitalization(.words)
+                        HStack(spacing: 10) {
+                            avatar.image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 32, height: 32)
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(Color.white.opacity(0.6), lineWidth: 1))
+                                .shadow(radius: 1)
+
+                            TextField(
+                                String.localized(key: "your_name", code: lang.code),
+                                text: $hostName
+                            )
+                            .textInputAutocapitalization(.words)
                             .disableAutocorrection(true)
                             .clearButton($hostName)
+                        }
+                        .font(.body)
+                        .padding()
+                        .background(colorScheme == .dark ? Color.black : Color.white)
+                        .cornerRadius(8)
+                        .foregroundColor(.primary)
+                        .shadow(color: .black.opacity(0.05), radius: 4)
                         
                         let isFinalizeDisabled = hostName.trimmingCharacters(in: .whitespaces).isEmpty
 
