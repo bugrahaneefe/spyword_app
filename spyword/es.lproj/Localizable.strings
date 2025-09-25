@@ -193,3 +193,4 @@
 "see_result" = "Ver resultado";
 "guessed" = "Adivinado";
 "select_players_description" = "Elige a los jugadores que quieres incluir en el juego.";
+"game_settings_description" = "Escribe tu propia palabra o usa una aleatoria, define el número de espías y de rondas y comienza la partida.";

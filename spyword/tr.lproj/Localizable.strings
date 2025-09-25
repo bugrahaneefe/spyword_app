@@ -202,3 +202,4 @@
 "category_tr_actors" = "Türk Oyuncular";
 "guessed" = "Tahmin";
 "select_players_description" = "Oyuna dahil etmek istediğiniz oyuncuları seçin.";
+"game_settings_description" = "İstersen kendi kelimeni yaz ya da rastgele bir kelime seç; casus ve tur sayısını ayarla ve oyunu başlat.";

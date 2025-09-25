@@ -194,3 +194,4 @@
 "category_tr_actors" = "Acteurs Turcs";
 "guessed" = "Deviné";
 "select_players_description" = "Choisissez les joueurs que vous souhaitez inclure dans la partie.";
+"game_settings_description" = "Saisissez votre propre mot ou utilisez-en un aléatoire, définissez le nombre d’espions et de manches, puis lancez la partie.";

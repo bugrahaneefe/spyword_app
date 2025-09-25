@@ -202,3 +202,4 @@
 "see_result" = "See Result";
 "guessed" = "Guessed";
 "select_players_description" = "Choose the players you want to include in the game.";
+"game_settings_description" = "Enter your own word or get a random one, set the number of spies and rounds, and start the game.";

@@ -194,3 +194,4 @@
 "category_tr_actors" = "Attori Turchi";
 "guessed" = "Indovinato";
 "select_players_description" = "Seleziona i giocatori che vuoi includere nel gioco.";
+"game_settings_description" = "Inserisci una tua parola oppure usane una casuale, imposta il numero di spie e di round e avvia la partita.";

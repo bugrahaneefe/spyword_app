@@ -36,6 +36,8 @@ struct GameSettingsView: View {
             .padding(.vertical, 12)
             .background(colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
 
+            DescriptionText(inputKey: "game_settings_description")
+            
             Divider()
 
             // Main form

@@ -194,3 +194,4 @@
 "category_tr_actors" = "Atores Turcos";
 "guessed" = "Adivinhado";
 "select_players_description" = "Escolha os jogadores que pretende incluir no jogo.";
+"game_settings_description" = "Introduza a sua própria palavra ou use uma aleatória, defina o número de espiões e de rondas e inicie o jogo.";

@@ -194,3 +194,4 @@
 "see_result" = "Ergebnis anzeigen";
 "guessed" = "Erraten";
 "select_players_description" = "Wählen Sie die Spieler aus, die Sie ins Spiel aufnehmen möchten.";
+"game_settings_description" = "Gib ein eigenes Wort ein oder lass ein zufälliges wählen, lege die Anzahl der Spione und Runden fest und starte das Spiel.";
