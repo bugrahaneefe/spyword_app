@@ -21,7 +21,7 @@ struct MainView: View {
             (colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
                 .ignoresSafeArea()
 
-            // centered content (unchanged)
+            // Centered content
             VStack(spacing: 24) {
                 Spacer()
                 Constant.appImage
@@ -33,55 +33,22 @@ struct MainView: View {
                 ButtonText(title: "join_game")   { router.replace(with: JoinGameView()) }
 
                 Spacer()
-
-                ButtonIcon(iconName: "lock.shield") {
-                    if let url = Constant.privacyPolicyUrl { UIApplication.shared.open(url) }
-                }
-                .padding(.top, 8)
             }
             .padding()
-
-            VStack {
-                HStack {
-                    Button {
-                        showAvatarSheet = true
-                    } label: {
-                        avatar.image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 64, height: 64)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.white.opacity(0.6), lineWidth: 1))
-                            .shadow(radius: 2)
-                            .accessibilityLabel(Text("Edit avatar"))
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.leading, 16)
-
-                    Spacer()
-                }
-                .padding(.top, 16)
-                .shadow(color: .black, radius: 8)
-
-                Spacer()
-            }
-            .padding(16)
-
-            // TOP-RIGHT: language + help (unchanged)
-            VStack(alignment: .trailing, spacing: 8) {
-                HStack { Spacer()
-                    ButtonIcon(iconName: "globe") { showLanguageSheet = true }
-                        .padding(.trailing, 16)
-                }
-                HStack { Spacer()
-                    ButtonIcon(iconName: "questionmark.circle") { showHowToSheet = true }
-                        .padding(.trailing, 16)
-                }
-                Spacer()
-            }
-            .padding(.top, 16)
+        }
+        .safeAreaInset(edge: .bottom) {
+            BottomBar(
+                onLanguage: { showLanguageSheet = true },
+                onHowTo:    { showHowToSheet = true },
+                onPrivacy:  {
+                    if let url = Constant.privacyPolicyUrl { UIApplication.shared.open(url) }
+                },
+                onAvatar:   { showAvatarSheet = true }
+            )
         }
         .onAppear(perform: setupDeviceIDIfNeeded)
+
+        // Sheets
         .sheet(isPresented: $showLanguageSheet) {
             LanguagePickerSheet(selected: lang.code) { lang.set($0) }
                 .presentationDetents([.medium])
@@ -101,9 +68,56 @@ struct MainView: View {
     }
 
     private func setupDeviceIDIfNeeded() {
-        let k = "deviceId"
+        let k = Constant.deviceIdKey
         if UserDefaults.standard.string(forKey: k) == nil {
             UserDefaults.standard.set(UUID().uuidString, forKey: k)
         }
+    }
+}
+
+private struct BottomBar: View {
+    @EnvironmentObject var avatar: AvatarManager
+    @Environment(\.colorScheme) var colorScheme
+
+    var onLanguage: () -> Void
+    var onHowTo:    () -> Void
+    var onPrivacy:  () -> Void
+    var onAvatar:   () -> Void
+
+    var body: some View {
+        HStack(spacing: 20) {
+            ButtonIcon(iconName: "globe", action: onLanguage, size: .small)
+            ButtonIcon(iconName: "questionmark.circle", action: onHowTo, size: .small)
+            ButtonIcon(iconName: "lock.shield", action: onPrivacy, size: .small)
+
+            Spacer()
+
+            VStack(spacing: 6) {
+                Button(action: onAvatar) {
+                    avatar.image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 84, height: 84)
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(Color.white.opacity(0.7), lineWidth: 1))
+                        .shadow(radius: 3)
+                }
+                .buttonStyle(.plain)
+
+                Text("Your Name")
+                    .font(.caption)
+                    .foregroundStyle(.primary)
+            }
+            .offset(y: -34)
+        }
+        .padding(.horizontal, 20)
+        .frame(height: 64)
+        .background(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(.ultraThinMaterial)
+                .shadow(color: .black.opacity(0.12), radius: 8, y: -2)
+        )
+        .padding(.horizontal, 16)
+        .padding(.bottom, 8)
     }
 }

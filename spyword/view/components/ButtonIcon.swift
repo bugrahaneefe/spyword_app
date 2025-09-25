@@ -23,7 +23,7 @@ struct ButtonIcon: View {
                 }
             }
             .foregroundColor(iconColor)
-            .frame(width: 24, height: 24)
+            .frame(width: (size == .small) ? 16 : 24, height: (size == .small) ? 16 : 24)
             .padding()
             .frame(width: calculatedWidth)
             .background(backgroundColor)
@@ -39,7 +39,7 @@ struct ButtonIcon: View {
         case .small:
             return UIScreen.main.bounds.width * 0.1
         case .justCaption:
-            return UIScreen.main.bounds.width * 0.075
+            return UIScreen.main.bounds.width * 0.1
         }
     }
 }
