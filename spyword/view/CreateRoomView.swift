@@ -117,6 +117,9 @@ struct CreateRoomView: View {
                 .padding()
                 .safeAreaPadding(.bottom)
             }
+            .overlay {
+                LoadingView(isLoading: isLoading)
+            }
         }
         .swipeBack(to: MainView(), by: router)
         .onAppear{ createRoom() }
@@ -170,7 +173,7 @@ extension CreateRoomView {
         Task { @MainActor in
             let root = UIApplication.shared.topMostViewController()
             do {
-                try await AdsManager.shared.showInterstitial(from: root, chance: 100)
+                try await AdsManager.shared.showInterstitial(from: root, chance: 90)
             } catch {
                 print("Interstitial error: \(error)")
             }

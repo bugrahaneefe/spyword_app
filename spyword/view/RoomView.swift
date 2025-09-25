@@ -155,8 +155,7 @@ struct RoomView: View {
     @ViewBuilder
     private func playersList() -> some View {
         if vm.isLoading {
-            ProgressView()
-                .padding()
+            LoadingView(isLoading: vm.isLoading)
         } else {
             ScrollView {
                 LazyVStack(spacing: 12) {

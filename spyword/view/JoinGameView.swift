@@ -160,6 +160,9 @@ struct JoinGameView: View {
                 .padding()
                 .safeAreaPadding(.bottom)
             }
+            .overlay {
+                LoadingView(isLoading: isLoading)
+            }
         }
         .swipeBack(to: MainView(), by: router)
         .keyboardAdaptive()
