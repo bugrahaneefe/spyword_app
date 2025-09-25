@@ -453,11 +453,11 @@ extension GameDetailView {
             
             ButtonText(
                 title: "guess_the_spy",
-                action: { showGuessPopup = true },
                 backgroundColor: .primaryBlue,
                 textColor: .white,
                 cornerRadius: 12,
-                size: .big
+                size: .big,
+                action: { showGuessPopup = true }
             )
             .padding()
             .onAppear {
@@ -467,11 +467,11 @@ extension GameDetailView {
             
             ButtonText(
                 title: "see_result",
-                action: { showGuessPopup = true },
                 backgroundColor: .primaryBlue,
                 textColor: .white,
                 cornerRadius: 12,
-                size: .big
+                size: .big,
+                action: { showGuessPopup = true }
             )
             .padding()
         }
@@ -1019,7 +1019,9 @@ struct SpyGuessView: View {
                                         name: p.name,
                                         role: p.role,
                                         isGuessedTarget: guessedSpyIds.contains(p.id),
-                                        colorScheme: colorScheme
+                                        colorScheme: colorScheme,
+                                        isMe: (p.id == deviceId),
+                                        enablePulse: (roomStatus == "result") && (p.id == deviceId)
                                     )
                                 }
                             }
@@ -1066,7 +1068,7 @@ struct SpyGuessView: View {
 
                     // Reveal button (unchanged)
                     if isHost && !wordRevealed {
-                        ButtonText(title: "reveal_secret_word") {
+                        ButtonText(title: "reveal_secret_word", size: .justCaption) {
                             revealWordAndFinalize()
                         }
                     }
@@ -1089,7 +1091,7 @@ struct SpyGuessView: View {
 
                     // Spy self action (unchanged)
                     if iAmSpy && !alreadyGuessed {
-                        ButtonText(title: "spy_guess_word") {
+                        ButtonText(title: "spy_guess_word", size: .justCaption) {
                             showGuessSheet = true
                         }
                         .padding(.top, 2)
@@ -1097,7 +1099,7 @@ struct SpyGuessView: View {
 
                     // Host end game (unchanged)
                     if isHost {
-                        ButtonText(title: "end_game") {
+                        ButtonText(title: "end_game", size: .justCaption) {
                             endGame()
                         }
                         .padding(.top, 2)
@@ -1464,14 +1466,17 @@ private struct PlayerResultRow: View {
     var role: String?
     var isGuessedTarget: Bool
     var colorScheme: ColorScheme
+    var isMe: Bool = false
+    var enablePulse: Bool = false
     @EnvironmentObject var lang: LanguageManager
 
     var body: some View {
-        let tint = roleTint(for: role, colorScheme)
-        let bg = (colorScheme == .dark ? tint.opacity(0.12) : tint.opacity(0.10))
-        let border = isGuessedTarget ? tint : tint.opacity(0.35)
+        // spy kırmızı, diğer herkes primaryBlue
+        let isSpy = role?.lowercased() == "spy"
+        let tint: Color = isSpy ? Color.errorRed : Color.primaryBlue
+        let bg = (colorScheme == .dark ? tint.opacity(0.16) : tint.opacity(0.12))
 
-        HStack(spacing: 10) {
+        let base = HStack(spacing: 10) {
             RoleBadge(role: role)
             Text(name)
                 .font(.body).bold()
@@ -1481,8 +1486,7 @@ private struct PlayerResultRow: View {
 
             if isGuessedTarget {
                 HStack(spacing: 6) {
-                    Image(systemName: "target")
-                        .imageScale(.medium)
+                    Image(systemName: "target").imageScale(.medium)
                     Text(String.localized(key: "guessed", code: lang.code))
                         .font(.caption).bold()
                 }
@@ -1497,10 +1501,31 @@ private struct PlayerResultRow: View {
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(bg)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .strokeBorder(border, lineWidth: isGuessedTarget ? 2.0 : 1.0)
-        )
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+        // Border: kendi kartım ve pulse açık ise animasyonlu; değilse normal
+        Group {
+            if isMe && enablePulse {
+                base.overlay(
+                    TimelineView(.animation) { timeline in
+                        let t = timeline.date.timeIntervalSinceReferenceDate
+                        let phase = (sin((t * (2 * .pi)) / 1.6) + 1) * 0.5
+                        let opacity = 0.25 + 0.75 * phase
+                        let width   = 2.0 + 2.0 * phase
+
+                        return RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .strokeBorder(tint.opacity(opacity), lineWidth: width)
+                            .shadow(color: tint.opacity(0.35 * phase),
+                                    radius: 8 * phase, x: 0, y: 2 * phase)
+                    }
+                )
+            } else {
+                base.overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .strokeBorder(tint.opacity(isGuessedTarget ? 1.0 : (colorScheme == .dark ? 0.45 : 0.35)),
+                                      lineWidth: isGuessedTarget ? 2.0 : 1.0)
+                )
+            }
+        }
     }
 }

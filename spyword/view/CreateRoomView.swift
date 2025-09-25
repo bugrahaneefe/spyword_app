@@ -97,11 +97,11 @@ struct CreateRoomView: View {
 
                         ButtonText(
                             title: "next",
-                            action: finalizeRoom,
                             backgroundColor: isFinalizeDisabled ? .gray : .successGreen,
                             textColor: .white,
                             cornerRadius: 12,
-                            size: .big
+                            size: .big,
+                            action: finalizeRoom
                         )
                         .disabled(isFinalizeDisabled)
                     }

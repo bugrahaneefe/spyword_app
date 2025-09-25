@@ -38,6 +38,8 @@ struct ButtonIcon: View {
             return UIScreen.main.bounds.width * 0.25
         case .small:
             return UIScreen.main.bounds.width * 0.1
+        case .justCaption:
+            return UIScreen.main.bounds.width * 0.075
         }
     }
 }

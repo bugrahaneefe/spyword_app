@@ -21,7 +21,7 @@ struct SplashScreen: View {
             .padding(.bottom, 96)
         }
         .onAppear {
-            let delay = Double.random(in: 1.0...2.5)
+            let delay = Double.random(in: 0.5...1.75)
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 withAnimation(.easeOut(duration: 0.5)) {
                     router.replace(with: MainView())

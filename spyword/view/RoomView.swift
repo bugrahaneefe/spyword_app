@@ -82,14 +82,14 @@ struct RoomView: View {
                     let canStart = vm.players.count >= 2
                     ButtonText(
                         title: LocalizedStringKey("start_game"),
-                        action: {
-                            vm.beginArranging()
-                            router.replace(with: SelectPlayersView(roomCode: roomCode, vm: vm))
-                        },
                         backgroundColor: canStart ? .successGreen : .gray,
                         textColor: .white,
                         cornerRadius: 12,
-                        size: .big
+                        size: .big,
+                        action: {
+                            vm.beginArranging()
+                            router.replace(with: SelectPlayersView(roomCode: roomCode, vm: vm))
+                        }
                     )
                     .disabled(!canStart)
                     .padding()

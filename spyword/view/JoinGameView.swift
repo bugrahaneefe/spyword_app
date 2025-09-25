@@ -144,11 +144,11 @@ struct JoinGameView: View {
 
                         ButtonText(
                             title: isLoading ? "loading_text" : "join_button",
-                            action: joinNew,
                             backgroundColor: isJoinDisabled ? .gray : .successGreen,
                             textColor: .white,
                             cornerRadius: 12,
-                            size: .big
+                            size: .big,
+                            action: joinNew
                         )
                         .disabled(isJoinDisabled)
                     }
