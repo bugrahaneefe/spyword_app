@@ -493,29 +493,97 @@ extension GameDetailView {
                     player: PlayerRow,
                     wordsByRound: [Int: String],
                     isCurrentTurn: Bool) -> some View {
+        PlayerCardView(
+            index: index,
+            player: player,
+            wordsByRound: wordsByRound,
+            isCurrentTurn: isCurrentTurn,
+            isMe: (player.id == deviceId),
+            status: status,
+            colorScheme: colorScheme,
+            gameWord: gameWord,
+            myRole: myRole
+        )
+        .environmentObject(lang)
+    }
+}
 
-        let isMe = player.id == deviceId
+private struct PlayerCardView: View {
+    let index: Int
+    let player: GameDetailView.PlayerRow
+    let wordsByRound: [Int: String]
+    let isCurrentTurn: Bool
+    let isMe: Bool
+    let status: String
+    let colorScheme: ColorScheme
+    let gameWord: String?
+    let myRole: String?
 
-        // arka plan — seninki yeşil, diğerleri yumuşak mavi
-        let softBG: Color = {
-            if isMe {
-                return colorScheme == .dark
-                    ? Color.successGreen.opacity(0.28)
-                    : Color.successGreen.opacity(0.18)
-            } else {
-                return colorScheme == .dark
-                    ? Color.secondaryBlue.opacity(0.22)
-                    : Color.secondaryBlue.opacity(0.12)
+    @EnvironmentObject var lang: LanguageManager
+    @State private var showPeek = false
+    @State private var peekWork: DispatchWorkItem?
+
+    private var textColor: Color { colorScheme == .dark ? .white : .primary }
+    private var pulseColor: Color { isMe ? .successGreen : .primaryBlue }
+    private var softBG: Color {
+        if isMe {
+            return colorScheme == .dark ? Color.successGreen.opacity(0.28) : Color.successGreen.opacity(0.18)
+        } else {
+            return colorScheme == .dark ? Color.secondaryBlue.opacity(0.22) : Color.secondaryBlue.opacity(0.12)
+        }
+    }
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            // Ana kart
+            cardBody
+                .overlay(borderOverlay)
+
+            if showPeek {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture { hidePeek() }
             }
-        }()
+            
+            // Peek balonu (sadece kendi kartımda)
+            if isMe {
+                peekBubble
+                    .opacity(showPeek ? 1 : 0)
+                    .scaleEffect(showPeek ? 1 : 0.95)
+                    .animation(.spring(response: 0.25, dampingFraction: 0.9), value: showPeek)
+                    .padding(.top, 6)
+                    .padding(.trailing, 6)
+            }
+        }
+        .onDisappear { peekWork?.cancel() }
+    }
+    
+    private func showPeekForAWhile() {
+        // önceki zamanlayıcıyı iptal et
+        peekWork?.cancel()
+        withAnimation(.spring(response: 0.25, dampingFraction: 0.9)) {
+            showPeek = true
+        }
+        // 2 sn sonra otomatik gizle
+        let work = DispatchWorkItem {
+            withAnimation(.easeOut(duration: 0.2)) {
+                showPeek = false
+            }
+        }
+        peekWork = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0, execute: work)
+    }
 
-        // metin rengi — açık zeminlerde koyu, koyu zeminlerde beyaz
-        let textColor: Color = colorScheme == .dark ? .white : .primary
-
-        // pulse rengi — senin kartında yeşil, diğerlerinde mavi
-        let pulseColor: Color = isMe ? .successGreen : .primaryBlue
-
-        let base = VStack(alignment: .leading, spacing: 6) {
+    private func hidePeek() {
+        peekWork?.cancel()
+        withAnimation(.easeOut(duration: 0.2)) {
+            showPeek = false
+        }
+    }
+    
+    // MARK: - Parçalar
+    private var cardBody: some View {
+        VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 8) {
                 Text("\(index)")
                     .font(.caption).bold()
@@ -529,6 +597,19 @@ extension GameDetailView {
                     .foregroundColor(textColor)
 
                 Spacer(minLength: 0)
+
+                if isMe {
+                    Image(systemName: "info.circle.fill")
+                        .imageScale(.large)
+                        .foregroundColor(.primaryBlue)
+                        .padding(6)
+                        .background(Color(.systemBackground).opacity(colorScheme == .dark ? 0.15 : 0.10))
+                        .clipShape(Circle())
+                        .onTapGesture {
+                            showPeekForAWhile()
+                        }
+                        .accessibilityLabel(Text("Show role"))
+                }
             }
 
             ForEach(wordsByRound.keys.sorted(), id: \.self) { round in
@@ -543,33 +624,62 @@ extension GameDetailView {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(softBG)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
 
-        if isCurrentTurn && status == "the game" {
-            base
-            .overlay(
+    private var borderOverlay: some View {
+        Group {
+            if isCurrentTurn && status.lowercased() == "the game" {
                 TimelineView(.animation) { timeline in
                     let t = timeline.date.timeIntervalSinceReferenceDate
                     let phase = (sin((t * (2 * .pi)) / 1.6) + 1) * 0.5
                     let opacity = 0.25 + 0.75 * phase
                     let width   = 2.0 + 2.0 * phase
 
-                    return RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
                         .strokeBorder(pulseColor.opacity(opacity), lineWidth: width)
-                        .shadow(color: pulseColor.opacity(0.35 * phase),
-                                radius: 8 * phase, x: 0, y: 2 * phase)
+                        .shadow(color: pulseColor.opacity(0.35 * phase), radius: 8 * phase, x: 0, y: 2 * phase)
                 }
-            )
-        } else {
-            base
-            .overlay(
+            } else {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .strokeBorder(pulseColor.opacity(colorScheme == .dark ? 0.35 : 0.25),
-                                  lineWidth: 1.5)
-            )
+                    .strokeBorder(pulseColor.opacity(colorScheme == .dark ? 0.35 : 0.25), lineWidth: 1.5)
+            }
         }
     }
-}
 
+    private var peekBubble: some View {
+        // Rol ve (bilense) secret word
+        let isSpy = (myRole == "spy")
+        return VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
+                Image(systemName: isSpy ? "eye.trianglebadge.exclamationmark.fill" : "lightbulb.fill")
+                    .imageScale(.small)
+                Text(isSpy
+                     ? String.localized(key: "spy", code: lang.code)
+                     : String.localized(key: "knower", code: lang.code))
+                    .font(.caption).bold()
+            }
+            .foregroundColor(.white)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(isSpy ? Color.errorRed : Color.successGreen)
+            .clipShape(Capsule())
+
+            if !isSpy, let w = gameWord, !w.isEmpty {
+                HStack(alignment: .top, spacing: 6) {
+                    Image(systemName: "key.fill").imageScale(.small)
+                    Text(String.localized(key: "game_word", code: lang.code, w))
+                        .font(.caption)
+                }
+                .foregroundColor(.primary)
+            }
+        }
+        .padding(10)
+        .background(colorScheme == .dark ? Color.black.opacity(0.9) : Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .shadow(radius: 8)
+        .onTapGesture { hidePeek() }
+    }
+}
 
 // MARK: - Logic & Firestore
 extension GameDetailView {
