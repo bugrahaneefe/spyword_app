@@ -448,6 +448,7 @@ extension GameDetailView {
     @ViewBuilder
     private func guessCTA() -> some View {
         if status == "guessReady" {
+            
             ButtonText(
                 title: "guess_the_spy",
                 action: { showGuessPopup = true },
@@ -457,7 +458,11 @@ extension GameDetailView {
                 size: .big
             )
             .padding()
+            .onAppear {
+                self.isGuessTime = true
+            }
         } else if status == "result" {
+            
             ButtonText(
                 title: "see_result",
                 action: { showGuessPopup = true },

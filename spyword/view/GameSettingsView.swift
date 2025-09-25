@@ -66,6 +66,7 @@ struct GameSettingsView: View {
                             ("category_tr_memes",       .trMemes),
                             ("category_tr_politicians", .trPoliticians),
                             ("category_tr_influencers", .trInfluencers),
+                            ("category_tr_actors", .trActors),
                             ("category_tr_streetfood",  .trStreetFood),
                             ("category_world", .world),
                             ("category_world_football", .worldFootball),
@@ -77,7 +78,6 @@ struct GameSettingsView: View {
                             ("category_music", .music),
                             ("category_literature", .literature),
                             ("category_technology", .technology),
-                            ("category_tr_actors", .trActors),
                             ("category_mythology", .mythology),
                             ("category_festivals", .festivals),
                             ("category_cuisine", .cuisine)
