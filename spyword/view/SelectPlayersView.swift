@@ -40,6 +40,8 @@ struct SelectPlayersView: View {
             .padding()
             .background(colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
             
+            DescriptionText(inputKey: "select_players_description")
+            
             Divider()
 
             List {
