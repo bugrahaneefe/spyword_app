@@ -5,6 +5,7 @@ import FirebaseFirestore
 struct JoinGameView: View {
     @EnvironmentObject var router: Router
     @EnvironmentObject var lang: LanguageManager
+    @EnvironmentObject var avatar: AvatarManager
     @Environment(\.colorScheme) var colorScheme
 
     @StateObject private var recent = RecentRoomsManager.shared
@@ -22,6 +23,9 @@ struct JoinGameView: View {
         ZStack {
             (colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
                 .ignoresSafeArea()
+                .onAppear {
+                    nickname = avatar.displayName
+                }
 
             VStack(spacing: 0) {
                 HStack(spacing: 12) {
@@ -122,16 +126,29 @@ struct JoinGameView: View {
                             .shadow(color: .black.opacity(0.05), radius: 4)
                             .clearButton($roomCode)
                         
-                        TextField("nickname_placeholder", text: $nickname)
+                        HStack(spacing: 10) {
+                            avatar.image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 32, height: 32)
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(Color.white.opacity(0.6), lineWidth: 1))
+                                .shadow(radius: 1)
+
+                            TextField(
+                                String.localized(key: "your_name", code: lang.code),
+                                text: $nickname
+                            )
                             .textInputAutocapitalization(.words)
                             .disableAutocorrection(true)
-                            .font(.body)
-                            .padding()
-                            .background(colorScheme == .dark ? Color.black : Color.white)
-                            .cornerRadius(8)
-                            .foregroundColor(.primary)
-                            .shadow(color: .black.opacity(0.05), radius: 4)
                             .clearButton($nickname)
+                        }
+                        .font(.body)
+                        .padding()
+                        .background(colorScheme == .dark ? Color.black : Color.white)
+                        .cornerRadius(8)
+                        .foregroundColor(.primary)
+                        .shadow(color: .black.opacity(0.05), radius: 4)
                         
                         if let err = errorMessage {
                             Text(err)
