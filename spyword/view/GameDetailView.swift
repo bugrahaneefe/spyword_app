@@ -855,7 +855,7 @@ struct SpyGuessView: View {
                         .font(.title2)
                         .bold()
                         .foregroundColor(.white)
-                        .padding()
+                        .padding(.horizontal)
                         .background(Color.primaryBlue)
                         .cornerRadius(12)
                         .multilineTextAlignment(.center)
@@ -937,7 +937,6 @@ struct SpyGuessView: View {
                         ButtonText(title: "reveal_secret_word") {
                             revealWordAndFinalize()
                         }
-                        .padding(.top, 4)
                     }
 
                     // Revealed word (unchanged)
@@ -961,7 +960,7 @@ struct SpyGuessView: View {
                         ButtonText(title: "spy_guess_word") {
                             showGuessSheet = true
                         }
-                        .padding(.top, 4)
+                        .padding(.top, 2)
                     }
 
                     // Host end game (unchanged)
@@ -969,7 +968,7 @@ struct SpyGuessView: View {
                         ButtonText(title: "end_game") {
                             endGame()
                         }
-                        .padding(.top, 4)
+                        .padding(.top, 2)
                     }
                     
                 } else if roomStatus == "guessing" || roomStatus == "guessReady" {

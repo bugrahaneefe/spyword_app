@@ -204,3 +204,4 @@
 "select_players_description" = "Oyuna dahil etmek istediğiniz oyuncuları seçin.";
 "game_settings_description" = "İstersen kendi kelimeni yaz ya da rastgele bir kelime seç; casus ve tur sayısını ayarla ve oyunu başlat.";
 "game_detail_description" = "Uygun kelimelerle anlat; casussan fark edilmeden gizli kelimeyi çöz, değilsen kendini kanıtla ama kelimeyi ele verme.";
+"room_description" = "Oda kodunu paylaş, arkadaşlarınla bir araya gel ve oyuna başla.";

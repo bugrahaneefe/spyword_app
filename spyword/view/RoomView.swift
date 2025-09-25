@@ -67,6 +67,9 @@ struct RoomView: View {
                 .background(colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
                 .shadow(radius: 2)
 
+                DescriptionText(inputKey: "room_description")
+                    .background(colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
+
                 Divider()
 
                 playersList()
