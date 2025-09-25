@@ -101,6 +101,8 @@ struct GameDetailView: View {
             
             VStack(spacing: 0) {
                 topBar()
+                DescriptionText(inputKey: "game_detail_description")
+                    .background(pageBG)
                 Divider()
                 contentArea()
             }

@@ -195,3 +195,4 @@
 "guessed" = "Indovinato";
 "select_players_description" = "Seleziona i giocatori che vuoi includere nel gioco.";
 "game_settings_description" = "Inserisci una tua parola oppure usane una casuale, imposta il numero di spie e di round e avvia la partita.";
+"game_detail_description" = "Scrivi parole adatte: se sei la spia, confonditi e indovina la parola segreta; altrimenti dimostra chi sei senza rivelarla.";

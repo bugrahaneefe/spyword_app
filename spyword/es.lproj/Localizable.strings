@@ -194,3 +194,4 @@
 "guessed" = "Adivinado";
 "select_players_description" = "Elige a los jugadores que quieres incluir en el juego.";
 "game_settings_description" = "Escribe tu propia palabra o usa una aleatoria, define el número de espías y de rondas y comienza la partida.";
+"game_detail_description" = "Usa palabras adecuadas: si eres el espía, disimúla y adivina la palabra secreta; si no, demuéstralo sin revelarla.";
