@@ -205,3 +205,4 @@
 "game_settings_description" = "Enter your own word or get a random one, set the number of spies and rounds, and start the game.";
 "game_detail_description" = "Describe with fitting words—if you are the spy, blend in and guess the secret word; if not, prove yourself without revealing it.";
 "room_description" = "Share the room code and gather your friends to play.";
+"create_room_description" = "Create your room and then invite your friends.";

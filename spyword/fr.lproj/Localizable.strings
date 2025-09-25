@@ -197,3 +197,4 @@
 "game_settings_description" = "Saisissez votre propre mot ou utilisez-en un aléatoire, définissez le nombre d’espions et de manches, puis lancez la partie.";
 "game_detail_description" = "Utilisez des mots adaptés : si vous êtes l’espion, fondez-vous et devinez le mot secret ; sinon, prouvez-le sans le dévoiler.";
 "room_description" = "Partage le code de la salle et joue avec tes amis.";
+"create_room_description" = "Crée ta salle puis invite tes amis.";

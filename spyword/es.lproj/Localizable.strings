@@ -196,3 +196,4 @@
 "game_settings_description" = "Escribe tu propia palabra o usa una aleatoria, define el número de espías y de rondas y comienza la partida.";
 "game_detail_description" = "Usa palabras adecuadas: si eres el espía, disimúla y adivina la palabra secreta; si no, demuéstralo sin revelarla.";
 "room_description" = "Comparte el código de sala y juega con tus amigos.";
+"create_room_description" = "Crea tu sala y después invita a tus amigos.";

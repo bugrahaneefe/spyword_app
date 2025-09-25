@@ -41,6 +41,9 @@ struct CreateRoomView: View {
                 .background(colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
                 .shadow(radius: 2)
                 
+                DescriptionText(inputKey: "create_room_description")
+                    .background(colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight)
+
                 Divider()
                 
                 VStack(spacing: 32) {

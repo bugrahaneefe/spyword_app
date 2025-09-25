@@ -197,3 +197,4 @@
 "game_settings_description" = "Gib ein eigenes Wort ein oder lass ein zufälliges wählen, lege die Anzahl der Spione und Runden fest und starte das Spiel.";
 "game_detail_description" = "Nutze passende Wörter – bist du der Spion, tarne dich und finde das geheime Wort; wenn nicht, beweise dich, ohne es zu verraten.";
 "room_description" = "Teile den Raumcode und spiele zusammen mit deinen Freunden.";
+"create_room_description" = "Erstelle deinen Raum und lade anschließend deine Freunde ein.";
