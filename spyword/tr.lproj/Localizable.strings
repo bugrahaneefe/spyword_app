@@ -207,3 +207,8 @@
 "room_description" = "Oda kodunu paylaş, arkadaşlarınla bir araya gel ve oyuna başla.";
 "create_room_description" = "Odanı oluştur, sonra arkadaşlarını davet et.";
 "join_room_description" = "Oda kodunu ve adını gir, arkadaşlarına katıl. İstersen eski odalarına da hızlıca dönebilirsin.";
+"choose_avatar" = "Avatar Seç";
+"your_name" = "Adın";
+"type_your_name" = "Adını yaz";
+"edit_name" = "Adı düzenle";
+"save" = "Kaydet";

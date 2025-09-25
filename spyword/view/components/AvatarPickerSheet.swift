@@ -17,7 +17,7 @@ struct AvatarPickerSheet: View {
                 NavigationView { content }
             }
         }
-        .navigationTitle("Choose Avatar")
+        .navigationTitle(Text("choose_avatar"))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -62,7 +62,6 @@ private struct AvatarCell: View {
                     .stroke(isSelected ? Color.primary : Color.clear, lineWidth: 2)
             )
             .contentShape(Circle())
-            .accessibilityLabel(Text("Avatar \(name)"))
         }
         .buttonStyle(.plain)
     }

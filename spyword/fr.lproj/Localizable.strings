@@ -199,3 +199,8 @@
 "room_description" = "Partage le code de la salle et joue avec tes amis.";
 "create_room_description" = "Crée ta salle puis invite tes amis.";
 "join_room_description" = "Saisis le code de la salle et ton nom pour rejoindre tes amis, ou retrouve rapidement une ancienne salle.";
+"choose_avatar" = "Choisir un avatar";
+"your_name" = "Votre nom";
+"type_your_name" = "Entrez votre nom";
+"edit_name" = "Modifier le nom";
+"save" = "Enregistrer";

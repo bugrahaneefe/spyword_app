@@ -14,17 +14,17 @@ struct NameEditSheet: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Your name")) {
-                    TextField("Type your name", text: $name)
+                Section(header: Text("your_name")) {
+                    TextField("type_your_name", text: $name)
                         .textInputAutocapitalization(.words)
                         .disableAutocorrection(true)
                 }
             }
-            .navigationTitle("Edit name")
+            .navigationTitle("edit_name")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
+                    Button("save") {
                         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
                         guard !trimmed.isEmpty else { dismiss(); return }
                         onSave(String(trimmed.prefix(18)))

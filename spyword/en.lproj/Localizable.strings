@@ -207,3 +207,8 @@
 "room_description" = "Share the room code and gather your friends to play.";
 "create_room_description" = "Create your room and then invite your friends.";
 "join_room_description" = "Enter the room code and your name to join your friends — or quickly rejoin a previous room.";
+"choose_avatar" = "Choose Avatar";
+"your_name" = "Your name";
+"type_your_name" = "Type your name";
+"edit_name" = "Edit name";
+"save" = "Save";

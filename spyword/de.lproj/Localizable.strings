@@ -199,3 +199,8 @@
 "room_description" = "Teile den Raumcode und spiele zusammen mit deinen Freunden.";
 "create_room_description" = "Erstelle deinen Raum und lade anschließend deine Freunde ein.";
 "join_room_description" = "Gib den Raumcode und deinen Namen ein, um mit deinen Freunden zu spielen – oder tritt direkt wieder einem früheren Raum bei.";
+"choose_avatar" = "Avatar wählen";
+"your_name" = "Dein Name";
+"type_your_name" = "Gib deinen Namen ein";
+"edit_name" = "Name bearbeiten";
+"save" = "Speichern";

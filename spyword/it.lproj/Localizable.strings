@@ -199,3 +199,8 @@
 "room_description" = "Condividi il codice stanza e gioca con i tuoi amici.";
 "create_room_description" = "Crea la tua stanza e poi invita i tuoi amici.";
 "join_room_description" = "Inserisci il codice stanza e il tuo nome per unirti agli amici, oppure rientra velocemente in una stanza precedente.";
+"choose_avatar" = "Scegli avatar";
+"your_name" = "Il tuo nome";
+"type_your_name" = "Scrivi il tuo nome";
+"edit_name" = "Modifica nome";
+"save" = "Salva";

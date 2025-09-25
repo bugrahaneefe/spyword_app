@@ -198,3 +198,8 @@
 "room_description" = "Comparte el código de sala y juega con tus amigos.";
 "create_room_description" = "Crea tu sala y después invita a tus amigos.";
 "join_room_description" = "Ingresa el código de sala y tu nombre para unirte a tus amigos, o vuelve rápidamente a una sala anterior.";
+"choose_avatar" = "Elegir avatar";
+"your_name" = "Tu nombre";
+"type_your_name" = "Escribe tu nombre";
+"edit_name" = "Editar nombre";
+"save" = "Guardar";
