@@ -101,7 +101,6 @@ struct JoinGameView: View {
                             .scrollIndicators(.hidden)
                             .listStyle(.plain)
                             .scrollContentBackground(.hidden)
-                            .frame(height: 200)
                         }
                     }
 
