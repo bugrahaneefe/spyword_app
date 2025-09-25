@@ -84,6 +84,8 @@ private struct BottomBar: View {
     var onPrivacy:  () -> Void
     var onAvatar:   () -> Void
 
+    @State private var showNameSheet = false
+
     var body: some View {
         HStack(spacing: 20) {
             ButtonIcon(iconName: "globe", action: onLanguage, size: .small)
@@ -92,7 +94,7 @@ private struct BottomBar: View {
 
             Spacer()
 
-            VStack(spacing: 6) {
+            VStack(alignment: .center, spacing: 6) {
                 Button(action: onAvatar) {
                     avatar.image
                         .resizable()
@@ -104,9 +106,21 @@ private struct BottomBar: View {
                 }
                 .buttonStyle(.plain)
 
-                Text("Your Name")
-                    .font(.caption)
-                    .foregroundStyle(.primary)
+                Button {
+                    showNameSheet = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Text(avatar.displayName.isEmpty ? "Your name" : avatar.displayName)
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.primary)
+                            .lineLimit(1)
+                        Image(systemName: "pencil")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .buttonStyle(.plain)
             }
             .offset(y: -34)
         }
@@ -119,5 +133,12 @@ private struct BottomBar: View {
         )
         .padding(.horizontal, 16)
         .padding(.bottom, 8)
+        .sheet(isPresented: $showNameSheet) {
+            NameEditSheet(currentName: avatar.displayName) { newName in
+                avatar.updateName(newName)
+            }
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.visible)
+        }
     }
 }
