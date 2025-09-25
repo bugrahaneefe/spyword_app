@@ -96,6 +96,8 @@ struct JoinGameView: View {
                                         rejoin(code)
                                     }
                                     .listRowBackground((colorScheme == .dark ? Color.backgroundDark : Color.backgroundLight).opacity(0.001))
+                                    
+                                    Divider()
                                 }
                             }
                             .scrollIndicators(.hidden)
