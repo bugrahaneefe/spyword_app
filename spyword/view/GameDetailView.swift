@@ -1004,7 +1004,7 @@ struct SpyGuessView: View {
                         .onAppear {
                             Task { @MainActor in
                                 let root = UIApplication.shared.topMostViewController()
-                                _ = try await AdsManager.shared.showRewarded(from: root, chance: 75)
+                                _ = try await AdsManager.shared.showRewarded(from: root, chance: 50)
                                 
                                 let db = Firestore.firestore()
                                 let snap = try? await db.collection("rooms").document(roomCode).getDocument()
