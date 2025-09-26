@@ -106,9 +106,6 @@ struct GameDetailView: View {
                 Divider()
                 contentArea()
             }
-            .overlay{
-                LoadingView(isLoading: isLoading)
-            }
             .safeAreaPadding(.bottom)
         }
         .swipeBack(to: MainView(), by: router)

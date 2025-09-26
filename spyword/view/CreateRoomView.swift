@@ -15,6 +15,7 @@ struct CreateRoomView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var showCopied = false
+    @State private var showAvatarSheet = false
     
     private let deviceId = UserDefaults.standard
         .string(forKey: "deviceId") ?? UUID().uuidString
@@ -87,13 +88,16 @@ struct CreateRoomView: View {
                         }
                         
                         HStack(spacing: 10) {
-                            avatar.image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 32, height: 32)
-                                .clipShape(Circle())
-                                .overlay(Circle().stroke(Color.white.opacity(0.6), lineWidth: 1))
-                                .shadow(radius: 1)
+                            Button(action: {showAvatarSheet = true}) {
+                                avatar.image
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 32, height: 32)
+                                    .clipShape(Circle())
+                                    .overlay(Circle().stroke(Color.white.opacity(0.6), lineWidth: 1))
+                                    .shadow(radius: 1)
+                            }
+                            .buttonStyle(.plain)
 
                             TextField(
                                 String.localized(key: "your_name", code: lang.code),
@@ -136,6 +140,11 @@ struct CreateRoomView: View {
             }
             .overlay {
                 LoadingView(isLoading: isLoading)
+            }
+            .sheet(isPresented: $showAvatarSheet) {
+                AvatarPickerSheet()
+                    .presentationDetents([.medium])
+                    .presentationDragIndicator(.visible)
             }
         }
         .swipeBack(to: MainView(), by: router)
