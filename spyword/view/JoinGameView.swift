@@ -311,15 +311,21 @@ extension JoinGameView {
         let upper = code.uppercased()
         let roomRef = db.collection("rooms").document(upper)
 
-        Task { @MainActor in
-            let root = UIApplication.shared.topMostViewController()
-            try? await AdsManager.shared.showInterstitial(from: root, chance: 45)
-        }
-
         roomRef.getDocument { snap, err in
             guard err == nil, let snap = snap, snap.exists else {
                 finish(error: String(localized: "room_not_found_error", bundle: .main, locale: lang.locale))
                 return
+            }
+
+            let data = snap.data() ?? [:]
+            let status = (data["info"] as? [String: Any])?["status"] as? String ?? ""
+            let isResultState = status.lowercased() == "result"
+
+            if !isResultState {
+                Task { @MainActor in
+                    let root = UIApplication.shared.topMostViewController()
+                    try? await AdsManager.shared.showInterstitial(from: root, chance: 45)
+                }
             }
 
             checkHostReady(roomRef: roomRef) { ready in

@@ -46,6 +46,7 @@ struct GameDetailView: View {
 
     @State private var showEndGameConfirm = false
     @State private var isGuessTime = false
+    @State private var isResultAdsShown = false
     
     private var categoryTitleKey: LocalizedStringKey? {
         if let raw = categoryRaw {
@@ -117,6 +118,7 @@ struct GameDetailView: View {
                 deviceId: deviceId,
                 isHost: isHost,
                 isPresented: $showGuessPopup,
+                isResultAdsShown: $isResultAdsShown,
                 router: router
             )
             .environmentObject(lang)
@@ -957,6 +959,7 @@ struct SpyGuessView: View {
     let deviceId: String
     let isHost: Bool
     @Binding var isPresented: Bool
+    @Binding var isResultAdsShown: Bool
     var router: Router
 
     @State private var roomStatus: String = ""
@@ -1004,8 +1007,8 @@ struct SpyGuessView: View {
                         .onAppear {
                             Task { @MainActor in
                                 let root = UIApplication.shared.topMostViewController()
-                                _ = try await AdsManager.shared.showRewarded(from: root, chance: 50)
-                                
+                                _ = try await AdsManager.shared.showRewarded(from: root, chance: isResultAdsShown ? 0 : 80)
+                                isResultAdsShown = true
                                 let db = Firestore.firestore()
                                 let snap = try? await db.collection("rooms").document(roomCode).getDocument()
                                 if let info = snap?.data()?["info"] as? [String: Any],
