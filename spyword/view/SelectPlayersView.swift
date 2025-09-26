@@ -46,9 +46,29 @@ struct SelectPlayersView: View {
 
             List {
                 ForEach(vm.players) { p in
-                    HStack {
-                        Text(p.name)
+                    HStack(spacing: 12) {
+                        Image(p.avatarName ?? "1")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 32, height: 32)
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.white.opacity(0.6), lineWidth: 1))
+
+                        HStack(spacing: 6) {
+                            Text(p.name)
+                                .font(.body)
+                                .foregroundColor(.primary)
+
+                            if p.id == vm.hostId {
+                                Image(systemName: "crown.fill")
+                                    .font(.caption2)
+                                    .foregroundColor(.successGreen)
+                                    .accessibilityHidden(true)
+                            }
+                        }
+
                         Spacer()
+
                         Image(systemName: vm.chosen.contains(p.id) ? "checkmark.circle.fill" : "circle")
                             .imageScale(.large)
                             .foregroundStyle((p.id == vm.hostId) ? Color.successGreen : Color.primary)
@@ -56,6 +76,7 @@ struct SelectPlayersView: View {
                     }
                     .contentShape(Rectangle())
                     .onTapGesture { toggle(p.id) }
+                    .padding(.vertical, 4)
                 }
             }
             .listStyle(.insetGrouped)
