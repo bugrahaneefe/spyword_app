@@ -94,12 +94,12 @@ private struct BottomBar: View {
 
             Spacer()
 
-            VStack(alignment: .center, spacing: 6) {
+            VStack(spacing: 6) {
                 Button(action: onAvatar) {
                     avatar.image
                         .resizable()
-                        .scaledToFill()
-                        .frame(width: 84, height: 84)
+                        .scaledToFit()
+                        .frame(width: 96, height: 96)
                         .clipShape(Circle())
                         .overlay(Circle().stroke(Color.white.opacity(0.7), lineWidth: 1))
                         .shadow(radius: 3)
@@ -111,18 +111,26 @@ private struct BottomBar: View {
                 } label: {
                     HStack(spacing: 6) {
                         Text(avatar.displayName.isEmpty ? "Your name" : avatar.displayName)
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.primary)
                             .lineLimit(1)
+                            .truncationMode(.tail)
                         Image(systemName: "pencil")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
                     }
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.primary)
+                    .frame(alignment: .center)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        Capsule().fill(Color.primaryBlue.opacity(0.24))
+                    )
+                    .overlay(
+                        Capsule().stroke(Color.primaryBlue.opacity(0.48), lineWidth: 0.8)
+                    )
+                    .contentShape(Capsule())
                 }
                 .buttonStyle(.plain)
             }
-            .offset(y: -34)
+            .offset(y: -44)
         }
         .padding(.horizontal, 20)
         .frame(height: 64)
