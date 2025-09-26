@@ -85,6 +85,7 @@ struct GameDetailView: View {
         let id: String
         let name: String
         var role: String? = nil
+        var avatarName: String? = nil
     }
 
     private var cardBG: Color { colorScheme == .dark ? Color.black : Color.white }
@@ -584,20 +585,28 @@ private struct PlayerCardView: View {
     // MARK: - Parçalar
     private var cardBody: some View {
         VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 8) {
+            HStack(alignment: .center, spacing: 8) {
+                Image(player.avatarName ?? "1")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 44, height: 44)
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(Color.white.opacity(0.6), lineWidth: 1))
+                    .padding(.trailing, 2)
+                
                 Text("\(index)")
                     .font(.caption).bold()
                     .padding(.horizontal, 8).padding(.vertical, 2)
                     .background(textColor.opacity(0.20))
                     .foregroundColor(textColor)
                     .clipShape(Capsule())
-
+                
                 Text(player.name)
                     .font(.body).bold()
                     .foregroundColor(textColor)
-
+                
                 Spacer(minLength: 0)
-
+                
                 if isMe {
                     Image(systemName: "info.circle.fill")
                         .imageScale(.large)
@@ -611,7 +620,7 @@ private struct PlayerCardView: View {
                         .accessibilityLabel(Text("Show role"))
                 }
             }
-
+            
             ForEach(wordsByRound.keys.sorted(), id: \.self) { round in
                 if let w = wordsByRound[round] {
                     Text("R\(round): \(w)")
@@ -797,8 +806,9 @@ extension GameDetailView {
                 let name = (d["name"] as? String) ?? id
                 let isSelected = (d["isSelected"] as? Bool) ?? false
                 let role = d["role"] as? String
+                let avatarName = d["avatarName"] as? String
 
-                if isSelected { picked.append(.init(id: id, name: name, role: role)) }
+                if isSelected { picked.append(.init(id: id, name: name, role: role, avatarName: avatarName)) }
                 if id == deviceId {
                     meSelected = isSelected
                     myRoleLocal = role

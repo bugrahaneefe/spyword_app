@@ -250,7 +250,8 @@ extension JoinGameView {
                     "role": NSNull(),
                     "isEliminated": false,
                     "isSelected": false,
-                    "joinedAt": FieldValue.serverTimestamp()
+                    "joinedAt": FieldValue.serverTimestamp(),
+                    "avatarName": avatar.selectedAvatar
                 ]
                 
                 Task { @MainActor in
@@ -273,6 +274,7 @@ extension JoinGameView {
                             recent.add(roomCode)
                             routeToCurrentState(code: roomCode)
                         }
+                        avatar.syncToRoom(roomCode: roomCode)
                     }
             }
             
