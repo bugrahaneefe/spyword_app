@@ -199,7 +199,8 @@ struct JoinGameView: View {
 extension JoinGameView {
 
     // MARK: - Join flows
-    private func upsertSelf(roomRef: DocumentReference, name: String, completion: @escaping (Error?) -> Void) {
+    // new join
+    private func writePlayerOnFirstJoin(roomRef: DocumentReference, name: String, completion: @escaping (Error?) -> Void) {
         let data: [String: Any] = [
             "name": name,
             "avatarName": avatar.selectedAvatar,
@@ -207,6 +208,15 @@ extension JoinGameView {
             "isEliminated": false,
             "isSelected": false,
             "joinedAt": FieldValue.serverTimestamp()
+        ]
+        roomRef.collection("players").document(deviceId).setData(data, merge: true, completion: completion)
+    }
+
+    // rejoin
+    private func updateIdentityOnly(roomRef: DocumentReference, name: String, completion: @escaping (Error?) -> Void) {
+        let data: [String: Any] = [
+            "name": name,
+            "avatarName": avatar.selectedAvatar
         ]
         roomRef.collection("players").document(deviceId).setData(data, merge: true, completion: completion)
     }
@@ -278,18 +288,15 @@ extension JoinGameView {
                     }
             }
             
-            upsertSelf(roomRef: roomRef, name: name) { setErr in
+            writePlayerOnFirstJoin(roomRef: roomRef, name: name) { setErr in
                 if let setErr = setErr {
                     let fmt = String(localized: "join_failed_error", bundle: .main, locale: lang.locale)
                     finish(error: String(format: fmt, locale: lang.locale, setErr.localizedDescription))
                 } else {
-                    avatar.displayName = name
-
                     isLoading = false
+                    avatar.displayName = name
                     recent.add(roomCode)
-
                     avatar.syncToRoom(roomCode: roomCode)
-
                     routeToCurrentState(code: roomCode)
                 }
             }
@@ -322,18 +329,15 @@ extension JoinGameView {
                 }
 
                 let name = nickname.trimmingCharacters(in: .whitespaces)
-
-                upsertSelf(roomRef: roomRef, name: name) { err in
+                updateIdentityOnly(roomRef: roomRef, name: name) { err in
                     isLoading = false
                     if let err = err {
                         let fmt = String(localized: "join_failed_error", bundle: .main, locale: lang.locale)
                         finish(error: String(format: fmt, locale: lang.locale, err.localizedDescription))
                         return
                     }
-
                     avatar.displayName = name
                     avatar.syncToRoom(roomCode: upper)
-
                     recent.add(upper)
                     routeToCurrentState(code: upper)
                 }

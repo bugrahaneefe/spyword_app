@@ -168,10 +168,19 @@ struct RoomView: View {
                                 .clipShape(Circle())
                                 .overlay(Circle().stroke(Color.white.opacity(0.6), lineWidth: 1))
                             
-                            Text(p.name)
-                                .font(.body)
-                                .foregroundColor(.primary)
+                            HStack(spacing: 6) {
+                                Text(p.name)
+                                    .font(.body)
+                                    .foregroundColor(.primary)
 
+                                if p.id == vm.hostId {
+                                    Image(systemName: "crown.fill")
+                                        .font(.caption2)
+                                        .foregroundColor(.successGreen)
+                                        .accessibilityHidden(true)
+                                }
+                            }
+                            
                             Spacer()
 
                             if p.id == deviceId {
