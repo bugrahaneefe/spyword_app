@@ -272,6 +272,10 @@ extension GameDetailView {
                 if !amSelected {
                     notSelectedCard()
                 } else {
+                    if shouldShowRoleReveal {
+                        roleRevealCard()
+                    }
+                    
                     if continuePressed {
                         playersInputsCard()
                         myTurnInputCard()
@@ -282,8 +286,6 @@ extension GameDetailView {
                                 .foregroundColor(.errorRed)
                                 .padding(.horizontal)
                         }
-                    } else {
-                        roleRevealCard()
                     }
                 }
             }
@@ -757,7 +759,6 @@ extension GameDetailView {
     }
     
     private var shouldShowRoleReveal: Bool {
-        // rol kartı sadece oyun aşamasında ve tahmin fazında DEĞİLSE gösterilir
         return !continuePressed && isGameStatus(status) && !isGuessRelated(status)
     }
 
@@ -765,7 +766,7 @@ extension GameDetailView {
         let db = Firestore.firestore()
         let roomRef = db.collection("rooms").document(roomCode)
 
-        // info/status
+        // INFO / STATUS
         roomRef.addSnapshotListener { snap, _ in
             guard let data = snap?.data(),
                   let info = data["info"] as? [String: Any] else {
@@ -773,35 +774,43 @@ extension GameDetailView {
                 self.isLoading = false
                 return
             }
-            self.status = (info["status"] as? String) ?? "started"
-            self.hostId = (info["hostId"] as? String) ?? ""
-            self.gameWord = info["word"] as? String
-            self.gameId = (info["gameId"] as? String) ?? self.gameId
-            
-            self.currentRound = (info["currentRound"] as? Int) ?? 1
-            self.totalRounds = (info["totalRounds"] as? Int) ?? 3
-            self.turnOrder = (info["turnOrder"] as? [String]) ?? []
-            self.currentTurnIndex = (info["currentTurnIndex"] as? Int) ?? 0
-            self.spyCount = (info["spyCount"] as? Int) ?? 1
-            self.categoryRaw = info["category"] as? String
 
-            if let map = info["continuePressed"] as? [String: Any],
-               let mine = map[self.deviceId] as? Bool {
-                if self.continuePressed != mine {
-                    self.continuePressed = mine
-                }
+            // Basic fields
+            self.status          = (info["status"] as? String) ?? "started"
+            self.hostId          = (info["hostId"] as? String) ?? ""
+            self.gameWord        = info["word"] as? String
+            self.gameId          = (info["gameId"] as? String) ?? self.gameId
+            self.currentRound    = (info["currentRound"] as? Int) ?? 1
+            self.totalRounds     = (info["totalRounds"] as? Int) ?? 3
+            self.turnOrder       = (info["turnOrder"] as? [String]) ?? []
+            self.currentTurnIndex = (info["currentTurnIndex"] as? Int) ?? 0
+            self.spyCount        = (info["spyCount"] as? Int) ?? 1
+            self.categoryRaw     = info["category"] as? String
+
+            // continuePressed (tip güvenli + yeni oyunda sıfırla)
+            let map = info["continuePressed"] as? [String: Any]
+            let rawMine = map?[self.deviceId]
+
+            // Bool ya da NSNumber (1/0) olabilir
+            let mineFromServer: Bool = {
+                if let b = rawMine as? Bool { return b }
+                if let n = rawMine as? NSNumber { return n.boolValue }
+                return false
+            }()
+
+            if self.status.lowercased() == "started" {
+                // Yeni oyun: yerelde her zaman false
+                if self.continuePressed != false { self.continuePressed = false }
             } else {
-                if self.continuePressed != false {
-                    self.continuePressed = false
-                }
+                // Diğer durumlarda server değerini yansıt
+                if self.continuePressed != mineFromServer { self.continuePressed = mineFromServer }
             }
-            
+
             self.maybeShowTurnSplash()
-            
             self.isLoading = false
         }
 
-        // players
+        // PLAYERS
         roomRef.collection("players").addSnapshotListener { qs, _ in
             var picked: [PlayerRow] = []
             var meSelected = false
@@ -815,7 +824,9 @@ extension GameDetailView {
                 let role = d["role"] as? String
                 let avatarName = d["avatarName"] as? String
 
-                if isSelected { picked.append(.init(id: id, name: name, role: role, avatarName: avatarName)) }
+                if isSelected {
+                    picked.append(.init(id: id, name: name, role: role, avatarName: avatarName))
+                }
                 if id == deviceId {
                     meSelected = isSelected
                     myRoleLocal = role
@@ -827,7 +838,7 @@ extension GameDetailView {
             self.myRole = myRoleLocal
         }
 
-        // rounds listener
+        // ROUNDS
         roomRef.collection("rounds").addSnapshotListener { qs, _ in
             var updated = self.playerInputs
             qs?.documents.forEach { doc in
@@ -843,12 +854,18 @@ extension GameDetailView {
     
     private func setContinuePressed(_ pressed: Bool) {
         continuePressed = pressed
-        
         let db = Firestore.firestore()
         let roomRef = db.collection("rooms").document(roomCode)
-        roomRef.updateData([
-            "info.continuePressed.\(deviceId)": pressed
-        ])
+
+        if pressed {
+            roomRef.updateData([
+                "info.continuePressed.\(deviceId)": true
+            ])
+        } else {
+            roomRef.updateData([
+                "info.continuePressed.\(deviceId)": FieldValue.delete()
+            ])
+        }
     }
     
     private func revealKey() -> String {

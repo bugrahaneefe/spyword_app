@@ -13,6 +13,8 @@ struct SpyGuessView: View {
     @Binding var isResultAdsShown: Bool
     var router: Router
 
+    @State private var errorMessage: String?
+    
     @State private var roomStatus: String = ""
     @State private var selectedIds: Set<String> = []
     @State private var votes: [String: [String]] = [:]
@@ -329,8 +331,13 @@ struct SpyGuessView: View {
             "info.resultText": FieldValue.delete(),
             "info.spyWordGuesses": FieldValue.delete(),
             "info.wordRevealed": FieldValue.delete(),
-            "info.guessedSpyIds": FieldValue.delete()
-        ])
+            "info.guessedSpyIds": FieldValue.delete(),
+            "info.continuePressed": FieldValue.delete()
+        ]) { err in
+            if let err = err {
+                self.errorMessage = err.localizedDescription
+            }
+        }
 
         roomRef.collection("rounds").getDocuments { qs, _ in
             qs?.documents.forEach { $0.reference.delete() }
@@ -338,6 +345,8 @@ struct SpyGuessView: View {
         roomRef.collection("guesses").getDocuments { qs, _ in
             qs?.documents.forEach { $0.reference.delete() }
         }
+        
+        self.roomStatus = "waiting"
     }
 
     // MARK: - Firestore listeners
