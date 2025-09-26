@@ -73,7 +73,8 @@ final class RoomViewModel: ObservableObject {
                             name: d["name"] as? String ?? "Anonim",
                             role: d["role"] as? String,
                             isEliminated: d["isEliminated"] as? Bool,
-                            isSelected: d["isSelected"] as? Bool
+                            isSelected: d["isSelected"] as? Bool,
+                            avatarName: d["avatarName"] as? String
                         )
                     }
                     DispatchQueue.main.async { self.players = loaded }

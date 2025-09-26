@@ -182,27 +182,27 @@ extension CreateRoomView {
     }
     
     private func finalizeRoom() {
-        guard !hostName.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+        let trimmed = hostName.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return }
         
         isLoading = true
         errorMessage = nil
         
+        avatar.displayName = trimmed
+        
         let db = Firestore.firestore()
         let playerData: [String: Any] = [
-            "name": hostName.trimmingCharacters(in: .whitespaces),
+            "name": trimmed,
             "role": "host",
             "isEliminated": false,
             "isSelected": false,
-            "joinedAt": FieldValue.serverTimestamp()
+            "joinedAt": FieldValue.serverTimestamp(),
+            "avatarName": avatar.selectedAvatar
         ]
         
         Task { @MainActor in
             let root = UIApplication.shared.topMostViewController()
-            do {
-                try await AdsManager.shared.showInterstitial(from: root, chance: 90)
-            } catch {
-                print("Interstitial error: \(error)")
-            }
+            try? await AdsManager.shared.showInterstitial(from: root, chance: 90)
         }
         
         db.collection("rooms")
@@ -215,6 +215,8 @@ extension CreateRoomView {
                     let fmt = String(localized: "name_add_failed", bundle: .main, locale: lang.locale)
                     errorMessage = String(format: fmt, locale: lang.locale, err.localizedDescription)
                 } else {
+                    avatar.syncToRoom(roomCode: roomCode)
+                    
                     recent.add(roomCode)
                     router.replace(with: RoomView(roomCode: roomCode))
                 }

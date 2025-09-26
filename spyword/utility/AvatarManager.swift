@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import Firebase
 
 final class AvatarManager: ObservableObject {
     static let allNames = (1...10).map { "\($0)" }
@@ -49,6 +50,21 @@ final class AvatarManager: ObservableObject {
         if trimmed.isEmpty { trimmed = AvatarManager.randomName() }
         displayName = trimmed
         UserDefaults.standard.set(trimmed, forKey: nameKey)
+    }
+    
+    func syncToRoom(roomCode: String) {
+        let db = Firestore.firestore()
+        let deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? ""
+        guard !roomCode.isEmpty, !deviceId.isEmpty else { return }
+
+        db.collection("rooms")
+          .document(roomCode)
+          .collection("players")
+          .document(deviceId)
+          .setData([
+            "avatarName": selectedAvatar,
+            "name": displayName
+          ], merge: true)
     }
 
     private static func randomName() -> String {

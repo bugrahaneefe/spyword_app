@@ -161,6 +161,13 @@ struct RoomView: View {
                 LazyVStack(spacing: 12) {
                     ForEach(vm.players) { p in
                         HStack(spacing: 12) {
+                            Image(p.avatarName ?? "1")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 36, height: 36)
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(Color.white.opacity(0.6), lineWidth: 1))
+                            
                             Text(p.name)
                                 .font(.body)
                                 .foregroundColor(.primary)

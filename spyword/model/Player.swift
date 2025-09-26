@@ -6,4 +6,5 @@ struct Player: Identifiable, Equatable {
     let role: String?
     var isEliminated: Bool?
     var isSelected: Bool?
+    let avatarName: String?
 }

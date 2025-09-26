@@ -199,6 +199,17 @@ struct JoinGameView: View {
 extension JoinGameView {
 
     // MARK: - Join flows
+    private func upsertSelf(roomRef: DocumentReference, name: String, completion: @escaping (Error?) -> Void) {
+        let data: [String: Any] = [
+            "name": name,
+            "avatarName": avatar.selectedAvatar,
+            "role": NSNull(),
+            "isEliminated": false,
+            "isSelected": false,
+            "joinedAt": FieldValue.serverTimestamp()
+        ]
+        roomRef.collection("players").document(deviceId).setData(data, merge: true, completion: completion)
+    }
 
     private func joinNew() {
         errorMessage = nil
@@ -264,6 +275,22 @@ extension JoinGameView {
                         }
                     }
             }
+            
+            upsertSelf(roomRef: roomRef, name: name) { setErr in
+                if let setErr = setErr {
+                    let fmt = String(localized: "join_failed_error", bundle: .main, locale: lang.locale)
+                    finish(error: String(format: fmt, locale: lang.locale, setErr.localizedDescription))
+                } else {
+                    avatar.displayName = name
+
+                    isLoading = false
+                    recent.add(roomCode)
+
+                    avatar.syncToRoom(roomCode: roomCode)
+
+                    routeToCurrentState(code: roomCode)
+                }
+            }
         }
     }
 
@@ -277,13 +304,9 @@ extension JoinGameView {
 
         Task { @MainActor in
             let root = UIApplication.shared.topMostViewController()
-            do {
-                try await AdsManager.shared.showInterstitial(from: root, chance: 45)
-            } catch {
-                print("Interstitial error: \(error)")
-            }
+            try? await AdsManager.shared.showInterstitial(from: root, chance: 45)
         }
-        
+
         roomRef.getDocument { snap, err in
             guard err == nil, let snap = snap, snap.exists else {
                 finish(error: String(localized: "room_not_found_error", bundle: .main, locale: lang.locale))
@@ -296,9 +319,22 @@ extension JoinGameView {
                     return
                 }
 
-                isLoading = false
-                recent.add(upper)
-                routeToCurrentState(code: upper)
+                let name = nickname.trimmingCharacters(in: .whitespaces)
+
+                upsertSelf(roomRef: roomRef, name: name) { err in
+                    isLoading = false
+                    if let err = err {
+                        let fmt = String(localized: "join_failed_error", bundle: .main, locale: lang.locale)
+                        finish(error: String(format: fmt, locale: lang.locale, err.localizedDescription))
+                        return
+                    }
+
+                    avatar.displayName = name
+                    avatar.syncToRoom(roomCode: upper)
+
+                    recent.add(upper)
+                    routeToCurrentState(code: upper)
+                }
             }
         }
     }
